@@ -84,7 +84,7 @@ python say.py --speed 0.85 --seed 42 "Daha yavaş."
 
 The model also runs **entirely in a browser**, with nothing sent anywhere:
 
-**<https://huggingface.co/spaces/ilqarrrr/azerbaijani-tts>**
+**<https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan>**
 
 The two ONNX graphs go through ONNX Runtime Web on WebGPU, at roughly 8x real
 time on a laptop; phonemisation is eSpeak NG compiled to WebAssembly, and the

@@ -102,13 +102,15 @@ Website field and link back from `README.md`.
 ### The static Space (live)
 
 The playground at
-<https://huggingface.co/spaces/ilqarrrr/azerbaijani-tts> is a **static** Space:
+<https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan> is a
+**static** Space, named after the checkpoint it descends from, the same as the
+GitHub repository:
 `web/` plus the 38 MB ONNX export, no server. Static Spaces are free for
 everyone; Gradio and Docker Spaces need a Pro subscription, which is why this
 one is static.
 
 ```bash
-git clone https://huggingface.co/spaces/ilqarrrr/azerbaijani-tts hf-space
+git clone https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan hf-space
 cd hf-space
 cp ../web/index.html ../web/styles.css ../web/app.js .
 cp -r ../web/js .

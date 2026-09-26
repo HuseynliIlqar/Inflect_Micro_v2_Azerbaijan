@@ -4,7 +4,7 @@
 not on a server. It is deployed as a Hugging Face **static** Space, which costs
 nothing and never sleeps.
 
-<https://huggingface.co/spaces/ilqarrrr/azerbaijani-tts>
+<https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan>
 
 ## How it works
 

@@ -85,7 +85,7 @@ python say.py --speed 0.85 --seed 42 "Daha yavaş."
 
 Model **tamamilə brauzerdə** də işləyir, heç nə heç yerə göndərilmir:
 
-**<https://huggingface.co/spaces/ilqarrrr/azerbaijani-tts>**
+**<https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan>**
 
 İki ONNX qrafı ONNX Runtime Web üzərindən WebGPU ilə işləyir — noutbukda təxminən
 real vaxtdan 8 dəfə sürətli; fonemləşdirmə WebAssembly-yə kompilyasiya edilmiş
