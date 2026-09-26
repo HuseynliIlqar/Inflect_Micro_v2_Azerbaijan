@@ -99,7 +99,58 @@ Two things that are easy to get wrong:
 Once the repository exists, add the model URL to the GitHub repository's
 Website field and link back from `README.md`.
 
-### The Gradio Space
+### The static Space (live)
+
+The playground at
+<https://huggingface.co/spaces/ilqarrrr/azerbaijani-tts> is a **static** Space:
+`web/` plus the 38 MB ONNX export, no server. Static Spaces are free for
+everyone; Gradio and Docker Spaces need a Pro subscription, which is why this
+one is static.
+
+```bash
+git clone https://huggingface.co/spaces/ilqarrrr/azerbaijani-tts hf-space
+cd hf-space
+cp ../web/index.html ../web/styles.css ../web/app.js .
+cp -r ../web/js .
+mkdir -p onnx && cp ../web/onnx/*.onnx onnx/
+# README.md needs `sdk: static` and `app_file: index.html` in its YAML header.
+git add -A && git commit -m "Update the playground" && git push
+```
+
+The ONNX export is not in this repository (`web/onnx/` is ignored): the
+repository already carries two checkpoints, and the Space is where the graphs
+belong. Copy them in from the training workspace when working on the page.
+
+#### Regenerating the golden files
+
+`web/` is a port of the Python text layer, so its tests compare against output
+generated from the Python side. After changing `az_text.py`, `az_chunk.py` or
+the number words, regenerate:
+
+```bash
+python - <<'PY'
+import json, random, re, sys
+sys.path.insert(0, '.')
+from aztts import normalize_az, chunk_text
+from num2words import num2words as n
+# numbers.json: every integer to 10,000 plus a sample above it
+vals = list(range(10001)); random.seed(7)
+vals += [random.randint(10001, 10**12) for _ in range(2000)]
+json.dump({str(v): [n(v, lang='az'), n(v, lang='az', to='ordinal')] for v in vals},
+          open('web/tests/golden/numbers.json', 'w', encoding='utf-8'), ensure_ascii=False)
+# normalise.json / chunks.json: keep the existing inputs, refresh the outputs
+old = json.load(open('web/tests/golden/normalise.json', encoding='utf-8'))
+json.dump({t: normalize_az(t) for t in old},
+          open('web/tests/golden/normalise.json', 'w', encoding='utf-8'), ensure_ascii=False)
+json.dump({t: list(chunk_text(normalize_az(t))) for t in old if normalize_az(t)},
+          open('web/tests/golden/chunks.json', 'w', encoding='utf-8'), ensure_ascii=False)
+PY
+node web/tests/test_num_az.mjs
+node web/tests/test_az_text.mjs
+node web/tests/test_az_chunk.mjs
+```
+
+### The Gradio Space (needs Pro)
 
 `app.py` in the repository root is the demo, and it runs on a free CPU Space --
 the model is 2-4x faster than real time there. A page people can click is worth

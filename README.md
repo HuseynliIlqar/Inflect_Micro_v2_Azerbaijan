@@ -80,6 +80,23 @@ python say.py --speed 0.85 --seed 42 "Daha yavaş."
 | `--show-text` | -- | Print the normalised text and the chunk boundaries |
 | `--voice` | `az` | `en` speaks with the English base model (see below) |
 
+### Try it in the browser
+
+The model also runs **entirely in a browser**, with nothing sent anywhere:
+
+**<https://huggingface.co/spaces/ilqarrrr/azerbaijani-tts>**
+
+The two ONNX graphs go through ONNX Runtime Web on WebGPU, at roughly 8x real
+time on a laptop; phonemisation is eSpeak NG compiled to WebAssembly, and the
+Azerbaijani text layer is ported to JavaScript. Once the page has loaded it
+works with the network switched off.
+
+The port is not trusted on faith. It is checked against the Python original
+over golden files generated from it -- 24,022 number-word comparisons, 550
+normalisation sentences, 550 chunkings -- and the ONNX path is checked against
+onnxruntime in Python: same sample count, same RMS to seven decimals. See
+[web/README.md](web/README.md).
+
 ### Browser interface
 
 A page for trying the model out without the command line: type a sentence,
@@ -256,6 +273,7 @@ webui/
   cleanup.py      Single-clip resonance filter (no ffmpeg)
 model/            Azerbaijani weights + runtime (37 MB) -- do not edit
 model-en/         English base-model weights (37 MB) -- do not edit
+web/              The browser playground (a Hugging Face static Space)
 tools/            seed_sweep, audio_postprocess -- quality tools
 training/         How the model was made (the base model is downloaded)
 packaging/        Publishing to GitHub / Hugging Face / Kaggle

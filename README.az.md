@@ -81,6 +81,22 @@ python say.py --speed 0.85 --seed 42 "Daha yavaş."
 | `--show-text` | — | Normallaşdırılmış mətni və hissə sərhədlərini çap edir |
 | `--voice` | `az` | `en` ingiliscə baza modellə danışır (aşağıya bax) |
 
+### Brauzerdə sınayın
+
+Model **tamamilə brauzerdə** də işləyir, heç nə heç yerə göndərilmir:
+
+**<https://huggingface.co/spaces/ilqarrrr/azerbaijani-tts>**
+
+İki ONNX qrafı ONNX Runtime Web üzərindən WebGPU ilə işləyir — noutbukda təxminən
+real vaxtdan 8 dəfə sürətli; fonemləşdirmə WebAssembly-yə kompilyasiya edilmiş
+eSpeak NG-dir, azərbaycanca mətn qatı isə JavaScript-ə portlanıb. Səhifə
+yükləndikdən sonra internetsiz də işləyir.
+
+Port sözə görə qəbul edilmir: Python orijinalından yaradılmış qızıl fayllarla
+yoxlanılır — 24 022 rəqəm müqayisəsi, 550 normallaşdırma cümləsi, 550 bölgü — və
+ONNX yolu Python-dakı onnxruntime ilə tutuşdurulur: eyni sample sayı, yeddi
+onluq dəqiqliklə eyni RMS. Bax [web/README.md](web/README.md).
+
 ### Brauzer interfeysi
 
 Modeli komanda sətri olmadan sınamaq üçün səhifə: cümləni yazın, parametrləri
@@ -255,6 +271,7 @@ webui/
   cleanup.py      Tək-klip rezonans filtri (ffmpeg-siz)
 model/            Azərbaycanca çəkilər + runtime (37 MB) — toxunmayın
 model-en/         İngilis baza modelin çəkiləri (37 MB) — toxunmayın
+web/              Brauzer playground-u (Hugging Face static Space)
 tools/            seed_sweep, audio_postprocess — keyfiyyət alətləri
 training/         Modelin necə hazırlandığı (baza model yüklənir)
 packaging/        GitHub / Hugging Face / Kaggle yayımı

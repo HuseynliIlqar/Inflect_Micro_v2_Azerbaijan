@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="az">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Azərbaycan dilində mətn-nitq sintezi</title>
+    <meta
+      name="description"
+      content="Offline Azerbaijani text-to-speech running entirely in the browser: a 9.36M-parameter VITS model through ONNX Runtime Web."
+    />
+    <meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121417" media="(prefers-color-scheme: dark)" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🗣️</text></svg>"
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#text">Mətnə keç</a>
+    <header class="page-head">
+      <div>
+        <h1 id="title">Azərbaycan dilində mətn-nitq sintezi</h1>
+        <p id="subtitle" class="subtitle"></p>
+      </div>
+      <div class="language" role="group" aria-labelledby="language-label">
+        <span id="language-label" class="language-label"></span>
+        <div class="segmented">
+          <button type="button" class="segment is-active" data-language="az">
+            Azərbaycanca
+          </button>
+          <button type="button" class="segment" data-language="en">English</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel" aria-labelledby="input-heading">
+        <h2 id="input-heading" class="visually-hidden">Input</h2>
+
+        <label class="field">
+          <span class="field-label" id="text-label">Mətn</span>
+          <textarea
+            id="text"
+            rows="4"
+            autocomplete="off"
+            name="text"
+            spellcheck="false"
+            enterkeyhint="go"
+          ></textarea>
+        </label>
+
+        <button id="speak" type="button" class="primary">Səsləndir</button>
+
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+
+        <div class="examples">
+          <span id="examples-label" class="field-label"></span>
+          <div id="examples" class="example-list"></div>
+        </div>
+
+        <div class="result">
+          <span id="audio-label" class="field-label"></span>
+          <audio id="audio" controls preload="none" aria-describedby="stats"></audio>
+          <div class="result-actions">
+            <a id="download" class="ghost" download="azerbaycan-tts.wav" hidden></a>
+          </div>
+          <p id="stats" class="stats"></p>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="parameters-heading">
+        <h2 id="parameters-heading">Parametrlər</h2>
+
+        <label class="field">
+          <span class="field-label" id="speed-label">Sürət</span>
+          <span class="field-info" id="speed-info"></span>
+          <span class="slider-row">
+            <input id="speed" type="range" min="0.5" max="2" step="0.05" value="1" />
+            <output id="speed-value" for="speed">1.00</output>
+          </span>
+        </label>
+
+        <label class="field">
+          <span class="field-label" id="variation-label">Dəyişkənlik</span>
+          <span class="field-info" id="variation-info"></span>
+          <span class="slider-row">
+            <input
+              id="variation"
+              type="range"
+              min="0"
+              max="1"
+              step="0.001"
+              value="0.667"
+            />
+            <output id="variation-value" for="variation">0.667</output>
+          </span>
+        </label>
+
+        <label class="field">
+          <span class="field-label" id="seed-label">Seed</span>
+          <span class="field-info" id="seed-info"></span>
+          <span class="slider-row">
+            <input
+              id="seed"
+              type="number"
+              name="seed"
+              inputmode="numeric"
+              autocomplete="off"
+              min="0"
+              step="1"
+              value="7"
+            />
+            <button id="shuffle" type="button" class="ghost"></button>
+          </span>
+        </label>
+
+        <label class="field checkbox">
+          <input id="normalise" type="checkbox" checked />
+          <span>
+            <span class="field-label" id="normalise-label"></span>
+            <span class="field-info" id="normalise-info"></span>
+          </span>
+        </label>
+
+        <details class="advanced">
+          <summary id="advanced-label"></summary>
+          <label class="field">
+            <span class="field-label" id="max-words-label"></span>
+            <span class="field-info" id="max-words-info"></span>
+            <span class="slider-row">
+              <input id="max-words" type="range" min="0" max="40" step="1" value="15" />
+              <output id="max-words-value" for="max-words">15</output>
+            </span>
+          </label>
+        </details>
+
+        <div class="field">
+          <span class="field-label" id="chunks-label"></span>
+          <span class="field-info" id="chunks-info"></span>
+          <pre id="chunks" class="chunks" aria-live="polite"></pre>
+        </div>
+
+        <p id="offline-note" class="note"></p>
+      </section>
+    </main>
+
+    <footer class="page-foot">
+      <p id="footer"></p>
+      <p id="en-note" class="note"></p>
+      <p class="note">
+        <a href="https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan"
+          >GitHub</a
+        >
+        ·
+        <a href="https://huggingface.co/owensong/Inflect-Micro-v2">Inflect-Micro-v2</a>
+        · Apache-2.0
+      </p>
+    </footer>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

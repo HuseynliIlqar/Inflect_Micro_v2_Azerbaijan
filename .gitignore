@@ -37,3 +37,11 @@ training/base-model/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# --- Browser playground ------------------------------------------------------
+# The ONNX export is 38 MB and lives in the Hugging Face Space, not here; the
+# repository already carries two checkpoints. Copy it in when working on the
+# page locally:
+#     cp <export>/onnx/*.onnx web/onnx/
+web/onnx/
+web/node_modules/

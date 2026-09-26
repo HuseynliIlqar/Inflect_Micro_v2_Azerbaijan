@@ -30,6 +30,7 @@ nothing to download for normal work.
 
 ```bash
 python -m pytest                     # ~3 seconds, never loads the model
+node web/tests/test_num_az.mjs && node web/tests/test_az_text.mjs && node web/tests/test_az_chunk.mjs
 python -m compileall -q say.py app.py aztts webui tools training
 cd model && sha256sum -c checksums.sha256       # 24 files, all must say OK
 cd model-en && sha256sum -c checksums.sha256    # 6 files, all must say OK
@@ -134,6 +135,11 @@ that into "free for commercial use".
   visitor can hear where this model started. None of the Azerbaijani text
   layers apply to it: no `normalize_az`, no `restress`. Keep it that way --
   Azerbaijani number words in an English sentence is the failure mode.
+- **`web/` is a port, and a port drifts.** The JavaScript in `web/js/` mirrors
+  `az_text.py`, `az_chunk.py` and `num2words`. When any of those change,
+  regenerate the golden files and run `node web/tests/*.mjs`; the snippet that
+  writes them is in `packaging/PUBLISHING.md`. A change to the text layer that
+  does not reach `web/` makes the page and the CLI say different things.
 - **Interface logic belongs in `webui/`, not in `app.py`.** That is what keeps
   `tests/test_webui_runner.py` able to run against a stand-in engine instead of
   loading the model.
@@ -148,6 +154,7 @@ that into "free for commercial use".
 | Change synthesis, chunk pauses, model loading | `aztts/engine.py` |
 | Add or change a CLI flag | `say.py` |
 | Change the browser interface, its labels or parameters | `app.py`, `webui/` |
+| Change the browser playground (the static Space) | `web/` |
 | Change how the English base model is spoken | `aztts/en_voice.py` |
 | Audio cleanup, seed selection | `tools/` |
 | Anything about how the model was trained | `training/` (archive; the pod is gone) |
