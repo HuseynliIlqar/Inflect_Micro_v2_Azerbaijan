@@ -19,6 +19,10 @@ python say.py "Salam, necəsiniz?"
 
 Səs `out/01.wav` faylına düşür. Vəssalam.
 
+**Yaxud heç nə quraşdırmadan dinləyin:
+[playground](https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan)**
+modeli sizin brauzerinizdə işlədir — hər iki səs, heç nə serverə göndərilmir.
+
 ---
 
 ## Quraşdırma

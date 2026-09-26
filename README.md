@@ -18,6 +18,10 @@ python say.py "Salam, necəsiniz?"
 
 The audio lands in `out/01.wav`. That is the whole thing.
 
+**Or hear it before installing anything:
+[the playground](https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan)**
+runs the model in your browser -- both voices, nothing sent to a server.
+
 ---
 
 ## Install
