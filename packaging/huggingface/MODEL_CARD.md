@@ -22,139 +22,138 @@ model-index:
   results: []
 ---
 
-# Azerbaijani TTS (9.36M, 24 kHz, offline)
+# Azerbaijani TTS — 9.36M, 24 kHz, offline
 
-A fully offline text-to-speech model that speaks Azerbaijani. 9.36M parameters,
-24 kHz mono, **2-4x faster than real time on a laptop CPU**. No server, no API
-key, no internet.
+A text-to-speech model that speaks Azerbaijani **entirely offline**: no server,
+no API key, no network at inference. 9.36M parameters, 24 kHz mono, single
+speaker, **2-4x faster than real time on a laptop CPU**.
 
-Code, tests and the full training pipeline:
-**https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan**
+A fine-tune of [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)
+by Owen Song — 200,000 steps on 25.07 hours of Azerbaijani speech, 409 of its
+410 tensors carried over bit-identically.
+
+| | |
+| --- | --- |
+| **Hear it** | [The playground](https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan) — runs in your browser, nothing installed |
+| **Code** | [github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan](https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan) |
+| **In this repo** | PyTorch at the root, ONNX in `onnx/`, WAVs in `samples/` |
 
 ## Samples
 
 | Text | Audio |
 | --- | --- |
-| `Salam, bu model tamamilə yerli maşında işləyir.` | <audio controls src="https://huggingface.co/<user>/azerbaijani-tts/resolve/main/samples/01-salam.wav"></audio> |
-| `Payız gəlmişdi və şəhərin küçələri saralmış yarpaqlarla örtülmüşdü.` | <audio controls src="https://huggingface.co/<user>/azerbaijani-tts/resolve/main/samples/02-payiz.wav"></audio> |
-| `Sən bu kitabı oxumusan? Mənə çox maraqlı gəldi.` | <audio controls src="https://huggingface.co/<user>/azerbaijani-tts/resolve/main/samples/03-sual.wav"></audio> |
-| `II Dünya müharibəsi 01/09/1939 tarixində başladı və 25% artım oldu.` | <audio controls src="https://huggingface.co/<user>/azerbaijani-tts/resolve/main/samples/04-reqem.wav"></audio> |
+| `Salam, bu model tamamilə yerli maşında işləyir.` | <audio controls src="https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan/resolve/main/samples/01-salam.wav"></audio> |
+| `Payız gəlmişdi və şəhərin küçələri saralmış yarpaqlarla örtülmüşdü.` | <audio controls src="https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan/resolve/main/samples/02-payiz.wav"></audio> |
+| `Sən bu kitabı oxumusan? Mənə çox maraqlı gəldi.` | <audio controls src="https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan/resolve/main/samples/03-sual.wav"></audio> |
+| `II Dünya müharibəsi 01/09/1939 tarixində başladı və 25% artım oldu.` | <audio controls src="https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan/resolve/main/samples/04-reqem.wav"></audio> |
+
+The last one shows why the text layer matters: `II` becomes `İkinci`,
+`01/09/1939` becomes `birinci sentyabr min doqquz yüz otuz doqquz`, `25%`
+becomes `iyirmi beş faiz`.
 
 ## Usage
 
+The weights are useless without the Azerbaijani text layer, which lives in the
+GitHub repository together with the CLI, the tests and the training pipeline:
+
 ```bash
+git lfs install
 git clone https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan
-cd azerbaycan-tts
+cd Inflect_Micro_v2_Azerbaijan
 pip install -r requirements.txt
 python say.py "Salam, necəsiniz?"
 ```
 
+That clone already contains these weights. To use the copy in this repository
+instead:
+
 ```python
+from huggingface_hub import snapshot_download
 from aztts import AzTTS
 
-tts = AzTTS()
+tts = AzTTS(snapshot_download("ilqarrrr/Inflect_Micro_v2_Azerbaijan"))
 tts.save("Salam, necəsiniz?", "out/salam.wav")
 ```
 
-Text normalisation runs automatically: `II` becomes `İkinci`, `25%` becomes
-`iyirmi beş faiz`, `01/09/1939` becomes `birinci sentyabr min doqquz yüz otuz
-doqquz`. Long sentences are cut into roughly fifteen-word chunks, because the
-model's intonation flattens beyond that.
+Normalisation and chunking run automatically. Calling the `model/` package
+directly means calling `normalize_az` yourself.
 
-There is also a browser interface -- every parameter, the normalised text the
-model actually reads, and the matching command line:
+### Without PyTorch
 
-```bash
-pip install -r requirements-app.txt
-python app.py                      # http://127.0.0.1:7860
-```
+`onnx/` holds the same model as two graphs, verified against the PyTorch module
+at a waveform correlation of 0.9999999999916:
 
-The repository additionally ships the English base model, so the same interface
-and CLI can speak English (`python say.py --voice en "Hello."`). That is
-`owensong/Inflect-Micro-v2` unchanged -- a different voice by another author,
-not this model.
+| Graph | Inputs | Outputs |
+| --- | --- | --- |
+| `onnx/duration.onnx` | `tokens`, `lengths`, `length_scale` | `m_p_exp`, `logs_p_exp`, `y_mask` |
+| `onnx/decode.onnx` | `m_p_exp`, `logs_p_exp`, `y_mask`, `zp_noise`, `noise_scale` | `waveform` |
+
+This is what the browser playground runs, through ONNX Runtime Web. `web/` in
+the GitHub repository is a working implementation, including the Azerbaijani
+text layer ported to JavaScript.
 
 ## Model details
 
 | | |
 | --- | --- |
-| Architecture | VITS (compact), alias-free vocoder |
-| Parameters | 9,356,513 |
-| Sample rate | 24 000 Hz, mono |
-| Voice | Single speaker (F0 195-201 Hz) |
-| Phoneme frontend | eSpeak NG, `az`, with stress marks |
-| Base model | [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2) |
-| Training | 200,000 steps = 1,343 epochs, 25.07 hours of audio |
-| Hardware | NVIDIA A40, ~3.7 days, roughly $39 |
+| Architecture | VITS (compact), 9,356,513 parameters |
+| Audio | 24 kHz, mono, single speaker |
+| Frontend | eSpeak NG (`az`) through `phonemizer`, with stress |
+| Training | 200,000 steps = 1,343 epochs, ~3.7 days on one A40, ~$39 |
+| Data | 25.07 hours, 9,674 clips |
+| Speed | 2-4x real time on CPU; ~0.3 s to load |
 
-The warm start was complete: 409 of 410 tensors were copied bit-identically from
-the base model, and every Azerbaijani phoneme was already in the base symbol set.
-
-## Speed
-
-| Context | Result |
-| --- | --- |
-| Short sentence | 2-4x real time (CPU) |
-| Two minutes of text | 122 s of audio / 43 s of compute |
-| Model load | 0.3-2 s |
-| 1 thread (phone-like) | 2.5x real time |
+The text layer ahead of the model does two things the checkpoint cannot:
+rewrites digits, Roman numerals, dates, units and abbreviations into spoken
+words, and cuts sentences into ~15-word chunks, because this model's intonation
+flattens towards the end of a long sentence.
 
 ## Limitations
 
-- **One voice, no emotion control.** The reading is neutral and cannot be
-  changed. There is no voice cloning and no multi-speaker support.
-- **The model is small.** 9.36M parameters is enough for clear speech, not for
-  full naturalness. The vocoder sometimes leaves a metallic resonance; an 11 kHz
-  low-pass reduces it.
-- **Rare names, foreign words and unusual spellings** are at the mercy of the
+- **One voice.** No voice cloning, no multi-speaker support, no emotion control.
+- At 9.36M parameters the speech is clear and intelligible but not fully
+  natural; the vocoder sometimes leaves a metallic resonance.
+- Rare names, foreign words and unusual spellings are at the mercy of the
   phoneme frontend.
-- **The training audio is most likely synthetic** -- constant-length silences, a
-  noise floor of exactly zero, vocoder traces in the spectrum. The quality
-  ceiling is therefore the system that produced it.
+- The training audio is most likely synthetic, so the quality ceiling is the
+  system that produced it. The evidence is in `docs/MODEL.md` in the repository.
 
-## Credits
+## Licence and commercial use
 
-This model exists because two people published their work openly. If you build
-on it, credit both of them as well.
+Apache-2.0 for this project's code and for these weights, inherited from the
+base model. **Commercial use is allowed**, with one condition that comes from
+the phonemiser rather than the model.
 
-**Base model --- [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)**
-by Owen Song, Apache-2.0. Every weight here started as one of his: 409 of the
-410 tensors were carried over bit-identically, and every Azerbaijani phoneme was
-already in his symbol set.
+Phonemisation calls [`phonemizer`](https://github.com/bootphon/phonemizer) and
+[eSpeak NG](https://github.com/espeak-ng/espeak-ng) **in-process**, and both are
+**GPL-3.0-or-later**. Running them changes nothing. Shipping a combined work —
+a desktop app, a container image, a binary handed to customers — brings GPL-3.0
+obligations for those components.
 
-**Training data --- [`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset)**
-by `ughurabbasov`. 9,674 clips used out of 10,088, 25.07 hours, single speaker.
-The repository declares no licence file; asked directly in its Hugging Face
-community tab, the author confirmed that anyone may use the dataset and asked to
-be credited. **Attribution is the condition of use.** The terms of the upstream
-TTS system that most likely produced the audio are a separate question and
-remain unknown.
+The checkpoint itself does not need eSpeak: `config.json` declares
+`accepts_prephonemized_input: true`, so phonemes can come from any frontend.
+`THIRD_PARTY_NOTICES.md` in the GitHub repository sets out both routes.
 
-## Licence
+**Training data.** [`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset)
+declares no licence file; asked in its Hugging Face community tab, the author
+confirmed free use and asked to be credited. **Attribution is the condition of
+use** — if you build on this model, credit the dataset too.
 
-The weights and this project's own code are **Apache-2.0**, inherited from the
-base model.
-
-**Commercial use.** The weights, this project's code and the bundled runtime
-components (VITS, BigVGAN, alias-free-torch) all permit it. The one condition is
-the phonemiser, below. The training data is used with the dataset author's
-permission, given in the HuggingFace community tab, on condition of attribution.
-
-**Runtime note.** Phonemisation goes through
-[`phonemizer`](https://github.com/bootphon/phonemizer) and
-[eSpeak NG](https://github.com/espeak-ng/espeak-ng), both **GPL-3.0-or-later**.
-Installing and running is unaffected, but redistributing a combined work -- a
-bundled application, a container image, a binary -- brings the GPL-3.0 terms with
-it for those components. The checkpoint itself does not depend on eSpeak: the
-config declares `accepts_prephonemized_input: true`, so phonemes can come from
-any frontend. See `THIRD_PARTY_NOTICES.md` in the GitHub repository.
+**Files.** The PyTorch export sits at the root (`model.pth`, `config.json`, the
+frontend and the VITS runtime); `checksums.sha256` verifies 24 of them.
+`NOTICES.md` is this project's full third-party notice, while `LICENSE` and
+`THIRD_PARTY_NOTICES.md` are the upstream package's own, unchanged.
 
 ## Ethical use
 
 Do not use this voice to impersonate a real person or to produce deceptive
-content.
+content. Disclose synthetic speech where the context could otherwise mislead.
 
-## Citation
+## Credits and citation
+
+Built on two openly published works: **`owensong/Inflect-Micro-v2`** by Owen
+Song (the checkpoint) and **`ughurabbasov/azerbaijani-tts-dataset`** by
+`ughurabbasov` (the audio). Please cite all three:
 
 ```bibtex
 @software{azerbaijani_tts,
