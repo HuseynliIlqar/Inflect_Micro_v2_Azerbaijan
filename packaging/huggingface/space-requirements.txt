@@ -4,7 +4,10 @@
 # reads only a file called `requirements.txt`, so the `-r` line the repository
 # version uses would refer to the file itself and loop.
 #
-# Keep it in step with requirements.txt when a dependency changes there.
+# The CPU index matters. On Linux, plain `torch` pulls the CUDA build -- about
+# 800 MB of wheels for GPU code a CPU Space can never run. This keeps the image
+# small and the build fast.
+--extra-index-url https://download.pytorch.org/whl/cpu
 
 torch>=2.6
 numpy>=1.26,<3

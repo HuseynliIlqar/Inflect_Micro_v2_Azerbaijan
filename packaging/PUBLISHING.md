@@ -119,20 +119,15 @@ cp -r ../webui ../aztts ../model ../model-en .
 cp ../packaging/huggingface/space-requirements.txt requirements.txt
 ```
 
-The Space's `README.md` needs the header before anything else:
+The Space's `README.md` is `packaging/huggingface/SPACE_README.md`, copied over:
 
-```yaml
----
-title: Azerbaijani TTS
-emoji: 🗣️
-colorFrom: blue
-colorTo: indigo
-sdk: gradio
-app_file: app.py
-pinned: false
-license: apache-2.0
----
+```bash
+cp ../packaging/huggingface/SPACE_README.md README.md
 ```
+
+Its YAML header is what makes the Space work -- `sdk: gradio`, `sdk_version`
+and `app_file: app.py`. Keep `sdk_version` in step with the Gradio the
+interface was tested against.
 
 One thing to check before pushing: **both models go through LFS.**
 `.gitattributes` is copied for that reason; without it each `model.pth` is
