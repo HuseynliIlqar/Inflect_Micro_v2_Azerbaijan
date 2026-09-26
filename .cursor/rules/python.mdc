@@ -12,6 +12,9 @@ alwaysApply: false
 - Module-level tables are `MappingProxyType` or `frozenset` so they cannot be
   mutated by accident. Keep new tables that way.
 - Small, single-purpose files. The largest is `az_text.py` at ~390 lines.
+- Interface logic belongs in `webui/`, never in `app.py`: that is what lets
+  `tests/test_webui_runner.py` drive it with a stand-in engine instead of the
+  model. `Settings` is a frozen dataclass; build a new one, never mutate.
 - Errors surface as a message plus a non-zero exit code from `main()`, never a
   traceback in the user's face. Library code raises; CLI code catches.
 - No new runtime dependencies without a stated reason.

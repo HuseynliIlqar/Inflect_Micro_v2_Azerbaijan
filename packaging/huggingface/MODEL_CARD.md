@@ -29,7 +29,7 @@ A fully offline text-to-speech model that speaks Azerbaijani. 9.36M parameters,
 key, no internet.
 
 Code, tests and the full training pipeline:
-**https://github.com/<user>/azerbaycan-tts**
+**https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan**
 
 ## Samples
 
@@ -43,7 +43,7 @@ Code, tests and the full training pipeline:
 ## Usage
 
 ```bash
-git clone https://github.com/<user>/azerbaycan-tts
+git clone https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan
 cd azerbaycan-tts
 pip install -r requirements.txt
 python say.py "Salam, necəsiniz?"
@@ -60,6 +60,19 @@ Text normalisation runs automatically: `II` becomes `İkinci`, `25%` becomes
 `iyirmi beş faiz`, `01/09/1939` becomes `birinci sentyabr min doqquz yüz otuz
 doqquz`. Long sentences are cut into roughly fifteen-word chunks, because the
 model's intonation flattens beyond that.
+
+There is also a browser interface -- every parameter, the normalised text the
+model actually reads, and the matching command line:
+
+```bash
+pip install -r requirements-app.txt
+python app.py                      # http://127.0.0.1:7860
+```
+
+The repository additionally ships the English base model, so the same interface
+and CLI can speak English (`python say.py --voice en "Hello."`). That is
+`owensong/Inflect-Micro-v2` unchanged -- a different voice by another author,
+not this model.
 
 ## Model details
 
@@ -122,6 +135,11 @@ remain unknown.
 The weights and this project's own code are **Apache-2.0**, inherited from the
 base model.
 
+**Commercial use.** The weights, this project's code and the bundled runtime
+components (VITS, BigVGAN, alias-free-torch) all permit it. The one condition is
+the phonemiser, below. The training data is used with the dataset author's
+permission, given in the HuggingFace community tab, on condition of attribution.
+
 **Runtime note.** Phonemisation goes through
 [`phonemizer`](https://github.com/bootphon/phonemizer) and
 [eSpeak NG](https://github.com/espeak-ng/espeak-ng), both **GPL-3.0-or-later**.
@@ -143,7 +161,7 @@ content.
   title  = {Azerbaijani TTS: an offline 9.36M-parameter VITS model},
   author = {Huseynli, Ilqar},
   year   = {2026},
-  url    = {https://github.com/<user>/azerbaycan-tts},
+  url    = {https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan},
   note   = {Adapted from owensong/Inflect-Micro-v2 (Apache-2.0);
             trained on ughurabbasov/azerbaijani-tts-dataset,
             used with the author's permission}

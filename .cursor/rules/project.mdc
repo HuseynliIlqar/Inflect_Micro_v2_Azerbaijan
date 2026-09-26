@@ -7,15 +7,20 @@ alwaysApply: true
 
 Offline Azerbaijani text-to-speech: a 9.36M-parameter VITS model plus the
 Azerbaijani text layer it needs. CPU-only, 2-4x real time, no network at
-runtime. `README.md` describes what it does; these rules describe how to change
-it without breaking it.
+runtime. A browser interface (`app.py`, Gradio, optional dependency) and the
+English base model (`model-en/`) ship alongside it. `README.md` describes what
+it does; these rules describe how to change it without breaking it.
 
 ## Layout
 
-- `aztts/` — all of our library code (~900 lines). Everything you write goes
-  here or in `say.py`.
+- `aztts/` — all of our library code. Everything you write goes here, in
+  `say.py` or in `webui/`.
 - `say.py` — the CLI, the main entry point.
+- `app.py` + `webui/` — the browser interface. `app.py` is Gradio wiring only;
+  everything testable lives in `webui/` (`i18n.py`, `runner.py`, `cleanup.py`).
 - `model/` — **vendored upstream export. Never edit.**
+- `model-en/` — **vendored English weights. Never edit.** Tracked through Git
+  LFS so a clone speaks both languages; `aztts/en_voice.py` drives it.
 - `tools/` — `seed_sweep.py` (pick a good seed), `audio_postprocess.py` (find
   and filter vocoder buzz).
 - `training/` — archive of how the model was made. The pod is gone; only
@@ -24,20 +29,29 @@ it without breaking it.
 
 ## Hard rules
 
-1. **Never edit `model/` or `training/base-model/`.** They are upstream
-   exports. `model/checksums.sha256` verifies 24 files there and any edit
-   breaks it. Wrap the model in `aztts/` instead of patching it.
+1. **Never edit `model/`, `model-en/` or `training/base-model/`.** They are
+   upstream exports. `model/checksums.sha256` verifies 24 files and
+   `model-en/checksums.sha256` verifies 6; any edit breaks them. Wrap the model
+   in `aztts/` instead of patching it. `aztts/en_voice.py` never imports the
+   English package's Python: both packages declare modules named `inference`,
+   `models` and `text`, and importing the second returns the first, silently.
 2. **`ə`, `ɣ`, `ʃ` inside `model/` are IPA symbols, not Azerbaijani text.** A
    grep for Azerbaijani letters matches them. Do not translate anything there.
 3. **All prose is English** — comments, docstrings, `print()`, argparse help,
    Markdown. Azerbaijani only ever appears as *language data* (example
    sentences, letter names, abbreviation and conjunction tables, phoneme
    strings). Translating language data changes behaviour.
-   `README.az.md` is the deliberate exception and mirrors `README.md`.
+   `README.az.md` is the deliberate exception and mirrors `README.md`; the
+   `_AZ` table in `webui/i18n.py` is interface label data, not prose.
 4. **Never call `.lower()` / `.upper()` on Azerbaijani text.** `I` → `ı` and
    `İ` → `i`. Use `az_lower()` / `az_capitalise()` from `aztts/az_text.py`.
 5. **Tests must never load the model.** The suite runs in ~3 seconds.
-6. **Do not add GPL dependencies.** `phonemizer` and eSpeak NG are already
+6. **The English voice is a guest, not a second product.** No `normalize_az`,
+   no `restress` for it — Azerbaijani number words inside an English sentence
+   is the failure mode. Its controls are disabled in the interface.
+7. **Gradio stays an optional dependency** (`[project.optional-dependencies]
+   app`, `requirements-app.txt`). Only `app.py` may import it.
+8. **Do not add GPL dependencies.** `phonemizer` and eSpeak NG are already
    GPL-3.0-or-later and loaded in-process; that surface is documented and
    bounded in `THIRD_PARTY_NOTICES.md`. Our code stays Apache-2.0.
 
@@ -45,20 +59,24 @@ it without breaking it.
 
 ```bash
 python -m pytest                                  # ~3s, no model load
-python say.py --show-text "II Dünya, 25% artım"   # text layer, no synthesis
 python say.py "Salam."                            # end to end -> out/01.wav
+python say.py --voice en "Hello."                 # the English voice
 cd model && sha256sum -c checksums.sha256         # 24 files, all OK
+cd model-en && sha256sum -c checksums.sha256      # 6 files, all OK
 ```
 
-`--show-text` prints exactly what would reach the model and synthesises
-nothing — it is the fastest check for any text-layer change.
+`--show-text` adds the chunk printout but still synthesises. To check a
+text-layer change without the model, call `normalize_az` directly (after
+`use_utf8()`, or a Windows console raises `UnicodeEncodeError`).
 
 ## Setup
 
-Python 3.11+, and Git LFS before cloning (`model.pth` is an LFS object).
-`pip install -r requirements.txt`, then `pip install pytest` separately.
-`training/base-model/` is not tracked — fetch it with
-`python training/scripts/download_model.py` if you need it.
+Python 3.11+, and Git LFS before cloning (both `model.pth` files are LFS
+objects; without it they arrive as pointer files and `checkpoint_status()`
+reports `pointer`). `pip install -r requirements.txt`, then `pip install pytest`
+separately, and `pip install -r requirements-app.txt` for the interface.
+`training/base-model/` is not tracked — it is the complete 38 MB upstream
+package, needed only for training work.
 
 ## Do not chase these
 

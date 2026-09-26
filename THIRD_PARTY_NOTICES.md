@@ -110,6 +110,13 @@ runtime includes concepts and adapted implementation structure from
 The weights in `model/` are an adaptation of this checkpoint, so the Apache-2.0
 grant carries through to them.
 
+**This repository also redistributes the checkpoint itself**, unmodified, in
+`model-en/`, so that a clone can speak English as well as Azerbaijani. Apache-2.0
+permits that; the conditions travel with it, which is why `model-en/` carries
+the upstream `LICENSE`, `THIRD_PARTY_NOTICES.md` and `CITATION.cff` unchanged.
+If you redistribute this project, keep them together. `model-en/README.md`
+records where the files came from and how to cite them.
+
 ---
 
 ## Training data

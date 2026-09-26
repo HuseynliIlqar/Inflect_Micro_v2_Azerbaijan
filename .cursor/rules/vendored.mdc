@@ -1,27 +1,45 @@
 ---
-description: model/ and training/base-model/ are vendored upstream exports and must not be edited
-globs: ["model/**", "training/base-model/**"]
+description: model/, model-en/ and training/base-model/ are vendored upstream exports and must not be edited
+globs: ["model/**", "model-en/**", "training/base-model/**"]
 alwaysApply: false
 ---
 
 # This file is vendored. Do not edit it.
 
-`model/` and `training/base-model/` are upstream export packages from
+`model/`, `model-en/` and `training/base-model/` come from
 [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2),
-not our code. They ship their own weights, phoneme frontend and VITS runtime.
+not from us. `model/` is the Azerbaijani adaptation's full export package;
+`training/base-model/` is the complete English package, untracked; `model-en/`
+is the English weights alone, tracked through Git LFS so a clone speaks both
+languages.
 
 - **`model/checksums.sha256` verifies 24 files in that directory.** Any edit
   breaks verification, and the check is part of the release process.
-- `.gitattributes` marks `model/**` as `linguist-vendored` so it stays out of
-  our language statistics and collapsed in diffs.
-- `training/base-model/` is not tracked at all — it is a 38 MB snapshot fetched
-  by `python training/scripts/download_model.py`. Editing it edits a download.
+- **`model-en/checksums.sha256` verifies its six vendored files.** `README.md`
+  there is ours and is deliberately outside the checksum list.
+- `.gitattributes` marks `model/**` and `model-en/**` as `linguist-vendored` so
+  they stay out of our language statistics and collapsed in diffs.
+- `training/base-model/` is not tracked at all — it is the complete 38 MB
+  package fetched by `python training/scripts/download_model.py`, needed only
+  for training work. Editing it edits a download.
 
 ## The characters here are IPA, not Azerbaijani
 
 `model/runtime/text/symbols.py` and the phoneme code contain `ə`, `ɣ`, `ʃ`, `ɫ`
 and friends. These are IPA phoneme symbols. A search for Azerbaijani letters
 matches them. Do not translate, transliterate or normalise anything here.
+
+## Never import the English package's Python
+
+`model-en/` deliberately holds only `model.pth` and `config.json` (plus the
+licence, notices and citation that must travel with them). The upstream package
+also ships `inference.py`, `models.py` and `text/` — modules with the *same
+names* as the ones in `model/`. Importing both in one process returns whichever
+was imported first, silently, with no error to notice.
+
+`aztts/en_voice.py` therefore loads the English weights into `model/`'s runtime
+and phonemises English itself with eSpeak's `en-us` voice, handing the result
+over as `phonemes=`. Keep it that way.
 
 ## If the model needs to behave differently
 

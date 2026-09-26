@@ -2,6 +2,8 @@
 
 Offline Azerbaijani text-to-speech. A 9.36M-parameter VITS model plus the
 Azerbaijani text layer it needs. Runs on CPU at 2-4x real time, no network.
+Ships with a browser interface and, as a guest voice, the English base model it
+was adapted from.
 
 Read `README.md` for what the project does. This file is about how to work on it
 without breaking it.
@@ -18,6 +20,7 @@ python -m venv .venv
 .venv/Scripts/python.exe -m pip install -r requirements.txt   # Windows
 ./.venv/bin/pip install -r requirements.txt                   # Linux / macOS
 pip install pytest                   # tests are not in requirements.txt
+pip install -r requirements-app.txt  # only if you want `python app.py`
 ```
 
 Python 3.11+. The 37 MB `model/` directory is in the repository -- there is
@@ -27,19 +30,34 @@ nothing to download for normal work.
 
 ```bash
 python -m pytest                     # ~3 seconds, never loads the model
-python -m compileall -q say.py aztts tools training
-cd model && sha256sum -c checksums.sha256    # 24 files, all must say OK
-python say.py --show-text "II Dünya, 25% artım"   # normalisation, no synthesis
+python -m compileall -q say.py app.py aztts webui tools training
+cd model && sha256sum -c checksums.sha256       # 24 files, all must say OK
+cd model-en && sha256sum -c checksums.sha256    # 6 files, all must say OK
+python say.py --show-text "II Dünya, 25% artım"   # prints the normalised text
 python say.py "Salam."               # end-to-end, writes out/01.wav
 ```
 
-`--show-text` is the fastest way to check a text-layer change: it prints what
-would reach the model and synthesises nothing.
+`--show-text` prints the chunks that reach the model *and* still synthesises --
+the flag adds the printout, it does not replace the synthesis. To check a text
+change without touching the model, call the text layer directly:
+
+```bash
+python -c "from aztts.console import use_utf8; use_utf8(); from aztts import normalize_az; print(normalize_az('II Dünya, 25%'))"
+```
+
+`use_utf8()` first, or printing `ə` on a Windows console raises
+`UnicodeEncodeError` -- the same reason every CLI entry point calls it.
 
 ## Hard rules
 
-**Never edit `model/` or `training/base-model/`.** They are vendored upstream
-exports, not our code. `model/checksums.sha256` verifies 24 of those files and
+**Never edit `model/`, `model-en/` or `training/base-model/`.** They are
+vendored upstream exports, not our code. `model-en/` holds the English weights
+this repository ships (`model-en/checksums.sha256` verifies its six vendored
+files; `README.md` there is ours). `aztts/en_voice.py` reads them but never
+imports the upstream package's Python: both packages ship modules named `inference`,
+`models` and `text`, so importing the second one in a live process silently
+returns the first. The English weights are loaded into `model/`'s runtime
+instead, and the English text is phonemised here and passed as `phonemes=`. `model/checksums.sha256` verifies 24 of those files and
 any edit breaks it. If the model needs different behaviour, wrap it in `aztts/`
 instead.
 
@@ -55,6 +73,8 @@ help, Markdown. Azerbaijani appears only as *language data*:
   `ORDINAL_SUFFIXES` in `az_text.py`
 - `_CONJUNCTIONS` in `az_chunk.py`
 - `CLITICS`, `WEAK_HEADS`, `_WIDE_WEAK`, `_PARTICIPLE_WORDS` in `az_prosody.py`
+- the `_AZ` table in `webui/i18n.py` -- the interface's own labels; the page has
+  to speak Azerbaijani, and this is the only module where it does
 - phoneme strings anywhere
 
 Translating any of those changes behaviour. `README.az.md` is the one deliberate
@@ -82,6 +102,14 @@ GPL-3.0-or-later and are loaded in-process by `model/deployment_frontend.py`.
 That is documented and bounded. Do not add more GPL dependencies, and do not
 relicense our Apache-2.0 code. See `THIRD_PARTY_NOTICES.md`.
 
+**Both READMEs answer the commercial-use question, and must keep saying the
+same thing.** Running it is unrestricted; redistributing a combined work brings
+GPL-3.0 obligations for `phonemizer` and eSpeak NG; `accepts_prephonemized_input`
+is the way out. The English voice is synthetic and Apache-2.0, but the release is
+open-weight, not open-data. The Azerbaijani training data is used with the
+dataset author's permission, on condition of attribution. Do not compress any of
+that into "free for commercial use".
+
 ## Conventions
 
 - **Pure functions over mutation.** Every text helper takes a string and returns
@@ -98,6 +126,17 @@ relicense our Apache-2.0 code. See `THIRD_PARTY_NOTICES.md`.
 - Files stay small and single-purpose. The largest is `az_text.py` at ~390
   lines.
 - No new runtime dependencies without a reason stated in the PR.
+- **The interface's dependency stays optional.** Gradio is declared under
+  `[project.optional-dependencies] app` and in `requirements-app.txt`, never in
+  `requirements.txt`: someone importing `aztts` as a library should not pay for
+  a web stack. `app.py` is the only module allowed to import it.
+- **The English voice is a guest, not a second product.** `EnVoice` exists so a
+  visitor can hear where this model started. None of the Azerbaijani text
+  layers apply to it: no `normalize_az`, no `restress`. Keep it that way --
+  Azerbaijani number words in an English sentence is the failure mode.
+- **Interface logic belongs in `webui/`, not in `app.py`.** That is what keeps
+  `tests/test_webui_runner.py` able to run against a stand-in engine instead of
+  loading the model.
 
 ## Where to change what
 
@@ -108,21 +147,29 @@ relicense our Apache-2.0 code. See `THIRD_PARTY_NOTICES.md`.
 | Change stress placement (`--prosody`) | `aztts/az_prosody.py` |
 | Change synthesis, chunk pauses, model loading | `aztts/engine.py` |
 | Add or change a CLI flag | `say.py` |
+| Change the browser interface, its labels or parameters | `app.py`, `webui/` |
+| Change how the English base model is spoken | `aztts/en_voice.py` |
 | Audio cleanup, seed selection | `tools/` |
 | Anything about how the model was trained | `training/` (archive; the pod is gone) |
 | Publish to GitHub / HF / Kaggle | `packaging/PUBLISHING.md` |
 
-`aztts/` is all of our library code, about 900 lines. `say.py` is the CLI.
+`aztts/` is the library (about 1,100 lines with `en_voice.py`), `say.py` is the
+CLI, and `app.py` plus `webui/` are the browser interface.
 
 ## Generated and ignored
 
 - `out/` is where synthesis writes. Never commit its contents; `out/.gitkeep` is
   the only tracked file in it.
-- `samples/` is tracked and goes through Git LFS. Regenerating it
-  (`python say.py --out samples`) rewrites five binaries -- only do that when the
-  model actually changed.
-- `training/base-model/` is not tracked. It is a 38 MB upstream snapshot; fetch
-  it with `python training/scripts/download_model.py` when you need it.
+- `samples/` is tracked and goes through Git LFS: five Azerbaijani WAVs and
+  three English ones in `samples/en/`. Regenerating them
+  (`python say.py --out samples`, `python say.py --voice en --out samples/en`)
+  rewrites eight binaries -- only do that when a model actually changed. Both
+  READMEs list the sentences, so a new sample means editing both.
+- `model-en/` **is** tracked, through Git LFS: 37 MB of English weights so a
+  clone speaks both languages. It is the reason the repository is ~75 MB.
+- `training/base-model/` is not tracked. It is the complete 38 MB upstream
+  package, only needed for training work; fetch it with
+  `python training/scripts/download_model.py`.
 
 ## Known limitations, so you do not chase them
 

@@ -72,6 +72,51 @@ python say.py --speed 0.85 --seed 42 "Daha yavaş."
 | `--max-words` | `15` | Hissə uzunluğu. `0` = bölməni modelə burax |
 | `--prosody` | `off` | `safe` / `wide` — vurğuları seyrəldir (təcrübi) |
 | `--show-text` | — | Normallaşdırılmış mətni və hissə sərhədlərini çap edir |
+| `--voice` | `az` | `en` ingiliscə baza modellə danışır (aşağıya bax) |
+
+### Brauzer interfeysi
+
+Modeli komanda sətri olmadan sınamaq üçün səhifə: cümləni yazın, parametrləri
+tənzimləyin, dinləyin, endirin. Gradio tələb edir — əsas kitabxana bilərəkdən
+ondan asılı deyil, ona görə yalnız səhifə lazımdırsa quraşdırın.
+
+```bash
+pip install -r requirements-app.txt     # və ya: pip install -e ".[app]"
+python app.py                           # http://127.0.0.1:7860
+```
+
+İnterfeys azərbaycanca və ingiliscə arasında keçid edir, CLI-dəki bütün
+parametrləri verir və komanda sətrinin gizlətdiyi iki şeyi göstərir: modelə
+həqiqətən çatan normallaşdırılmış mətni və seçdiyiniz ayarlara uyğun `say.py`
+əmrini — yəni səhifə həm də CLI-ni öyrənmək üçün işləyir.
+
+`Səsi təmizlə` vokoderin metal rezonansını hazır kliplə süzür. Bu,
+`tools/audio_postprocess.py`-ın tək-klip variantıdır, ffmpeg tələb etmir və
+hansı tezlikləri sildiyini bildirir.
+
+### İngilis səsi
+
+Həm səhifə, həm də CLI `owensong/Inflect-Micro-v2` ilə — bu modelin
+uyğunlaşdırıldığı ingilis checkpoint-i ilə — danışa bilir. O, `model-en/`
+qovluğunda gəlir, yəni klon heç nə yükləmədən hər iki dildə danışır:
+
+```bash
+python say.py --voice en "Hello there."
+```
+
+Bu, başqa müəllifin başqa səsidir, Apache-2.0-dır və ona necə istinad
+ediləcəyi `model-en/README.md`-də yazılıb. Çəkilər azərbaycanca model kimi Git
+LFS ilə gəlir — `git lfs install` edilmədən klonlansa, fayl əvəzinə göstərici
+düşür; həm CLI, həm də səhifə bunu açıq deyir, torch-un içində sınmır.
+
+Azərbaycanca mətn qatları ona aid deyil: `normalize_az` rəqəmləri azərbaycanca
+sözlərə çevirir, vurğu qatı isə azərbaycanca üçün köklənib — ona görə ingiliscə
+üçün hər ikisi söndürülür və interfeysdə passivləşir. İngilis mətni eSpeak-in
+`en-us` səsi ilə fonemlərə çevrilib runtime-a verilir.
+
+Bu layihənin öz modeli ingiliscə danışmır. O, 200.000 addım boyu tək bir
+azərbaycanca səslə uyğunlaşdırılıb; ingilis mətni ona verilsə, çıxan şey həmin
+səsin tanımadığı fonemləri oxumasıdır.
 
 ### Python-dan
 
@@ -122,12 +167,38 @@ Nə baş verdiyini görmək üçün `--show-text` verin. Söndürmək üçün `-
 
 ## Nümunələr
 
-`samples/` qovluğunda beş hazır WAV var — modelin necə səsləndiyini eşitmək
-üçün dinləyin. Onları yenidən yaratmaq:
+Hazır WAV faylları, hər səs üçün bir dəst. Heç nə quraşdırmadan əvvəl dinləyin.
+
+**Azərbaycanca** — bu layihənin modeli, `samples/`:
+
+| Fayl | Cümlə |
+| --- | --- |
+| [`01-salam.wav`](samples/01-salam.wav) | `Salam, bu model tamamilə yerli maşında işləyir.` |
+| [`02-payiz.wav`](samples/02-payiz.wav) | `Payız gəlmişdi və şəhərin küçələri saralmış yarpaqlarla örtülmüşdü.` |
+| [`03-sual.wav`](samples/03-sual.wav) | `Sən bu kitabı oxumusan? Mənə çox maraqlı gəldi.` |
+| [`04-reqem.wav`](samples/04-reqem.wav) | `II Dünya müharibəsi 01/09/1939 tarixində başladı və 25% artım oldu.` |
+| [`05-uzun.wav`](samples/05-uzun.wav) | Uzun cümlə — intonasiyanın harada yastılaşdığını eşitmək üçün |
+
+**İngiliscə** — baza model, `samples/en/`:
+
+| Fayl | Cümlə |
+| --- | --- |
+| [`01-hello.wav`](samples/en/01-hello.wav) | `Hello, this model runs completely offline on your machine.` |
+| [`02-autumn.wav`](samples/en/02-autumn.wav) | `Autumn had come, and the streets were covered with yellow leaves.` |
+| [`03-question.wav`](samples/en/03-question.wav) | `Have you read this book? I found it very interesting.` |
+
+Bunlar fərqli müəlliflərin fərqli səsləridir. Azərbaycanca olan bu layihənindir;
+ingiliscə olan isə `owensong/Inflect-Micro-v2`-dir, dəyişdirilməmiş.
+
+Yenidən yaratmaq:
 
 ```bash
-python say.py --out samples
+python say.py --out samples                 # azərbaycanca
+python say.py --voice en --out samples/en   # ingiliscə
 ```
+
+Hər iki dəst Git LFS-dən keçir, ona görə yalnız model həqiqətən dəyişəndə
+yenidən yaradın.
 
 ## Keyfiyyət alətləri
 
@@ -149,12 +220,13 @@ seçib koda sabitləmək oxunuşu nəzərəçarpacaq yaxşılaşdırır.
 python -m pytest
 ```
 
-141 test:
+227 test:
 
 | | |
 | --- | ---: |
 | Mətn normallaşdırma, hissələrə bölmə, vurğu qatı | 116 |
 | Sürətli monotonic alignment (train optimizasiyası) | 25 |
+| İnterfeys etiketləri, parametrlər, rezonans filtri | 86 |
 
 Testlər modeli yükləmir — 3 saniyədə bitir.
 
@@ -162,18 +234,25 @@ Testlər modeli yükləmir — 3 saniyədə bitir.
 
 ```
 say.py            Komanda sətri — əsas giriş nöqtəsi
+app.py            Brauzer interfeysi (Gradio) — könüllü
 aztts/
   engine.py       AzTTS — model yüklənməsi, normallaşdırma, bölmə, sintez
   az_text.py      Rəqəm / Roma rəqəmi / qısaltma → söz
   az_chunk.py     Cümlələri modelin bacardığı uzunluğa bölür
   az_prosody.py   Vurğu qatı (könüllü, --prosody)
+  en_voice.py     İngilis baza modeli, eyni runtime ilə
   console.py      Windows konsolunu UTF-8-ə keçirir
+webui/
+  i18n.py         İnterfeys etiketləri, azərbaycanca və ingiliscə
+  runner.py       Parametrlər, CLI qarşılığı, bir sintez
+  cleanup.py      Tək-klip rezonans filtri (ffmpeg-siz)
 model/            Azərbaycanca çəkilər + runtime (37 MB) — toxunmayın
+model-en/         İngilis baza modelin çəkiləri (37 MB) — toxunmayın
 tools/            seed_sweep, audio_postprocess — keyfiyyət alətləri
 training/         Modelin necə hazırlandığı (baza model yüklənir)
 packaging/        GitHub / Hugging Face / Kaggle yayımı
 samples/          Nümunə səslər
-tests/            141 test
+tests/            227 test
 out/              Yaratdığınız WAV faylları
 ```
 
@@ -261,6 +340,66 @@ Bu layihəni işlədirsinizsə, ona və hər iki mənbəyə istinad edin — bax
             used with the author's permission}
 }
 ```
+
+## Kommersiya istifadəsi
+
+Qısa cavab: **işlətmək üçün bəli, yaymaq üçün bir real şərt var.** Şərt modelə
+yox, fonemləşdirmə hissəsinə aiddir.
+
+| Hissə | Lisenziya | Kommersiya istifadəsi |
+| --- | --- | --- |
+| Bizim kod (`aztts/`, `say.py`, `app.py`, `webui/`) | Apache-2.0 | Bəli |
+| Azərbaycanca çəkilər (`model/`) | Apache-2.0 | Bəli |
+| İngiliscə çəkilər (`model-en/`) | Apache-2.0 | Bəli |
+| Runtime hissələri (VITS, BigVGAN, alias-free-torch) | MIT / Apache-2.0 | Bəli |
+| **`phonemizer` + eSpeak NG** | **GPL-3.0-or-later** | **İşlətmək: bəli. Yaymaq: aşağıya bax** |
+
+### Məhsul buraxmazdan əvvəl yoxlanmalı tək şey
+
+Fonemləşdirmə [`phonemizer`](https://github.com/bootphon/phonemizer) və
+[eSpeak NG](https://github.com/espeak-ng/espeak-ng) kitabxanalarını **eyni
+prosesin içində** çağırır, hər ikisi isə GPL-3.0-or-later-dir. Şirkət daxilində
+işlətmək heç nəyi dəyişmir. Birləşmiş məhsul yaymaq — masaüstü tətbiq, konteyner
+image-i, müştəriyə verilən binar — həmin komponentlər üçün GPL-3.0 öhdəliklərini
+gətirir, o cümlədən uyğun mənbə kodunu təklif etmək öhdəliyini.
+
+Modelin özü eSpeak-ə möhtac deyil. `model/config.json` faylında
+`accepts_prephonemized_input: true` yazılıb — yəni GPL-dən uzaq qalmalı olan
+məhsul mətni öz aləti ilə fonemlərə çevirib modelə verə bilər. Hər iki yol
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) faylında açıqlanıb.
+
+### İki səs
+
+**Azərbaycanca.**
+[`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset)
+üzərində öyrədilib. Repozitoriyada lisenziya faylı yoxdur; HuggingFace icma
+tabında birbaşa soruşulanda müəllif sərbəst istifadəyə icazə verdiyini bildirib
+və ad çəkilməsini xahiş edib. Şərt budur: istinad. Audio çox güman ki
+sintetikdir, şərtləri bilinməyən başqa bir TTS sistemi tərəfindən hazırlanıb —
+[docs/MODEL.md](docs/MODEL.md).
+
+**İngiliscə.** `owensong/Inflect-Micro-v2`, Apache-2.0, burada dəyişdirilmədən
+yenidən yayımlanır. Model kartından kommersiya qərarı üçün vacib üç fakt:
+
+- səs **sintetikdir**. Paket real danışanın səs korpusunu yaymır və səsi hər
+  hansı real insanın kimliyi kimi təqdim etmir — yəni təmizlənməli şəxsiyyət və
+  ya bənzərlik hüququ yoxdur;
+- buraxılış **açıq-çəki**dir, açıq-data deyil: korpus yaradan konveyer və
+  filtrləmə infrastrukturu qapalıdır, ona görə təlim datası ictimai
+  materiallardan yoxlanıla bilməz. Uyğunluq prosesiniz bu auditi tələb edirsə,
+  müəllif e-poçt vasitəsilə deployment sorğularını qəbul edir;
+- məsuliyyətli istifadə bəyanatı istəyir ki, kontekst yanlış təəssürat yarada
+  biləcəksə sintetik nitq açıqlansın və səs heç kimi təqlid etmək üçün
+  işlədilməsin.
+
+### Hər iki səsdə qadağan olan
+
+Real bir insanı təqlid etmək, aldadıcı məzmun hazırlamaq və ya sintetik nitqi
+əsl səsyazma kimi təqdim etmək. Bu, həm bu layihənin, həm də upstream-in
+mövqeyidir.
+
+Bu, lisenziyaların oxunuşudur, hüquqi məsləhət deyil. Məhsulunuz buna
+söykənirsə, ixtisaslı birinə təsdiqlətdirin.
 
 ## Lisenziya
 

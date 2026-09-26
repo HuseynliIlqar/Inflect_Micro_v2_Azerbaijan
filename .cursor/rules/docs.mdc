@@ -39,20 +39,33 @@ change all:
 - 9.36M parameters (9,356,513), 24 kHz mono, single speaker
 - 200,000 steps = 1,343 epochs, 25.07 hours, ~3.7 days on an A40, ~$39
 - 2-4x real time on CPU
-- Base model `owensong/Inflect-Micro-v2`, Apache-2.0
+- Base model `owensong/Inflect-Micro-v2`, Apache-2.0. Its weights are
+  redistributed unmodified in `model-en/`, so the interface and the CLI can
+  speak English too (`--voice en`). It is a synthetic voice by another author;
+  the release is open-weight, not open-data. Do not describe it as "our" second
+  voice, and do not claim this project's model speaks English -- it does not.
 - Dataset `ughurabbasov/azerbaijani-tts-dataset`: no licence file declared; the
   author confirmed free use with attribution requested in the HF community tab.
   The terms of the upstream TTS system that produced the audio remain unknown.
   State it exactly this way — do not simplify it into "licensed" or "unlicensed".
 - `phonemizer` and eSpeak NG are GPL-3.0-or-later and loaded in-process.
   Installing and running is unaffected; **redistributing a combined work** brings
-  those terms with it. Do not soften or overstate this.
+  those terms with it. Do not soften or overstate this. The same sentence
+  carries the commercial-use answer in both READMEs: running is unrestricted,
+  redistribution is the condition, and the way out is
+  `accepts_prephonemized_input`.
+- 227 tests, about two seconds, and they never load a model. Update the count in
+  both READMEs and in `packaging/PUBLISHING.md` when it changes.
+- Samples: five Azerbaijani WAVs in `samples/`, three English ones in
+  `samples/en/`, all through Git LFS.
 
 ## Where documents live
 
-`README.md` / `README.az.md` (usage), `docs/MODEL.md` (model card, measurements,
-limitations), `training/README.md` and `training/docs/` (how it was made — an
-archive), `THIRD_PARTY_NOTICES.md` (licences), `packaging/PUBLISHING.md`
-(release steps), `CITATION.cff` (how to cite this project and its two sources),
-`CLAUDE.md` (working on the code). `AGENTS.md` is a pointer to `CLAUDE.md` for
+`README.md` / `README.az.md` (usage, samples, commercial use), `docs/MODEL.md`
+(model card, measurements, limitations), `model-en/README.md` (where the English
+weights came from and how to cite them), `training/README.md` and
+`training/docs/` (how it was made — an archive), `THIRD_PARTY_NOTICES.md`
+(licences, including the redistribution of the English checkpoint),
+`packaging/PUBLISHING.md` (release steps), `CITATION.cff` (how to cite this
+project and its two sources), `CLAUDE.md` (working on the code). `AGENTS.md` is a pointer to `CLAUDE.md` for
 agents that do not read it -- keep it short, never duplicate content into it.

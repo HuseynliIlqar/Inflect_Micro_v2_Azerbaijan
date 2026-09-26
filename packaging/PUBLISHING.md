@@ -3,16 +3,27 @@
 Everything needed to put this project on GitHub, Hugging Face and Kaggle.
 Nothing here runs automatically -- these are the steps and the files they use.
 
-Replace `<user>` with your account name everywhere before publishing.
+The GitHub repository already exists:
+<https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan>. The Hugging Face
+and Kaggle accounts do not, so `<user>` still stands for them -- replace it
+before publishing there.
 
 ---
 
 ## Before the first push, anywhere
 
 ```bash
-git lfs install          # required: model.pth and the samples go through LFS
-python -m pytest         # 141 tests, three seconds, no model load
+git lfs install          # required: both model.pth files and the samples
+python -m pytest         # 227 tests, three seconds, no model load
 ```
+
+The repository carries two checkpoints -- `model/` (Azerbaijani, 37 MB) and
+`model-en/` (the English base model, 37 MB) -- so a clone pulls about 75 MB of
+LFS objects. GitHub's free tier gives 1 GB of LFS storage and 1 GB of bandwidth
+a month, which is roughly thirteen clones. If the project gets popular enough
+for that to bite, the English weights are the part to drop: they are a copy of
+`owensong/Inflect-Micro-v2`, still downloadable with
+`python training/scripts/download_model.py`.
 
 Check that nothing large slipped in:
 
@@ -21,8 +32,9 @@ git ls-files -s | wc -l
 du -sh .git 2>/dev/null
 ```
 
-`training/base-model/` is deliberately not tracked -- it is a 38 MB upstream
-snapshot. Fetch it locally with `python training/scripts/download_model.py`.
+`training/base-model/` is deliberately not tracked -- it is the complete 38 MB
+upstream package, needed only for training work. Fetch it locally with
+`python training/scripts/download_model.py`.
 
 ---
 
@@ -36,7 +48,7 @@ git init
 git add .
 git commit -m "feat: offline Azerbaijani TTS"
 git branch -M main
-git remote add origin https://github.com/<user>/azerbaycan-tts
+git remote add origin https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan
 git push -u origin main
 ```
 
@@ -87,12 +99,51 @@ Two things that are easy to get wrong:
 Once the repository exists, add the model URL to the GitHub repository's
 Website field and link back from `README.md`.
 
-### Worth doing next: a Gradio Space
+### The Gradio Space
 
-The model runs at 2-4x real time on CPU, which means it works on a free CPU
-Space. A demo people can click is worth more for adoption than any amount of
-documentation. Not built here -- it is a separate `app.py` plus a Space README
-with `sdk: gradio` in its YAML header.
+`app.py` in the repository root is the demo, and it runs on a free CPU Space --
+the model is 2-4x faster than real time there. A page people can click is worth
+more for adoption than any amount of documentation.
+
+A Space is its own git repository and needs three things from this one:
+`app.py`, `webui/`, `aztts/`, `say.py` (the examples come from it) and `model/`,
+plus a `requirements.txt` of its own and a README with the Space's YAML header.
+
+```bash
+hf repo create <user>/azerbaijani-tts-demo --repo-type space --space_sdk gradio
+git clone https://huggingface.co/spaces/<user>/azerbaijani-tts-demo hf-space
+cd hf-space
+cp ../.gitattributes .
+cp ../app.py ../say.py .
+cp -r ../webui ../aztts ../model ../model-en .
+cp ../packaging/huggingface/space-requirements.txt requirements.txt
+```
+
+The Space's `README.md` needs the header before anything else:
+
+```yaml
+---
+title: Azerbaijani TTS
+emoji: 🗣️
+colorFrom: blue
+colorTo: indigo
+sdk: gradio
+app_file: app.py
+pinned: false
+license: apache-2.0
+---
+```
+
+One thing to check before pushing: **both models go through LFS.**
+`.gitattributes` is copied for that reason; without it each `model.pth` is
+pushed as a 37 MB blob and the Space is rejected. Leave `model-en/` out if you
+would rather the Space offered the Azerbaijani voice alone -- the interface
+handles a missing English checkpoint and says so in the voice selector.
+
+`space-requirements.txt` exists because a Space reads only a file named
+`requirements.txt`, so the repository's `requirements-app.txt` -- whose first
+line is `-r requirements.txt` -- would refer to itself. Keep the two in step
+when a dependency changes.
 
 ### Also worth doing: safetensors
 

@@ -103,6 +103,20 @@ follows from that:
 5. **Filter the metallic ring:**
    `ffmpeg -i input.wav -af lowpass=f=11000 output.wav`.
 
+## The English base model
+
+The repository also ships `model-en/`: the English checkpoint this model was
+adapted from, `owensong/Inflect-Micro-v2`, redistributed unmodified under
+Apache-2.0 so that a clone speaks both languages. It is a different voice by
+another author, synthetic, and none of the Azerbaijani text layers apply to it.
+`python say.py --voice en "Hello."`, or the voice selector in the interface.
+Samples for it are in `samples/en/`; see `model-en/README.md` for provenance and
+`README.md` for what it means for commercial use.
+
+**This model does not speak English.** It was adapted over 200,000 steps on a
+single Azerbaijani voice; English text pushed through it is that voice reading
+phonemes it was never trained on.
+
 ## Sources
 
 - Base model: [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2) (Apache-2.0)
