@@ -20,8 +20,16 @@ model/** -text
 *.flac        filter=lfs diff=lfs merge=lfs -text
 *.mp3         filter=lfs diff=lfs merge=lfs -text
 
+# Vendored packages -----------------------------------------------------------
+# Never touch the bytes of a vendored export: `checksums.sha256` in each of
+# these directories is computed over the files as upstream wrote them, so line
+# ending normalisation would make a fresh clone fail verification.
+model/**       -text
+model-en/**    -text
+
 # Language statistics ----------------------------------------------------------
 # `model/` is a vendored upstream export; it should not count as our code and
 # should stay collapsed in pull request diffs.
 model/**       linguist-vendored
+model-en/**    linguist-vendored
 training/patches/*.patch linguist-generated

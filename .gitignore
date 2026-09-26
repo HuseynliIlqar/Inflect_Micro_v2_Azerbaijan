@@ -21,9 +21,10 @@ out/*
 !out/.gitkeep
 
 # --- Downloaded artefacts ---------------------------------------------------
-# The English base model is an upstream snapshot, not source. Fetch it with:
+# The full English upstream package is only needed for training work. The
+# weights themselves are tracked, in model-en/, so a clone speaks both
+# languages; this is the complete 38 MB package on top of that. Fetch it with:
 #     python training/scripts/download_model.py
-# Keeping it out of the repository saves 38 MB per clone.
 training/base-model/
 
 # Hugging Face download bookkeeping, wherever it appears.

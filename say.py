@@ -3,6 +3,7 @@
     python say.py "Salam, necəsiniz?"
     python say.py --text-file text.txt --one-file --out out/book
     python say.py --show-text "II Dünya müharibəsi, 25% artım"
+    python say.py --voice en "Hello there."     # the English base model
     python say.py                       # renders the demo sentences
 
 Audio lands in `out/` unless you say otherwise.
@@ -20,7 +21,13 @@ import soundfile as sf
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-from aztts import DEFAULT_MAX_WORDS, DEFAULT_MODEL_DIR, AzTTS, ModelNotFoundError  # noqa: E402
+from aztts import (  # noqa: E402
+    DEFAULT_MAX_WORDS,
+    DEFAULT_MODEL_DIR,
+    AzTTS,
+    EnVoice,
+    ModelNotFoundError,
+)
 from aztts.console import use_utf8  # noqa: E402
 
 use_utf8()
@@ -52,6 +59,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--one-file", action="store_true", help="With --text-file: write everything into a single WAV.")
     parser.add_argument("--out", "-o", type=Path, default=DEFAULT_OUT, help=f"Output directory (default: {DEFAULT_OUT.name}/).")
     parser.add_argument("--model", "-m", type=Path, default=DEFAULT_MODEL_DIR, help="Path to the model package.")
+    parser.add_argument(
+        "--voice", choices=("az", "en"), default="az",
+        help="az is this project's Azerbaijani model. en is the English base "
+             "model it was adapted from -- a different voice by another "
+             "author, shipped in model-en/.",
+    )
     parser.add_argument("--device", "-d", default="cpu", choices=("cpu", "cuda"))
     parser.add_argument("--speed", type=float, default=1.0, help="0.5-2.0; lower is slower.")
     parser.add_argument("--variation", type=float, default=0.667, help="0.0-1.0; lower is steadier, higher is livelier.")
@@ -75,6 +88,13 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+EN_DEMO: tuple[tuple[str, str], ...] = (
+    ("01-hello", "Hello, this model runs completely offline on your machine."),
+    ("02-autumn", "Autumn had come, and the streets were covered with yellow leaves."),
+    ("03-question", "Have you read this book? I found it very interesting."),
+)
+
+
 def collect_items(args: argparse.Namespace) -> list[tuple[str, str]] | None:
     """Turn the CLI arguments into (name, text) pairs; None on a read error."""
     if args.text_file:
@@ -89,22 +109,31 @@ def collect_items(args: argparse.Namespace) -> list[tuple[str, str]] | None:
         return [(f"{i:02d}", p) for i, p in enumerate(paragraphs, start=1)]
     if args.text:
         return [(f"{i:02d}", t) for i, t in enumerate(args.text, start=1)]
-    return list(DEMO)
+    return list(EN_DEMO if args.voice == "en" else DEMO)
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
+    english = args.voice == "en"
     started = time.perf_counter()
     try:
-        tts = AzTTS(args.model, device=args.device)
+        tts = (
+            EnVoice(device=args.device)
+            if english
+            else AzTTS(args.model, device=args.device)
+        )
     except ModelNotFoundError as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
     print(f"model : {tts.model_dir}")
     print(f"device: {args.device}   load: {time.perf_counter() - started:.2f}s")
-    print(f"text  : normalise={'off' if args.raw else 'on'}  "
-          f"max-words={args.max_words or 'package'}  prosody={args.prosody}")
+    if english:
+        # Azerbaijani normalisation and the stress layer do not apply.
+        print(f"text  : voice=en  max-words={args.max_words or 'package'}")
+    else:
+        print(f"text  : normalise={'off' if args.raw else 'on'}  "
+              f"max-words={args.max_words or 'package'}  prosody={args.prosody}")
     print()
 
     items = collect_items(args)
@@ -114,19 +143,26 @@ def main(argv: list[str] | None = None) -> int:
         print("error: the text is empty", file=sys.stderr)
         return 1
 
-    options = dict(
+    options: dict[str, object] = dict(
         speed=args.speed,
         variation=args.variation,
         seed=args.seed,
-        normalize=not args.raw,
         max_words=args.max_words,
-        prosody=args.prosody,
-        prosody_drop=args.prosody_drop,
     )
+    if not english:
+        options.update(
+            normalize=not args.raw,
+            prosody=args.prosody,
+            prosody_drop=args.prosody_drop,
+        )
 
     args.out.mkdir(parents=True, exist_ok=True)
     for name, source in items:
-        chunks = tts.prepare(source, normalize=not args.raw, max_words=args.max_words)
+        chunks = (
+            tts.prepare(source, max_words=args.max_words)
+            if english
+            else tts.prepare(source, normalize=not args.raw, max_words=args.max_words)
+        )
         if not chunks:
             print(f"skipped (empty): {name}", file=sys.stderr)
             continue
