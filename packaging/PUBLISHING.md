@@ -67,37 +67,48 @@ Files used: `.gitignore`, `.gitattributes` (LFS + `linguist-vendored`),
 
 ## Hugging Face
 
-The weights live here, and this is where people searching for an Azerbaijani TTS
-model will find the project.
+Two repositories, both live:
 
-```bash
-pip install -U "huggingface_hub[cli]"
-hf auth login
-hf repo create <user>/azerbaijani-tts --repo-type model
+| | |
+| --- | --- |
+| Model | <https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan> |
+| Space | <https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan> |
+
+### The model repository
+
+It carries the PyTorch export **at the root** -- `model.pth`, `config.json`,
+the frontend and the VITS runtime, exactly the contents of `model/` -- so a
+snapshot can be handed straight to the engine:
+
+```python
+from huggingface_hub import snapshot_download
+from aztts import AzTTS
+
+tts = AzTTS(snapshot_download("ilqarrrr/Inflect_Micro_v2_Azerbaijan"))
 ```
 
+Plus `onnx/` (the two graphs the playground runs), `samples/`, `CITATION.cff`
+and `NOTICES.md`. The English base model is **not** copied there: it is one
+click away at `owensong/Inflect-Micro-v2`, and the card links it.
+
+To update it:
+
 ```bash
-git clone https://huggingface.co/<user>/azerbaijani-tts hf-model
+git clone https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan hf-model
 cd hf-model
-cp ../packaging/huggingface/MODEL_CARD.md README.md   # the YAML header matters
-cp ../.gitattributes .
-cp -r ../model .
-cp -r ../samples .
-cp ../LICENSE ../THIRD_PARTY_NOTICES.md .
-git add . && git commit -m "Add Azerbaijani TTS 9.36M" && git push
+cp ../model/* .                       # the export goes at the root
+cp ../packaging/huggingface/MODEL_CARD.md README.md
+git add -A && git commit -m "Update the weights" && git push
 ```
 
-Two things that are easy to get wrong:
+Two things that cost a push each when they were missed:
 
 1. **The YAML front matter is what makes the model findable.** Without
    `pipeline_tag: text-to-speech` and `language: az` the model does not appear
    in the filters that matter. It is already in `MODEL_CARD.md`.
-2. **Fix the sample URLs.** `MODEL_CARD.md` embeds `<audio>` tags pointing at
-   `resolve/main/samples/...`; replace `<user>` in them or the players stay
-   silent.
-
-Once the repository exists, add the model URL to the GitHub repository's
-Website field and link back from `README.md`.
+2. **Every binary needs LFS, including the samples.** The Hub rejects a push
+   that contains plain binary files, naming them. `*.wav` was missing from the
+   repository's `.gitattributes`; `*.pth` and `*.onnx` were already there.
 
 ### The static Space (live)
 

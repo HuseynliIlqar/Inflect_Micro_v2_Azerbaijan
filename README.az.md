@@ -22,6 +22,8 @@ Səs `out/01.wav` faylına düşür. Vəssalam.
 **Yaxud heç nə quraşdırmadan dinləyin:
 [playground](https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan)**
 modeli sizin brauzerinizdə işlədir — hər iki səs, heç nə serverə göndərilmir.
+Çəkilər Hub-da da var: [`ilqarrrr/Inflect_Micro_v2_Azerbaijan`](https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan), PyTorch və
+ONNX.
 
 ---
 
@@ -160,6 +162,15 @@ tts.save("Mətn burada.", "out/a.wav")
 
 waveform = tts.synthesize("Xam massiv lazımdırsa.", speed=1.1, seed=3)
 # → float32 numpy massiv, mono, [-1, 1], 24 000 Hz
+```
+
+Çəkilər bu repo ilə gəlir, ona görə `AzTTS()` heç nə yükləmir. Hub-dakı
+nüsxədən istifadə etmək üçün:
+
+```python
+from huggingface_hub import snapshot_download
+
+tts = AzTTS(snapshot_download("ilqarrrr/Inflect_Micro_v2_Azerbaijan"))
 ```
 
 Mətn funksiyaları modeldən asılı deyil, ayrıca da işlədilə bilər:

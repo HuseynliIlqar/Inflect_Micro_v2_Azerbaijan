@@ -20,7 +20,9 @@ The audio lands in `out/01.wav`. That is the whole thing.
 
 **Or hear it before installing anything:
 [the playground](https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan)**
-runs the model in your browser -- both voices, nothing sent to a server.
+runs the model in your browser -- both voices, nothing sent to a server. The
+weights are also on the Hub: [`ilqarrrr/Inflect_Micro_v2_Azerbaijan`](https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan),
+PyTorch and ONNX.
 
 ---
 
@@ -162,6 +164,15 @@ tts.save("Mətn burada.", "out/a.wav")
 
 waveform = tts.synthesize("Xam massiv lazımdırsa.", speed=1.1, seed=3)
 # -> float32 numpy array, mono, [-1, 1], 24 000 Hz
+```
+
+The weights ship with this repository, so `AzTTS()` needs no download. To use
+the copy on the Hub instead:
+
+```python
+from huggingface_hub import snapshot_download
+
+tts = AzTTS(snapshot_download("ilqarrrr/Inflect_Micro_v2_Azerbaijan"))
 ```
 
 The text helpers do not depend on the model and can be used on their own:
