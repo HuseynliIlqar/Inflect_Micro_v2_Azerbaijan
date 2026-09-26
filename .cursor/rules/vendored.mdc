@@ -1,0 +1,38 @@
+---
+description: model/ and training/base-model/ are vendored upstream exports and must not be edited
+globs: ["model/**", "training/base-model/**"]
+alwaysApply: false
+---
+
+# This file is vendored. Do not edit it.
+
+`model/` and `training/base-model/` are upstream export packages from
+[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2),
+not our code. They ship their own weights, phoneme frontend and VITS runtime.
+
+- **`model/checksums.sha256` verifies 24 files in that directory.** Any edit
+  breaks verification, and the check is part of the release process.
+- `.gitattributes` marks `model/**` as `linguist-vendored` so it stays out of
+  our language statistics and collapsed in diffs.
+- `training/base-model/` is not tracked at all — it is a 38 MB snapshot fetched
+  by `python training/scripts/download_model.py`. Editing it edits a download.
+
+## The characters here are IPA, not Azerbaijani
+
+`model/runtime/text/symbols.py` and the phoneme code contain `ə`, `ɣ`, `ʃ`, `ɫ`
+and friends. These are IPA phoneme symbols. A search for Azerbaijani letters
+matches them. Do not translate, transliterate or normalise anything here.
+
+## If the model needs to behave differently
+
+Wrap it. `aztts/engine.py` exists precisely for this: it loads the package,
+then adds Azerbaijani normalisation (`az_text.py`), chunking (`az_chunk.py`) and
+optional restressing (`az_prosody.py`) around it. Every gap between "what the
+upstream package does" and "what Azerbaijani needs" is closed in `aztts/`.
+
+Two upstream facts worth knowing before you try to patch anything:
+
+- `model/config.json` declares `accepts_prephonemized_input: true`, so phonemes
+  can come from any frontend — you do not have to go through eSpeak.
+- The package splits text itself only after 280 characters, which is far too
+  late for this model. `az_chunk.py` cuts at ~15 words instead.

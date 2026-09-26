@@ -1,0 +1,17 @@
+{
+  "copied_parameter_count": 9356513,
+  "copied_tensor_count": 410,
+  "exact_tensor_count": 409,
+  "fresh_parameter_count": 1858944,
+  "fresh_prefixes": [
+    "enc_q."
+  ],
+  "fresh_tensor_count": 100,
+  "initialized_embedding_rows": 0,
+  "migrated_embedding_rows": 178,
+  "source_format": "inflect_vits_inference_checkpoint_v1",
+  "source_parameter_count": 9356513,
+  "source_path": "/root/work/base/model.pth",
+  "source_tensor_count": 410,
+  "verified_equal_after_copy": true
+}

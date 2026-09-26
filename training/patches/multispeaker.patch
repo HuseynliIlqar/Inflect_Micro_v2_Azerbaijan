@@ -1,0 +1,939 @@
+diff --git a/finetune/inflect_finetune/checkpoint.py b/finetune/inflect_finetune/checkpoint.py
+index 5577369..112830a 100644
+--- a/finetune/inflect_finetune/checkpoint.py
++++ b/finetune/inflect_finetune/checkpoint.py
+@@ -5,6 +5,7 @@ from __future__ import annotations
+ import hashlib
+ import json
+ import os
++import re
+ import random
+ import shutil
+ from collections import defaultdict
+@@ -26,6 +27,19 @@ EMBEDDING_KEY = "enc_p.emb.weight"
+ FRESH_PREFIXES = ("enc_q.",)
+ 
+ 
++def _is_speaker_conditioning_key(key: str) -> bool:
++    """True for tensors that exist only when speaker conditioning is enabled.
++
++    These are the speaker embedding table and the per-module conditioning
++    projections. The released single-voice checkpoint contains none of them.
++    """
++
++    if key == "emb_g.weight":
++        return True
++    parent = key.rsplit(".", 1)[0]
++    return parent.endswith(".cond") or parent.endswith(".cond_layer")
++
++
+ @dataclass(frozen=True)
+ class CompatibilityReport:
+     source_path: str
+@@ -110,6 +124,7 @@ def warm_start_from_release(
+     target_symbols: Sequence[str],
+     *,
+     initialization_seed: int = 1234,
++    allow_speaker_conditioning: bool = False,
+ ) -> CompatibilityReport:
+     """Load all released tensors exactly, allowing only a fresh enc_q.
+ 
+@@ -128,7 +143,12 @@ def warm_start_from_release(
+     if unexpected:
+         raise RuntimeError(f"Release checkpoint has unexpected generator keys: {unexpected}")
+     fresh = sorted(target_keys - source_keys)
+-    invalid_fresh = [key for key in fresh if not key.startswith(FRESH_PREFIXES)]
++    invalid_fresh = [
++        key
++        for key in fresh
++        if not key.startswith(FRESH_PREFIXES)
++        and not (allow_speaker_conditioning and _is_speaker_conditioning_key(key))
++    ]
+     if invalid_fresh:
+         raise RuntimeError(
+             "Training model contains non-release keys outside the allowed training-only "
+@@ -230,6 +250,7 @@ def cpu_compatibility_report(
+     target_symbols: Sequence[str],
+     *,
+     initialization_seed: int = 1234,
++    allow_speaker_conditioning: bool = False,
+ ) -> CompatibilityReport:
+     """Run strict migration on CPU and return its machine-readable audit."""
+ 
+@@ -240,6 +261,7 @@ def cpu_compatibility_report(
+         base_symbols,
+         target_symbols,
+         initialization_seed=initialization_seed,
++        allow_speaker_conditioning=allow_speaker_conditioning,
+     )
+ 
+ 
+@@ -358,6 +380,41 @@ def load_run_identity(path: str | Path) -> dict[str, Any]:
+     return payload
+ 
+ 
++#: Training checkpoints are named by the step that produced them.
++STEP_CHECKPOINT_PATTERN = re.compile(r"^adaptation-step-(\d+)\.pth$")
++
++
++def prune_training_checkpoints(directory: str | Path, keep: int) -> list[Path]:
++    """Delete all but the newest ``keep`` step checkpoints; return what went.
++
++    Only ``adaptation-step-*.pth`` files are considered. ``latest.pth`` and
++    ``adaptation-final.pth`` do not match the pattern, and the lightweight
++    ``exports/`` packages live in a different directory, so neither is ever
++    touched: this reclaims resume state, never anything needed to choose a
++    final checkpoint. ``keep <= 0`` disables pruning.
++    """
++
++    if keep <= 0:
++        return []
++    root = Path(directory)
++    if not root.is_dir():
++        return []
++    numbered: list[tuple[int, Path]] = []
++    for path in root.glob("adaptation-step-*.pth"):
++        match = STEP_CHECKPOINT_PATTERN.match(path.name)
++        if match:
++            numbered.append((int(match.group(1)), path))
++    numbered.sort(key=lambda item: item[0])
++    removed: list[Path] = []
++    for _, path in numbered[: max(0, len(numbered) - keep)]:
++        try:
++            path.unlink()
++        except OSError:  # a locked or already-removed file must not stop training
++            continue
++        removed.append(path)
++    return removed
++
++
+ def copy_checkpoint_alias(source: str | Path, destination: str | Path) -> Path:
+     """Atomically refresh a stable checkpoint copy without symlink assumptions."""
+ 
+diff --git a/finetune/inflect_finetune/cli.py b/finetune/inflect_finetune/cli.py
+index 78a4b4f..4624347 100644
+--- a/finetune/inflect_finetune/cli.py
++++ b/finetune/inflect_finetune/cli.py
+@@ -23,6 +23,13 @@ def _positive_int(value: str) -> int:
+     return parsed
+ 
+ 
++def _non_negative_int(value: str) -> int:
++    parsed = int(value)
++    if parsed < 0:
++        raise argparse.ArgumentTypeError("value must not be negative")
++    return parsed
++
++
+ def _fraction(value: str) -> float:
+     parsed = float(value)
+     if not 0.0 < parsed < 1.0:
+@@ -140,6 +147,15 @@ def _add_train(subparsers: Any) -> None:
+     parser.add_argument(
+         "--checkpoint-interval", type=_positive_int, default=argparse.SUPPRESS
+     )
++    parser.add_argument(
++        "--checkpoint-retention",
++        type=_non_negative_int,
++        default=argparse.SUPPRESS,
++        help=(
++            "Keep only this many step checkpoints on disk; 0 keeps every one. "
++            "Only heavy resume state is removed - exports/ is never pruned."
++        ),
++    )
+     parser.add_argument(
+         "--validation-interval", type=_positive_int, default=argparse.SUPPRESS
+     )
+@@ -289,6 +305,7 @@ def _run_train(args: argparse.Namespace) -> dict[str, Any]:
+         "decoder_unfreeze_step",
+         "amp",
+         "checkpoint_interval",
++        "checkpoint_retention",
+         "validation_interval",
+         "log_interval",
+     )
+diff --git a/finetune/inflect_finetune/exporting.py b/finetune/inflect_finetune/exporting.py
+index 83e4054..12d39bf 100644
+--- a/finetune/inflect_finetune/exporting.py
++++ b/finetune/inflect_finetune/exporting.py
+@@ -1012,6 +1012,7 @@ class InflectTTS:
+             self.hps.train.segment_size // self.hps.data.hop_length,
+             **self.hps.model,
+         ).to(self.device).eval()
++        self.n_speakers = int(getattr(self.hps.model, "n_speakers", 0) or 0)
+         root_logger = logging.getLogger()
+         previous_level = root_logger.level
+         try:
+@@ -1046,7 +1047,18 @@ class InflectTTS:
+         speed: float = 1.0,
+         variation: float = 0.667,
+         seed: int = 0,
++        speaker: int = 0,
+     ) -> tuple[int, np.ndarray]:
++        if self.n_speakers > 0:
++            if not 0 <= speaker < self.n_speakers:
++                raise ValueError(
++                    f"speaker must be between 0 and {self.n_speakers - 1}"
++                )
++            sid = torch.LongTensor([speaker]).to(self.device)
++        elif speaker:
++            raise ValueError("This package contains a single voice; speaker must be 0.")
++        else:
++            sid = None
+         if phonemes is None:
+             normalized = " ".join((text or "").split())
+             if not normalized:
+@@ -1077,6 +1089,7 @@ class InflectTTS:
+             waveform = self.model.infer(
+                 tokens,
+                 lengths,
++                sid=sid,
+                 noise_scale=variation,
+                 noise_scale_w=0.8,
+                 length_scale=1.0 / speed,
+@@ -1322,6 +1335,13 @@ def _export_onnx(
+     *,
+     opset: int,
+ ) -> tuple[list[Path], dict[str, Any]]:
++    if int(getattr(model, "n_speakers", 0) or 0) > 0:
++        # The duration and decode graphs are traced without a speaker input, so
++        # a multi-speaker checkpoint would silently export an unusable pair.
++        raise RuntimeError(
++            "ONNX export does not support speaker-conditioned checkpoints. The traced "
++            "graphs carry no speaker input. Export --format pytorch instead."
++        )
+     try:
+         import onnx
+     except ImportError as exc:
+diff --git a/finetune/inflect_finetune/modeling.py b/finetune/inflect_finetune/modeling.py
+index af27898..f2a9205 100644
+--- a/finetune/inflect_finetune/modeling.py
++++ b/finetune/inflect_finetune/modeling.py
+@@ -230,13 +230,34 @@ def load_release_config(base_model: str | Path) -> dict:
+     return payload
+ 
+ 
++#: Width of the global conditioning vector used when speaker ids are enabled.
++#: This is the stock VITS default and the size the release architecture expects.
++DEFAULT_GIN_CHANNELS = 256
++
++
+ def build_training_models(
+     base_model: str | Path,
+     symbols: Sequence[str],
+     *,
+     seed: int = 1234,
++    n_speakers: int = 0,
++    gin_channels: int = 0,
+ ) -> ModelBundle:
+-    """Construct the released generator in training mode plus a fresh MPD."""
++    """Construct the released generator in training mode plus a fresh MPD.
++
++    Passing ``n_speakers >= 2`` enables the architecture's speaker-conditioning
++    path (``emb_g`` plus per-module ``cond`` layers). The released checkpoint has
++    no such tensors, so they are initialized fresh and every other weight still
++    warm-starts exactly.
++    """
++
++    if n_speakers == 1:
++        # Stock VITS builds emb_g only when n_speakers > 1 but reads it whenever
++        # n_speakers > 0, so a single-entry inventory would crash at infer time.
++        raise ValueError(
++            "n_speakers=1 is not a valid speaker-conditioned configuration; use 0 for a "
++            "single-voice checkpoint or 2 or more for a multi-speaker checkpoint."
++        )
+ 
+     model_root = resolve_base_model(base_model)
+     config = load_release_config(model_root)
+@@ -247,6 +268,15 @@ def build_training_models(
+     # them through **kwargs; they are part of the architecture contract.
+     model_kwargs["n_layers_q"] = int(model_kwargs.get("n_layers_q", 3))
+     model_kwargs["n_speakers"] = int(config["data"].get("n_speakers", 0))
++    if n_speakers > 1:
++        resolved_gin = int(gin_channels or DEFAULT_GIN_CHANNELS)
++        model_kwargs["n_speakers"] = int(n_speakers)
++        model_kwargs["gin_channels"] = resolved_gin
++        # Mirror the choice into the config so export writes a deployable
++        # description of the model that was actually trained.
++        config["data"]["n_speakers"] = int(n_speakers)
++        config["model"]["n_speakers"] = int(n_speakers)
++        config["model"]["gin_channels"] = resolved_gin
+ 
+     with torch.random.fork_rng(devices=[]):
+         torch.manual_seed(seed)
+diff --git a/finetune/inflect_finetune/monotonic_align.py b/finetune/inflect_finetune/monotonic_align.py
+index 07494ce..2613963 100644
+--- a/finetune/inflect_finetune/monotonic_align.py
++++ b/finetune/inflect_finetune/monotonic_align.py
+@@ -1,33 +1,47 @@
+-"""Dependency-free monotonic alignment for public Inflect adaptation."""
++"""Dependency-free monotonic alignment for public Inflect adaptation.
++
++The upstream reference evaluates the dynamic program with a pure-Python double
++loop over (audio frames x text tokens) for every item in the batch. On a 25-hour
++corpus at batch 64 that is tens of millions of interpreted iterations per step,
++which measured at ~8.7 s/step on an A40 with the GPU idle. This version keeps
++the identical recurrence and tie-breaking but vectorises the text and batch axes
++with NumPy, leaving only the inherently sequential loop over audio frames.
++Parity with the original is asserted in tests/test_fast_monotonic_align.py.
++"""
+ 
+ from __future__ import annotations
+ 
+ import numpy as np
+ import torch
+ 
++NEG_INF = -np.inf
++
++
++def _validate(neg_cent: torch.Tensor, mask: torch.Tensor) -> None:
++    if neg_cent.ndim != 3 or mask.ndim != 3 or neg_cent.shape != mask.shape:
++        raise ValueError(
++            "neg_cent and mask must have the same [batch, audio, text] shape."
++        )
++
+ 
+ def maximum_path(neg_cent: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+     """Return the maximum-score monotonic path through ``[batch, audio, text]``.
+ 
+     Each valid audio frame is assigned to one text token. The token index starts
+-    at zero, ends at the final valid token, and either stays fixed or advances
+-    by one at each frame. This is a training-only operation; deployable
+-    inference checkpoints do not contain or call it.
++    at zero, ends at the final valid token, and either stays fixed or advances by
++    one at each frame.
+     """
+ 
+-    if neg_cent.ndim != 3 or mask.ndim != 3 or neg_cent.shape != mask.shape:
+-        raise ValueError(
+-            "neg_cent and mask must have the same [batch, audio, text] shape."
+-        )
++    _validate(neg_cent, mask)
+     scores = neg_cent.detach().to(device="cpu", dtype=torch.float32).numpy()
+     valid = mask.detach().to(device="cpu").numpy() > 0
+-    paths = np.zeros(scores.shape, dtype=np.float32)
++    batch_size, audio_frames, text_tokens = scores.shape
+ 
+-    for batch_index in range(scores.shape[0]):
+-        valid_audio = np.any(valid[batch_index], axis=1)
+-        valid_text = np.any(valid[batch_index], axis=0)
+-        audio_length = int(valid_audio.sum())
+-        text_length = int(valid_text.sum())
++    audio_lengths = np.zeros(batch_size, dtype=np.int64)
++    text_lengths = np.zeros(batch_size, dtype=np.int64)
++    for index in range(batch_size):
++        audio_length = int(np.any(valid[index], axis=1).sum())
++        text_length = int(np.any(valid[index], axis=0).sum())
+         if audio_length == 0 or text_length == 0:
+             raise ValueError("Monotonic alignment received an empty valid sequence.")
+         if audio_length < text_length:
+@@ -35,42 +49,59 @@ def maximum_path(neg_cent: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+                 "Monotonic alignment requires at least one audio frame per text token; "
+                 f"received {audio_length} frames and {text_length} tokens."
+             )
+-        expected_mask = np.zeros_like(valid[batch_index])
+-        expected_mask[:audio_length, :text_length] = True
+-        if not np.array_equal(valid[batch_index], expected_mask):
++        expected = np.zeros_like(valid[index])
++        expected[:audio_length, :text_length] = True
++        if not np.array_equal(valid[index], expected):
+             raise ValueError(
+                 "Monotonic alignment mask must be one top-left rectangular valid region."
+             )
++        audio_lengths[index] = audio_length
++        text_lengths[index] = text_length
++
++    token_index = np.arange(text_tokens, dtype=np.int64)[None, :]
++    in_text = token_index < text_lengths[:, None]
++
++    accumulated = np.full((batch_size, text_tokens), NEG_INF, dtype=np.float32)
++    accumulated[:, 0] = scores[:, 0, 0]
++    advanced = np.zeros((batch_size, audio_frames, text_tokens), dtype=np.bool_)
++
++    for frame in range(1, audio_frames):
++        # Only items still inside their own audio length take this frame.
++        active = frame < audio_lengths
++        if not active.any():
++            break
++        lower = np.maximum(0, text_lengths + frame - audio_lengths)[:, None]
++        upper = np.minimum(text_lengths - 1, frame)[:, None]
++        writable = (token_index >= lower) & (token_index <= upper) & in_text
++        writable &= active[:, None]
+ 
+-        values = scores[batch_index, :audio_length, :text_length]
+-        accumulated = np.full(values.shape, -np.inf, dtype=np.float32)
+-        advanced = np.zeros(values.shape, dtype=np.bool_)
+-        accumulated[0, 0] = values[0, 0]
+-
+-        for audio_index in range(1, audio_length):
+-            minimum_text = max(0, text_length + audio_index - audio_length)
+-            maximum_text = min(text_length - 1, audio_index)
+-            for text_index in range(minimum_text, maximum_text + 1):
+-                stay = accumulated[audio_index - 1, text_index]
+-                move = (
+-                    accumulated[audio_index - 1, text_index - 1]
+-                    if text_index > 0
+-                    else -np.inf
+-                )
+-                use_move = text_index == audio_index or move > stay
+-                predecessor = move if use_move else stay
+-                accumulated[audio_index, text_index] = (
+-                    values[audio_index, text_index] + predecessor
+-                )
+-                advanced[audio_index, text_index] = use_move
+-
+-        text_index = text_length - 1
+-        for audio_index in range(audio_length - 1, -1, -1):
+-            paths[batch_index, audio_index, text_index] = 1.0
+-            if audio_index > 0 and advanced[audio_index, text_index]:
+-                text_index -= 1
+-        if text_index != 0:
+-            raise RuntimeError("Monotonic alignment backtracking did not reach the first token.")
++        stay = accumulated
++        move = np.empty_like(accumulated)
++        move[:, 0] = NEG_INF
++        move[:, 1:] = accumulated[:, :-1]
++
++        # Ties keep the reference behaviour: advance only on a strict improvement,
++        # except on the diagonal where advancing is forced.
++        use_move = (token_index == frame) | (move > stay)
++        candidate = scores[:, frame, :] + np.where(use_move, move, stay)
++
++        accumulated = np.where(writable, candidate, accumulated)
++        advanced[:, frame, :] = use_move & writable
++
++    paths = np.zeros(scores.shape, dtype=np.float32)
++    for index in range(batch_size):
++        audio_length = int(audio_lengths[index])
++        text_position = int(text_lengths[index]) - 1
++        item_advanced = advanced[index]
++        item_paths = paths[index]
++        for frame in range(audio_length - 1, -1, -1):
++            item_paths[frame, text_position] = 1.0
++            if frame > 0 and item_advanced[frame, text_position]:
++                text_position -= 1
++        if text_position != 0:
++            raise RuntimeError(
++                "Monotonic alignment backtracking did not reach the first token."
++            )
+ 
+     return torch.from_numpy(paths).to(device=neg_cent.device, dtype=neg_cent.dtype)
+ 
+diff --git a/finetune/inflect_finetune/prepare.py b/finetune/inflect_finetune/prepare.py
+index 8a35299..c34bff3 100644
+--- a/finetune/inflect_finetune/prepare.py
++++ b/finetune/inflect_finetune/prepare.py
+@@ -262,12 +262,16 @@ def prepare_dataset(options: PrepareOptions) -> dict[str, Any]:
+     )
+     speakers = sorted({row.speaker for row in rows if row.speaker})
+     if len(speakers) > 1:
+-        raise PreparationError(
+-            "Single-speaker adaptation requires one consistent nonempty speaker value, "
+-            f"but the manifest contains {len(speakers)} values: "
+-            + ", ".join(repr(speaker) for speaker in speakers)
+-        )
+-    dataset_speaker = speakers[0] if speakers else None
++        # Multi-speaker adaptation: every row must declare which voice it belongs
++        # to, otherwise unlabelled clips would silently train speaker id 0.
++        unlabelled = sum(1 for row in rows if not row.speaker)
++        if unlabelled:
++            raise PreparationError(
++                "Multi-speaker adaptation requires every row to carry a nonempty speaker "
++                f"value, but {unlabelled} row(s) have none. Label every clip, or prepare "
++                "one dataset per voice."
++            )
++    dataset_speaker = speakers[0] if len(speakers) == 1 else None
+     base_symbols = (
+         load_base_symbols(options.base_symbols_path)
+         if options.base_symbols_path
+@@ -345,6 +349,14 @@ def prepare_dataset(options: PrepareOptions) -> dict[str, Any]:
+         validation_rows = [
+             row for index, row in enumerate(prepared_rows) if index in validation_indices
+         ]
++        if len(speakers) > 1:
++            trained = {row.get("speaker") for row in train_rows}
++            untrained = [speaker for speaker in speakers if speaker not in trained]
++            if untrained:
++                raise PreparationError(
++                    "Every speaker must appear in the training split, but these have no "
++                    "training rows: " + ", ".join(repr(item) for item in untrained)
++                )
+         _write_jsonl(stage / "train.jsonl", train_rows)
+         _write_jsonl(stage / "validation.jsonl", validation_rows)
+         write_symbol_inventory(stage / "symbols.json", inventory)
+@@ -365,6 +377,9 @@ def prepare_dataset(options: PrepareOptions) -> dict[str, Any]:
+             "sample_rate": options.sample_rate,
+             "channels": 1,
+             "speaker": dataset_speaker,
++            # Ordered voice inventory; a speaker's index here is its runtime id.
++            # Empty or single-entry means a single-voice checkpoint.
++            "speakers": speakers,
+             "frontend": frontend_metadata,
+             "source_manifest_sha256": _sha256(manifest_path),
+             "split_seed": options.split_seed,
+diff --git a/finetune/inflect_finetune/training.py b/finetune/inflect_finetune/training.py
+index 7fad881..7066a2a 100644
+--- a/finetune/inflect_finetune/training.py
++++ b/finetune/inflect_finetune/training.py
+@@ -8,7 +8,7 @@ import random
+ import uuid
+ from dataclasses import MISSING, asdict, dataclass, fields, replace
+ from pathlib import Path
+-from typing import Any, Iterable
++from typing import Any, Iterable, Sequence
+ 
+ import numpy as np
+ import soundfile as sf
+@@ -35,6 +35,7 @@ from .modeling import (
+     resolve_base_model,
+ )
+ from .presets import available_presets, load_packaged_preset
++from .checkpoint import _is_speaker_conditioning_key, prune_training_checkpoints
+ from .training_data import AudioConfig, PreparedTTSDataset, create_dataloader
+ 
+ 
+@@ -69,6 +70,10 @@ class TrainingOptions:
+     posterior_lr_multiplier: float = 1.0
+     linguistic_lr_multiplier: float = 0.5
+     decoder_lr_multiplier: float = 0.1
++    # Speaker conditioning is randomly initialized, so it usually wants to move
++    # at least as fast as the linguistic path. Only used when the prepared
++    # dataset declares two or more voices.
++    speaker_lr_multiplier: float = 1.0
+     posterior_warmup_steps: int = 500
+     decoder_unfreeze_step: int | None = 3_000
+     amp: bool = True
+@@ -82,6 +87,9 @@ class TrainingOptions:
+     feature_loss_weight: float = 1.0
+     duration_loss_weight: float = 1.0
+     checkpoint_interval: int = 1_000
++    #: How many step checkpoints to keep on disk; 0 keeps every one.
++    #: Only heavy resume state is pruned - exports/ is never touched.
++    checkpoint_retention: int = 0
+     validation_interval: int = 500
+     log_interval: int = 25
+     validation_seed: int = 7
+@@ -170,6 +178,8 @@ def _validate_options(options: TrainingOptions) -> None:
+             raise ValueError(f"{name} must be positive.")
+     if options.posterior_warmup_steps < 0:
+         raise ValueError("posterior_warmup_steps must be non-negative.")
++    if options.checkpoint_retention < 0:
++        raise ValueError("checkpoint_retention must be non-negative.")
+     if (
+         options.decoder_unfreeze_step is not None
+         and options.decoder_unfreeze_step < options.posterior_warmup_steps
+@@ -181,6 +191,7 @@ def _validate_options(options: TrainingOptions) -> None:
+         "posterior_lr_multiplier",
+         "linguistic_lr_multiplier",
+         "decoder_lr_multiplier",
++        "speaker_lr_multiplier",
+         "lr_decay",
+     ):
+         if float(getattr(options, name)) <= 0:
+@@ -196,6 +207,25 @@ def _device(name: str) -> torch.device:
+     return device
+ 
+ 
++def _peak_memory_gb(device: torch.device) -> float:
++    """Largest CUDA allocation seen so far, in GB; 0.0 on CPU."""
++    if device.type != "cuda":
++        return 0.0
++    return torch.cuda.max_memory_allocated(device) / 1e9
++
++
++def _reserved_memory_gb(device: torch.device) -> float:
++    """Largest pool the caching allocator has held, in GB; 0.0 on CPU.
++
++    This is the number that decides whether a run fits: the allocator keeps
++    freed blocks, so reserved sits above allocated and is what the driver
++    reports. Device total must also cover the CUDA context on top of this.
++    """
++    if device.type != "cuda":
++        return 0.0
++    return torch.cuda.max_memory_reserved(device) / 1e9
++
++
+ def _seed_everything(seed: int) -> None:
+     random.seed(seed)
+     np.random.seed(seed)
+@@ -219,8 +249,17 @@ def _generator_groups(model: nn.Module, options: TrainingOptions) -> list[dict[s
+         "linguistic": [],
+         "decoder": [],
+     }
++    # Speaker conditioning spans every module, so it cannot follow the
++    # posterior/linguistic/decoder split. It gets its own group that stays
++    # trainable in all stages; otherwise the voices could not separate until
++    # the decoder unfreezes.
++    speaker_conditioning = int(getattr(model, "n_speakers", 0)) > 0
++    if speaker_conditioning:
++        assignments["speaker"] = []
+     for name, parameter in named.items():
+-        if name.startswith("enc_q."):
++        if speaker_conditioning and _is_speaker_conditioning_key(name):
++            assignments["speaker"].append(parameter)
++        elif name.startswith("enc_q."):
+             assignments["posterior"].append(parameter)
+         elif name.startswith("dec."):
+             assignments["decoder"].append(parameter)
+@@ -235,6 +274,7 @@ def _generator_groups(model: nn.Module, options: TrainingOptions) -> list[dict[s
+         "posterior": options.posterior_lr_multiplier,
+         "linguistic": options.linguistic_lr_multiplier,
+         "decoder": options.decoder_lr_multiplier,
++        "speaker": options.speaker_lr_multiplier,
+     }
+     return [
+         {
+@@ -258,9 +298,9 @@ def _apply_stage(
+     if stage not in STAGES:
+         raise ValueError(f"Unknown training stage {stage!r}.")
+     enabled = {
+-        STAGE_POSTERIOR: {"posterior"},
+-        STAGE_ADAPT: {"posterior", "linguistic"},
+-        STAGE_DECODER: {"posterior", "linguistic", "decoder"},
++        STAGE_POSTERIOR: {"posterior", "speaker"},
++        STAGE_ADAPT: {"posterior", "linguistic", "speaker"},
++        STAGE_DECODER: {"posterior", "linguistic", "decoder", "speaker"},
+     }[stage]
+     for group in optimizer.param_groups:
+         name = group["name"]
+@@ -525,6 +565,21 @@ def _establish_run_identity(
+     return expected, checkpoint
+ 
+ 
++def _prepared_speakers(prepared_dir: Path) -> tuple[str, ...]:
++    """Ordered voice inventory from dataset.json; empty for a single voice."""
++
++    dataset_path = prepared_dir / "dataset.json"
++    if not dataset_path.is_file():
++        raise ValueError(f"Prepared dataset is missing dataset.json: {dataset_path}")
++    payload = json.loads(dataset_path.read_text(encoding="utf-8"))
++    speakers = payload.get("speakers") or ()
++    if not isinstance(speakers, (list, tuple)):
++        raise ValueError("dataset.json 'speakers' must be a list when present.")
++    if len(speakers) != len(set(speakers)):
++        raise ValueError("dataset.json 'speakers' contains duplicate entries.")
++    return tuple(str(speaker) for speaker in speakers)
++
++
+ @torch.inference_mode()
+ def _validate(
+     bundle: ModelBundle,
+@@ -533,26 +588,42 @@ def _validate(
+     output_dir: Path,
+     step: int,
+     seed: int,
++    speakers: Sequence[str] = (),
+ ) -> dict[str, Any]:
+     model = bundle.generator
+     model.eval()
+     batch = next(iter(loader))
+     x, x_lengths = batch[0].to(device), batch[1].to(device)
+-    torch.manual_seed(seed)
+-    output = model.infer(x[:1], x_lengths[:1], noise_scale=0.667, max_len=4000)[0]
+-    waveform = output[0, 0].float().cpu().numpy()
+     sample_rate = int(bundle.config["data"]["sampling_rate"])
+-    sample_path = output_dir / "validation" / f"step-{step:08d}.wav"
+-    sample_path.parent.mkdir(parents=True, exist_ok=True)
+-    sf.write(sample_path, np.clip(waveform, -1.0, 1.0), sample_rate)
++    directory = output_dir / "validation"
++    directory.mkdir(parents=True, exist_ok=True)
++
++    # One clip per voice, same text and seed, so voices are directly comparable.
++    speaker_ids = range(len(speakers)) if len(speakers) > 1 else (None,)
++    rendered: list[dict[str, Any]] = []
++    for speaker_id in speaker_ids:
++        sid = None if speaker_id is None else torch.full((1,), speaker_id, dtype=torch.long, device=device)
++        torch.manual_seed(seed)
++        output = model.infer(x[:1], x_lengths[:1], sid=sid, noise_scale=0.667, max_len=4000)[0]
++        waveform = output[0, 0].float().cpu().numpy()
++        suffix = "" if speaker_id is None else f"-speaker{speaker_id:02d}"
++        sample_path = directory / f"step-{step:08d}{suffix}.wav"
++        sf.write(sample_path, np.clip(waveform, -1.0, 1.0), sample_rate)
++        entry = {
++            "sample": str(sample_path),
++            "samples": int(waveform.size),
++            "seconds": waveform.size / sample_rate,
++            "peak": float(np.max(np.abs(waveform))),
++        }
++        if speaker_id is not None:
++            entry["speaker"] = speakers[speaker_id]
++            entry["speaker_id"] = speaker_id
++        rendered.append(entry)
+     model.train()
+-    return {
+-        "step": step,
+-        "sample": str(sample_path),
+-        "samples": int(waveform.size),
+-        "seconds": waveform.size / sample_rate,
+-        "peak": float(np.max(np.abs(waveform))),
+-    }
++    summary = {"step": step, **rendered[0]}
++    if len(rendered) > 1:
++        summary["speakers"] = rendered
++    return summary
+ 
+ 
+ def train_adaptation(options: TrainingOptions) -> dict[str, Any]:
+@@ -565,6 +636,7 @@ def train_adaptation(options: TrainingOptions) -> dict[str, Any]:
+     output_dir = Path(options.output_dir).resolve()
+     prepared_dir = Path(options.prepared_dir).resolve()
+     symbols = load_symbols(prepared_dir / "symbols.json")
++    speakers = _prepared_speakers(prepared_dir)
+     base_root = resolve_base_model(options.base_model)
+     run_identity, resume_checkpoint = _establish_run_identity(
+         options=options,
+@@ -573,15 +645,34 @@ def train_adaptation(options: TrainingOptions) -> dict[str, Any]:
+         prepared_dir=prepared_dir,
+     )
+ 
+-    bundle = build_training_models(base_root, symbols, seed=options.seed)
++    multi_speaker = len(speakers) > 1
++    bundle = build_training_models(
++        base_root,
++        symbols,
++        seed=options.seed,
++        n_speakers=len(speakers) if multi_speaker else 0,
++    )
+     compatibility = cpu_compatibility_report(
+         bundle.generator,
+         base_root / "model.pth",
+         bundle.base_symbols,
+         symbols,
+         initialization_seed=options.seed,
++        allow_speaker_conditioning=multi_speaker,
+     )
+     compatibility.write(output_dir / "compatibility-report.json")
++    # Export resolves config.json from the run directory. Writing the effective
++    # config here keeps speaker conditioning (and anything else the trainer
++    # decided) in the deployable description instead of silently falling back to
++    # the single-voice release config.
++    output_dir.mkdir(parents=True, exist_ok=True)
++    (output_dir / "config.json").write_text(
++        json.dumps(bundle.config, indent=2, sort_keys=True) + "\n", encoding="utf-8"
++    )
++    if multi_speaker:
++        (output_dir / "speakers.json").write_text(
++            json.dumps(list(speakers), indent=2) + "\n", encoding="utf-8"
++        )
+     bundle.generator.to(device)
+     bundle.discriminator.to(device)
+ 
+@@ -646,8 +737,10 @@ def train_adaptation(options: TrainingOptions) -> dict[str, Any]:
+         win_length=int(bundle.config["data"]["win_length"]),
+         add_blank=bool(bundle.config["data"].get("add_blank", True)),
+     )
+-    train_dataset = PreparedTTSDataset(prepared_dir, "train", symbols, audio)
+-    validation_dataset = PreparedTTSDataset(prepared_dir, "validation", symbols, audio)
++    train_dataset = PreparedTTSDataset(prepared_dir, "train", symbols, audio, speakers=speakers)
++    validation_dataset = PreparedTTSDataset(
++        prepared_dir, "validation", symbols, audio, speakers=speakers
++    )
+     train_loader = create_dataloader(
+         train_dataset,
+         batch_size=options.batch_size,
+@@ -687,12 +780,13 @@ def train_adaptation(options: TrainingOptions) -> dict[str, Any]:
+                 optimizer_d.zero_grad(set_to_none=True)
+                 micro_step = 0
+ 
+-            x, x_lengths, spec, spec_lengths, waveform, _ = (
++            x, x_lengths, spec, spec_lengths, waveform, _, speaker_ids = (
+                 tensor.to(device, non_blocking=device.type == "cuda") for tensor in batch
+             )
++            sid = speaker_ids if multi_speaker else None
+             with _autocast(device, amp_enabled):
+                 generated, duration, _, ids_slice, _, z_mask, latent = bundle.generator(
+-                    x, x_lengths, spec, spec_lengths
++                    x, x_lengths, spec, spec_lengths, sid=sid
+                 )
+                 z, z_p, m_p, logs_p, _, logs_q = latent
+                 real = bundle.components.commons.slice_segments(
+@@ -772,16 +866,20 @@ def train_adaptation(options: TrainingOptions) -> dict[str, Any]:
+                 "lr": {
+                     group["name"]: float(group["lr"]) for group in optimizer_g.param_groups
+                 },
++                "peak_memory_gb": round(_peak_memory_gb(device), 3),
++                "peak_reserved_gb": round(_reserved_memory_gb(device), 3),
+             }
+             with log_path.open("a", encoding="utf-8") as handle:
+                 handle.write(json.dumps(metrics, sort_keys=True) + "\n")
+             if state.step % options.log_interval == 0:
+                 LOGGER.info(
+-                    "step=%d stage=%s loss_g=%.4f loss_d=%.4f",
++                    "step=%d stage=%s loss_g=%.4f loss_d=%.4f vram=%.2f/%.2fGB",
+                     state.step,
+                     state.stage,
+                     metrics["loss_g"],
+                     metrics["loss_d"],
++                    metrics["peak_memory_gb"],
++                    metrics["peak_reserved_gb"],
+                 )
+             if state.step % options.validation_interval == 0:
+                 validation = _validate(
+@@ -791,6 +889,7 @@ def train_adaptation(options: TrainingOptions) -> dict[str, Any]:
+                     output_dir,
+                     state.step,
+                     options.validation_seed,
++                    speakers=speakers,
+                 )
+                 (output_dir / "validation" / f"step-{state.step:08d}.json").write_text(
+                     json.dumps(validation, indent=2, sort_keys=True) + "\n",
+@@ -824,6 +923,15 @@ def train_adaptation(options: TrainingOptions) -> dict[str, Any]:
+                     iteration=state.step,
+                     learning_rate=optimizer_g.param_groups[0]["lr"],
+                 )
++                removed = prune_training_checkpoints(
++                    output_dir / "checkpoints", options.checkpoint_retention
++                )
++                if removed:
++                    LOGGER.info(
++                        "pruned %d old checkpoint(s), keeping the newest %d",
++                        len(removed),
++                        options.checkpoint_retention,
++                    )
+             if state.step >= options.max_steps:
+                 break
+ 
+diff --git a/finetune/inflect_finetune/training_data.py b/finetune/inflect_finetune/training_data.py
+index 811abae..d93169c 100644
+--- a/finetune/inflect_finetune/training_data.py
++++ b/finetune/inflect_finetune/training_data.py
+@@ -86,12 +86,16 @@ class PreparedTTSDataset(Dataset):
+         split: str,
+         symbols: Sequence[str],
+         audio_config: AudioConfig,
++        speakers: Sequence[str] | None = None,
+     ) -> None:
+         if split not in {"train", "validation"}:
+             raise ValueError("split must be 'train' or 'validation'")
+         self.root = Path(prepared_dir).resolve()
+         self.rows = read_jsonl(self.root / f"{split}.jsonl")
+         self.symbol_to_id = {symbol: index for index, symbol in enumerate(symbols)}
++        # A speaker's position in the prepared inventory is its runtime id.
++        self.speakers = tuple(speakers or ())
++        self.speaker_to_id = {name: index for index, name in enumerate(self.speakers)}
+         self.audio_config = audio_config
+         self.records = []
+         unknown: set[str] = set()
+@@ -102,7 +106,16 @@ class PreparedTTSDataset(Dataset):
+             audio_path = _safe_child(self.root, row["audio"])
+             missing = set(row["phonemes"]) - self.symbol_to_id.keys()
+             unknown.update(missing)
+-            self.records.append((audio_path, row["phonemes"]))
++            speaker_id = 0
++            if self.speaker_to_id:
++                speaker = row.get("speaker")
++                if speaker not in self.speaker_to_id:
++                    raise ValueError(
++                        f"{split}.jsonl row {index} has speaker {speaker!r}, which is absent "
++                        "from the prepared speaker inventory in dataset.json."
++                    )
++                speaker_id = self.speaker_to_id[speaker]
++            self.records.append((audio_path, row["phonemes"], speaker_id))
+         if unknown:
+             rendered = " ".join(repr(item) for item in sorted(unknown))
+             raise ValueError(
+@@ -112,8 +125,10 @@ class PreparedTTSDataset(Dataset):
+     def __len__(self) -> int:
+         return len(self.records)
+ 
+-    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+-        audio_path, phonemes = self.records[index]
++    def __getitem__(
++        self, index: int
++    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
++        audio_path, phonemes, speaker_id = self.records[index]
+         audio, sample_rate = sf.read(audio_path, dtype="float32", always_2d=True)
+         if sample_rate != self.audio_config.sampling_rate:
+             raise ValueError(
+@@ -134,12 +149,17 @@ class PreparedTTSDataset(Dataset):
+         if not token_ids:
+             raise ValueError(f"{audio_path} has an empty phoneme sequence.")
+         tokens = torch.tensor(token_ids, dtype=torch.long)
+-        return tokens, spectrogram(waveform, self.audio_config), waveform[None]
++        return (
++            tokens,
++            spectrogram(waveform, self.audio_config),
++            waveform[None],
++            torch.tensor(speaker_id, dtype=torch.long),
++        )
+ 
+ 
+ class TTSCollate:
+     def __call__(
+-        self, batch: Iterable[tuple[torch.Tensor, torch.Tensor, torch.Tensor]]
++        self, batch: Iterable[tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]]
+     ) -> tuple[torch.Tensor, ...]:
+         rows = sorted(batch, key=lambda item: item[1].shape[-1], reverse=True)
+         batch_size = len(rows)
+@@ -151,11 +171,13 @@ class TTSCollate:
+             batch_size, rows[0][1].shape[0], int(spec_lengths.max()), dtype=torch.float32
+         )
+         wav = torch.zeros(batch_size, 1, int(wav_lengths.max()), dtype=torch.float32)
+-        for index, (tokens, spectrum, waveform) in enumerate(rows):
++        speaker_ids = torch.zeros(batch_size, dtype=torch.long)
++        for index, (tokens, spectrum, waveform, speaker_id) in enumerate(rows):
+             text[index, : tokens.numel()] = tokens
+             spec[index, :, : spectrum.shape[-1]] = spectrum
+             wav[index, :, : waveform.shape[-1]] = waveform
+-        return text, text_lengths, spec, spec_lengths, wav, wav_lengths
++            speaker_ids[index] = speaker_id
++        return text, text_lengths, spec, spec_lengths, wav, wav_lengths, speaker_ids
+ 
+ 
+ def create_dataloader(
+diff --git a/finetune/tests/test_data_frontend_prepare.py b/finetune/tests/test_data_frontend_prepare.py
+index 5c23cd8..d11c1b0 100644
+--- a/finetune/tests/test_data_frontend_prepare.py
++++ b/finetune/tests/test_data_frontend_prepare.py
+@@ -156,16 +156,48 @@ def test_same_speaker_multiple_sessions_produces_nonempty_splits(
+         }
+ 
+ 
+-def test_prepare_rejects_multiple_speakers(tmp_path: Path) -> None:
++def test_prepare_accepts_multiple_speakers(tmp_path: Path) -> None:
++    manifest = _source_dataset(
++        tmp_path / "source",
++        count=6,
++        speakers=["alice", "bob", "alice", "bob", "alice", "bob"],
++    )
++    output = tmp_path / "prepared"
++    _prepare(manifest, output)
++    metadata = json.loads((output / "dataset.json").read_text(encoding="utf-8"))
++
++    # Ordered inventory; a speaker's index is the id used at training time.
++    assert metadata["speakers"] == ["alice", "bob"]
++    # 'speaker' stays single-valued and is therefore unset for a multi-voice set.
++    assert metadata["speaker"] is None
++    train_speakers = {row["speaker"] for row in _read_split(output / "train.jsonl")}
++    assert train_speakers == {"alice", "bob"}
++
++
++def test_prepare_rejects_unlabelled_rows_in_a_multi_speaker_manifest(tmp_path: Path) -> None:
+     manifest = _source_dataset(
+         tmp_path / "source",
+         count=3,
+-        speakers=["alice", "bob", "alice"],
++        speakers=["alice", "bob", None],
+     )
+-    with pytest.raises(PreparationError, match="one consistent nonempty speaker"):
++    with pytest.raises(PreparationError, match="every row to carry a nonempty speaker"):
+         _prepare(manifest, tmp_path / "prepared")
+ 
+ 
++def test_single_speaker_dataset_records_an_empty_inventory(tmp_path: Path) -> None:
++    manifest = _source_dataset(
++        tmp_path / "source",
++        count=3,
++        speakers=["one-speaker"] * 3,
++    )
++    output = tmp_path / "prepared"
++    _prepare(manifest, output)
++    metadata = json.loads((output / "dataset.json").read_text(encoding="utf-8"))
++
++    assert metadata["speaker"] == "one-speaker"
++    assert metadata["speakers"] == ["one-speaker"]
++
++
+ def test_normalized_duplicate_text_is_co_located(tmp_path: Path) -> None:
+     manifest = _source_dataset(
+         tmp_path / "source",

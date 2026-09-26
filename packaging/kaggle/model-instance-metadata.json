@@ -1,0 +1,16 @@
+{
+  "ownerSlug": "INSERT_KAGGLE_USERNAME",
+  "modelSlug": "azerbaijani-tts",
+  "instanceSlug": "pytorch-fp32",
+  "framework": "pyTorch",
+  "overview": "The step-200,000 checkpoint together with the runtime it needs: model.pth, config.json, symbols.json, the phoneme frontend and the VITS inference runtime. This is the `model/` directory of the repository, unchanged, so `model/checksums.sha256` still verifies.",
+  "usage": "Upload this instance, then in a notebook:\n\n    import sys\n    sys.path.insert(0, '/kaggle/input/azerbaijani-tts/pytorch/pytorch-fp32/1')\n    from aztts import AzTTS\n    tts = AzTTS('/kaggle/input/azerbaijani-tts/pytorch/pytorch-fp32/1/model')\n    tts.save('Salam, necəsiniz?', '/kaggle/working/salam.wav')\n\nThe model runs on CPU at 2-4x real time and needs no network access at inference time.",
+  "licenseName": "Apache 2.0",
+  "fineTunable": false,
+  "trainingData": [
+    "ughurabbasov/azerbaijani-tts-dataset"
+  ],
+  "modelInstanceType": "Unspecified",
+  "baseModelInstance": "",
+  "externalBaseModelUrl": "https://huggingface.co/owensong/Inflect-Micro-v2"
+}

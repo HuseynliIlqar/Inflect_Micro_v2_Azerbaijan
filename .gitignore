@@ -1,0 +1,38 @@
+# --- Python -----------------------------------------------------------------
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# --- Tool caches ------------------------------------------------------------
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# --- Generated audio --------------------------------------------------------
+# Everything the user synthesises lands here. The directory itself is tracked
+# so a fresh clone already has somewhere to write.
+out/*
+!out/.gitkeep
+
+# --- Downloaded artefacts ---------------------------------------------------
+# The English base model is an upstream snapshot, not source. Fetch it with:
+#     python training/scripts/download_model.py
+# Keeping it out of the repository saves 38 MB per clone.
+training/base-model/
+
+# Hugging Face download bookkeeping, wherever it appears.
+.cache/huggingface/
+
+# --- Editors and operating systems ------------------------------------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,92 @@
+{
+  "base": {
+    "checkpoint_sha256": "3eede065c9ccfa88ade0a5a9a5c23de34afcbbb32213e59aad44d5cf100fdee8",
+    "config_sha256": "91ba9652f743f65e6be48eaa1aacea1db3d2941f5138ce309f359d4ce14f34e4",
+    "identity": "base"
+  },
+  "format": "inflect_adaptation_run_identity_v1",
+  "optimizer_schema": {
+    "amp_requested": true,
+    "discriminator": {
+      "base_learning_rate": 0.0002,
+      "betas": [
+        0.8,
+        0.99
+      ],
+      "class": "torch.optim.AdamW",
+      "eps": 1e-09,
+      "weight_decay": 0.0
+    },
+    "generator": {
+      "base_learning_rate": 0.0002,
+      "betas": [
+        0.8,
+        0.99
+      ],
+      "class": "torch.optim.AdamW",
+      "eps": 1e-09,
+      "parameter_groups": [
+        {
+          "lr_multiplier": 1.0,
+          "name": "posterior"
+        },
+        {
+          "lr_multiplier": 1.0,
+          "name": "linguistic"
+        },
+        {
+          "lr_multiplier": 0.25,
+          "name": "decoder"
+        }
+      ],
+      "weight_decay": 0.0
+    },
+    "gradient_accumulation_steps": 1,
+    "scheduler": {
+      "class": "torch.optim.lr_scheduler.ExponentialLR",
+      "gamma": 0.99999
+    }
+  },
+  "options": {
+    "adam_betas": [
+      0.8,
+      0.99
+    ],
+    "adam_eps": 1e-09,
+    "amp": true,
+    "batch_size": 64,
+    "checkpoint_interval": 5000,
+    "checkpoint_retention": 5,
+    "decoder_lr_multiplier": 0.25,
+    "decoder_unfreeze_step": 30000,
+    "device": "cuda",
+    "duration_loss_weight": 1.0,
+    "feature_loss_weight": 1.0,
+    "gradient_accumulation_steps": 1,
+    "kl_loss_weight": 1.0,
+    "learning_rate_d": 0.0002,
+    "learning_rate_g": 0.0002,
+    "linguistic_lr_multiplier": 1.0,
+    "log_interval": 50,
+    "lr_decay": 0.99999,
+    "max_grad_norm": 10.0,
+    "max_steps": 200000,
+    "mel_loss_weight": 45.0,
+    "num_workers": 5,
+    "posterior_lr_multiplier": 1.0,
+    "posterior_warmup_steps": 5000,
+    "seed": 1234,
+    "speaker_lr_multiplier": 1.0,
+    "validation_interval": 2500,
+    "validation_seed": 7,
+    "weight_decay": 0.0
+  },
+  "prepared_dataset": {
+    "dataset_json_sha256": "9e4f6274a0237d34a71f2b997e981607c104fa257c69f6b1ba4faeb6d94bc44b",
+    "train_jsonl_sha256": "03c9162aa65be263370add5d1f91c9e5e33e9230db656c5a67bd5c714f70a5b2",
+    "validation_jsonl_sha256": "b17c73894db9ca9977fa92a05f182d164948c9afd5964b2aef148d5320055ee4"
+  },
+  "run_id": "3648d87e46d142a987304738a9752431",
+  "symbols_sha256": "6bcd2ea519d3108aa6801558c7fdd93f23cfee8a73f1148f87426a4ab8957655",
+  "toolkit_version": "0.1.0"
+}

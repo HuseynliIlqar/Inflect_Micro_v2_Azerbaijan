@@ -1,0 +1,22 @@
+{
+  "accepts_prephonemized_input": true,
+  "custom_hook": null,
+  "format": "inflect_deployment_frontend_v1",
+  "language": "az",
+  "mode": "espeak",
+  "prepared_dataset": {
+    "dataset_json_sha256": "9e4f6274a0237d34a71f2b997e981607c104fa257c69f6b1ba4faeb6d94bc44b",
+    "format": "inflect_prepared_dataset_v1",
+    "release_compatibility": false,
+    "source_manifest_sha256": "ecbb1dfb71d107185753f4bb60878d8cf388c3121839b284637b8222291509ba"
+  },
+  "prepared_frontend": {
+    "custom_hook": null,
+    "language": "az",
+    "preserve_punctuation": true,
+    "type": "espeak",
+    "with_stress": true
+  },
+  "preserve_punctuation": true,
+  "with_stress": true
+}

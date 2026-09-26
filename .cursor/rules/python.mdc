@@ -1,0 +1,66 @@
+---
+description: Python conventions and the traps specific to the Azerbaijani text layer
+globs: ["**/*.py"]
+alwaysApply: false
+---
+
+# Python conventions
+
+- `from __future__ import annotations` at the top; type hints everywhere.
+- **Pure functions.** Every text helper takes a string and returns a new one.
+  Nothing is mutated in place, and no function reaches outside its arguments.
+- Module-level tables are `MappingProxyType` or `frozenset` so they cannot be
+  mutated by accident. Keep new tables that way.
+- Small, single-purpose files. The largest is `az_text.py` at ~390 lines.
+- Errors surface as a message plus a non-zero exit code from `main()`, never a
+  traceback in the user's face. Library code raises; CLI code catches.
+- No new runtime dependencies without a stated reason.
+
+## Azerbaijani casing
+
+`I` lowercases to `ı` and `İ` lowercases to `i`. Python's `.lower()` and
+`.upper()` silently produce the wrong letter. Always use `az_lower()` and
+`az_capitalise()` from `aztts/az_text.py`.
+
+## `normalize_az()` step order is load-bearing
+
+The pipeline in `az_text.py` runs in a fixed order:
+
+1. abbreviations first, so their full stops are never mistaken for sentence ends
+2. then number forms from most specific (phone, dates, times, currency,
+   percent, units) to least (ranges, bare digits)
+3. acronyms last, so Roman numerals win the `II`-style ambiguity
+
+Adding a step means choosing its position deliberately and adding a test that
+pins the interaction.
+
+## Windows console
+
+Every CLI entry point calls `use_utf8()` from `aztts/console.py` before printing
+anything. Without it, printing `ə` on a Windows console raises
+`UnicodeEncodeError`. Current callers: `say.py`, `tools/seed_sweep.py`,
+`tools/audio_postprocess.py`, `training/scripts/compare_checkpoints.py`. Any new
+entry point needs the same call.
+
+## Azerbaijani strings in code are data
+
+`LETTER_NAMES`, `MONTHS`, `ABBREVIATIONS`, `UNITS`, `CURRENCIES`, `ACRONYMS`,
+`ORDINAL_SUFFIXES` (`az_text.py`), `_CONJUNCTIONS` (`az_chunk.py`), `CLITICS`,
+`WEAK_HEADS`, `_WIDE_WEAK`, `_PARTICIPLE_WORDS` (`az_prosody.py`), the `DEMO`
+sentences in `say.py`, and every phoneme string. Do not translate them, do not
+"clean them up". Comments about them stay English.
+
+## `fast_monotonic_align.py`
+
+Must stay **bit-identical** to `tests/reference_monotonic_align.py`. That
+equivalence is the reason the file exists — it cut training from ~20 days to
+3.2 days. `tests/test_fast_monotonic_align.py` proves it across random shapes,
+edge cases, mask variants and determinism. Never touch it without those tests
+passing.
+
+## Tests
+
+`pytest`, plain functions, `parametrize` for table cases. Tests must never load
+the model — the suite finishes in about three seconds and that is deliberate.
+`pyproject.toml` puts `.` and `training` on the path, so import as
+`from aztts import ...` and `from fast_monotonic_align import ...`.

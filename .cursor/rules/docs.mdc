@@ -1,0 +1,58 @@
+---
+description: Documentation language policy and the two mirrored READMEs
+globs: ["**/*.md", "**/*.mdc"]
+alwaysApply: false
+---
+
+# Documentation
+
+**Everything is written in English.** The project targets GitHub, Hugging Face
+and Kaggle, where Azerbaijani-only documentation is effectively invisible.
+
+The one deliberate exception is `README.az.md`, the Azerbaijani mirror of
+`README.md`. **When you change content in one, change it in the other.** They
+are allowed to differ in wording, never in facts, commands, flags or structure.
+
+## Voice
+
+Plain, direct, technical. State limitations honestly — the existing docs already
+say the model is small, the vocoder rings, and the training audio is probably
+synthetic. Keep that tone.
+
+Do not add marketing language, emoji, or enthusiasm the original did not have.
+Do not add claims that were not measured. Lines wrap at about 80 characters;
+tables and code blocks are exempt.
+
+## Azerbaijani inside English documents is data
+
+Example TTS input sentences, normalisation examples (`II Dünya müharibəsi` →
+`İkinci Dünya müharibəsi`), phoneme strings and speaker labels stay verbatim. If
+an example sentence needs explaining, add a short English gloss in parentheses
+rather than replacing it.
+
+## Facts that must stay consistent across documents
+
+These appear in `README.md`, `README.az.md`, `docs/MODEL.md`,
+`packaging/huggingface/MODEL_CARD.md` and the Kaggle metadata. Change one,
+change all:
+
+- 9.36M parameters (9,356,513), 24 kHz mono, single speaker
+- 200,000 steps = 1,343 epochs, 25.07 hours, ~3.7 days on an A40, ~$39
+- 2-4x real time on CPU
+- Base model `owensong/Inflect-Micro-v2`, Apache-2.0
+- Dataset `ughurabbasov/azerbaijani-tts-dataset`: no licence file declared; the
+  author confirmed free use with attribution requested in the HF community tab.
+  The terms of the upstream TTS system that produced the audio remain unknown.
+  State it exactly this way — do not simplify it into "licensed" or "unlicensed".
+- `phonemizer` and eSpeak NG are GPL-3.0-or-later and loaded in-process.
+  Installing and running is unaffected; **redistributing a combined work** brings
+  those terms with it. Do not soften or overstate this.
+
+## Where documents live
+
+`README.md` / `README.az.md` (usage), `docs/MODEL.md` (model card, measurements,
+limitations), `training/README.md` and `training/docs/` (how it was made — an
+archive), `THIRD_PARTY_NOTICES.md` (licences), `packaging/PUBLISHING.md`
+(release steps), `CITATION.cff` (how to cite this project and its two sources),
+`CLAUDE.md` (working on the code). `AGENTS.md` is a pointer to `CLAUDE.md` for
+agents that do not read it -- keep it short, never duplicate content into it.

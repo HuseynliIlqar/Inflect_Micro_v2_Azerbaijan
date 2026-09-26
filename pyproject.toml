@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aztts"
+version = "1.0.0"
+description = "Offline Azerbaijani text-to-speech (9.36M parameters, 24 kHz)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+keywords = ["tts", "azerbaijani", "speech-synthesis", "vits", "offline"]
+dependencies = [
+    "torch>=2.6",
+    "numpy>=1.26,<3",
+    "scipy>=1.13",
+    "soundfile>=0.13",
+    "phonemizer>=3.3",
+    "espeakng-loader>=0.2.4",
+    "num2words>=0.5.14",
+    "Unidecode>=1.3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+packages = ["aztts"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".", "training"]
+addopts = "-q"

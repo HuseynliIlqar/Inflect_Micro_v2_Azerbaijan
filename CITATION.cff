@@ -1,0 +1,53 @@
+cff-version: 1.2.0
+message: >-
+  If you use this model, please cite it, and also credit the base model and the
+  training dataset listed under `references`.
+title: 'Azerbaijani TTS: an offline 9.36M-parameter VITS model'
+abstract: >-
+  A fully offline text-to-speech model for Azerbaijani. 9.36M parameters,
+  24 kHz mono, single speaker, 2-4x faster than real time on a laptop CPU.
+  Adapted from the English Inflect-Micro-v2 checkpoint over 200,000 steps on
+  25.07 hours of Azerbaijani audio, and shipped with an Azerbaijani text
+  normalisation and chunking layer.
+type: software
+authors:
+  - family-names: Huseynli
+    given-names: Ilqar
+version: 1.0.0
+license: Apache-2.0
+repository-code: 'https://github.com/INSERT_GITHUB_USER/azerbaycan-tts'
+keywords:
+  - text-to-speech
+  - speech-synthesis
+  - azerbaijani
+  - vits
+  - offline
+  - low-resource-languages
+
+references:
+  - type: software
+    title: 'Inflect-Micro-v2'
+    abstract: >-
+      The English 9.36M-parameter VITS checkpoint this model was adapted from.
+      409 of its 410 tensors were carried over bit-identically.
+    authors:
+      - family-names: Song
+        given-names: Owen
+    version: 2.0.0
+    date-released: 2026-07-24
+    url: 'https://huggingface.co/owensong/Inflect-Micro-v2'
+    license: Apache-2.0
+
+  - type: data
+    title: 'azerbaijani-tts-dataset'
+    abstract: >-
+      The Azerbaijani speech corpus this model was trained on: 9,674 clips used
+      out of 10,088, 25.07 hours, single speaker. The repository declares no
+      licence file; the author confirmed in the Hugging Face community tab that
+      the dataset may be used freely, with attribution requested.
+    authors:
+      - alias: ughurabbasov
+    url: 'https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset'
+    notes: >-
+      Used with the author's permission, granted in the dataset's Hugging Face
+      community tab. Attribution is the condition of use.

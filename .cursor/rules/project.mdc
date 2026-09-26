@@ -1,0 +1,69 @@
+---
+description: Core facts and hard rules for the Azerbaijani TTS project
+alwaysApply: true
+---
+
+# Azerbaijani TTS
+
+Offline Azerbaijani text-to-speech: a 9.36M-parameter VITS model plus the
+Azerbaijani text layer it needs. CPU-only, 2-4x real time, no network at
+runtime. `README.md` describes what it does; these rules describe how to change
+it without breaking it.
+
+## Layout
+
+- `aztts/` — all of our library code (~900 lines). Everything you write goes
+  here or in `say.py`.
+- `say.py` — the CLI, the main entry point.
+- `model/` — **vendored upstream export. Never edit.**
+- `tools/` — `seed_sweep.py` (pick a good seed), `audio_postprocess.py` (find
+  and filter vocoder buzz).
+- `training/` — archive of how the model was made. The pod is gone; only
+  `fast_monotonic_align.py` is live code.
+- `tests/`, `docs/`, `samples/`, `packaging/`, `out/` (generated).
+
+## Hard rules
+
+1. **Never edit `model/` or `training/base-model/`.** They are upstream
+   exports. `model/checksums.sha256` verifies 24 files there and any edit
+   breaks it. Wrap the model in `aztts/` instead of patching it.
+2. **`ə`, `ɣ`, `ʃ` inside `model/` are IPA symbols, not Azerbaijani text.** A
+   grep for Azerbaijani letters matches them. Do not translate anything there.
+3. **All prose is English** — comments, docstrings, `print()`, argparse help,
+   Markdown. Azerbaijani only ever appears as *language data* (example
+   sentences, letter names, abbreviation and conjunction tables, phoneme
+   strings). Translating language data changes behaviour.
+   `README.az.md` is the deliberate exception and mirrors `README.md`.
+4. **Never call `.lower()` / `.upper()` on Azerbaijani text.** `I` → `ı` and
+   `İ` → `i`. Use `az_lower()` / `az_capitalise()` from `aztts/az_text.py`.
+5. **Tests must never load the model.** The suite runs in ~3 seconds.
+6. **Do not add GPL dependencies.** `phonemizer` and eSpeak NG are already
+   GPL-3.0-or-later and loaded in-process; that surface is documented and
+   bounded in `THIRD_PARTY_NOTICES.md`. Our code stays Apache-2.0.
+
+## Verify before claiming done
+
+```bash
+python -m pytest                                  # ~3s, no model load
+python say.py --show-text "II Dünya, 25% artım"   # text layer, no synthesis
+python say.py "Salam."                            # end to end -> out/01.wav
+cd model && sha256sum -c checksums.sha256         # 24 files, all OK
+```
+
+`--show-text` prints exactly what would reach the model and synthesises
+nothing — it is the fastest check for any text-layer change.
+
+## Setup
+
+Python 3.11+, and Git LFS before cloning (`model.pth` is an LFS object).
+`pip install -r requirements.txt`, then `pip install pytest` separately.
+`training/base-model/` is not tracked — fetch it with
+`python training/scripts/download_model.py` if you need it.
+
+## Do not chase these
+
+Properties of a 9.36M model, not bugs: one voice, no emotion control, metallic
+vocoder resonance on some sentences, flat intonation (eSpeak stresses 92.2% of
+words), flattening over long sentences. The training audio is most likely
+synthetic, so the quality ceiling is the system that produced it. See
+`docs/MODEL.md`.

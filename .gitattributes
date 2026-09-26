@@ -1,0 +1,27 @@
+# Line endings -----------------------------------------------------------------
+# Normalise text in the repository, check out native line endings on Windows.
+* text=auto eol=lf
+*.sh   text eol=lf
+*.bat  text eol=crlf
+*.patch -text
+# `model/` is byte-for-byte verified by model/checksums.sha256, and some of its
+# files ship with CRLF. Never convert line endings there or the hashes break.
+model/** -text
+
+# Large files ------------------------------------------------------------------
+# Requires Git LFS on the machine that pushes:  git lfs install
+# Hugging Face uses the same patterns, so this file works for both remotes.
+*.pth         filter=lfs diff=lfs merge=lfs -text
+*.safetensors filter=lfs diff=lfs merge=lfs -text
+*.onnx        filter=lfs diff=lfs merge=lfs -text
+*.bin         filter=lfs diff=lfs merge=lfs -text
+*.ckpt        filter=lfs diff=lfs merge=lfs -text
+*.wav         filter=lfs diff=lfs merge=lfs -text
+*.flac        filter=lfs diff=lfs merge=lfs -text
+*.mp3         filter=lfs diff=lfs merge=lfs -text
+
+# Language statistics ----------------------------------------------------------
+# `model/` is a vendored upstream export; it should not count as our code and
+# should stay collapsed in pull request diffs.
+model/**       linguist-vendored
+training/patches/*.patch linguist-generated
