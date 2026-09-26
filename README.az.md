@@ -4,6 +4,13 @@ Azərbaycan dilində danışan **tam oflayn** mətn→səs modeli. 9.36M paramet
 24 kHz mono, adi noutbukun prosessorunda **real vaxtdan 2–4 dəfə sürətli**
 işləyir. Server, API açarı, internet — heç biri lazım deyil.
 
+Bu model Owen Song-un
+**[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)**
+checkpoint-inin fine-tune-udur (Apache-2.0) — 25.07 saatlıq azərbaycanca nitq
+üzərində 200.000 addım, 410 tensordan 409-u bit-bit köçürülüb. Həmin checkpoint
+burada ikinci səs kimi, dəyişdirilmədən də gəlir; bax
+[Təşəkkür və istinad](#təşəkkür-və-istinad).
+
 > For the English documentation see [README.md](README.md).
 
 ```bash

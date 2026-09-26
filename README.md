@@ -4,6 +4,12 @@ A **fully offline** text-to-speech model that speaks Azerbaijani. 9.36M
 parameters, 24 kHz mono, **2-4x faster than real time** on an ordinary laptop
 CPU. No server, no API key, no internet.
 
+It is a fine-tune of
+**[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)**
+by Owen Song (Apache-2.0) --- 200,000 steps on 25.07 hours of Azerbaijani
+speech, 409 of its 410 tensors carried over bit-identically. That checkpoint
+also ships here as a second voice, unchanged; see [Credits](#credits).
+
 > Azərbaycanca oxumaq üçün: [README.az.md](README.az.md)
 
 ```bash
