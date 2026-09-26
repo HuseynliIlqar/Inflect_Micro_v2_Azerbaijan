@@ -23,9 +23,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
+# The browser interface. Kept out of the core dependencies on purpose: Gradio
+# pulls in a web stack that a caller using `aztts` as a library has no use for.
+app = ["gradio>=5.0,<6"]
 
 [tool.setuptools]
-packages = ["aztts"]
+packages = ["aztts", "webui"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

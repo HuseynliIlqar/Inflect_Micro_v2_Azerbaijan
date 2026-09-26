@@ -1,0 +1,5 @@
+# The browser interface only. The core library does not need any of this --
+# install it when you want `python app.py`, and skip it when you import `aztts`.
+-r requirements.txt
+
+gradio>=5.0,<6
