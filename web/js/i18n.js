@@ -12,6 +12,13 @@ export const LANGUAGE_NAMES = { az: "Azərbaycanca", en: "English" };
 
 export const LABELS = {
   "az": {
+
+  "voice_label": "Səs",
+  "voice_info": "«Azərbaycanca» bu layihənin modelidir. «İngiliscə» isə onun uyğunlaşdırıldığı baza modeldir — başqa müəllifin başqa səsi, ayrıca yüklənir.",
+  "voice_az": "Azərbaycanca",
+  "voice_en": "İngiliscə (baza model)",
+  "az_only": "Yalnız azərbaycanca səs üçün.",
+  "en_loading": "İngilis modeli yüklənir (38 MB, bir dəfə)…",
     "title": "Azərbaycan dilində mətn-nitq sintezi",
     "subtitle": "9.36M parametrli VITS modeli, 24 kHz, tamamilə oflayn. Mətni yazın, parametrləri tənzimləyin və dinləyin.",
     "language_label": "İnterfeys dili",
@@ -50,6 +57,13 @@ export const LABELS = {
     "stats": "{seconds} s səs, {elapsed} s-də hazırlandı ({realtime}x real vaxt) · {chunks} · {rate} Hz"
   },
   "en": {
+
+  "voice_label": "Voice",
+  "voice_info": "\"Azerbaijani\" is this project's model. \"English\" is the base model it was adapted from -- another author's voice, downloaded separately.",
+  "voice_az": "Azerbaijani",
+  "voice_en": "English (base model)",
+  "az_only": "Azerbaijani voice only.",
+  "en_loading": "Loading the English model (38 MB, once)…",
     "title": "Azerbaijani text to speech",
     "subtitle": "A 9.36M-parameter VITS model, 24 kHz, fully offline. Type the text, adjust the parameters and listen.",
     "language_label": "Interface language",

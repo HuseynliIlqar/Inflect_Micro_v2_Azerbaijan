@@ -86,10 +86,15 @@ The model also runs **entirely in a browser**, with nothing sent anywhere:
 
 **<https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan>**
 
-The two ONNX graphs go through ONNX Runtime Web on WebGPU, at roughly 8x real
-time on a laptop; phonemisation is eSpeak NG compiled to WebAssembly, and the
+The ONNX graphs go through ONNX Runtime Web on WebGPU, at roughly 8x real time
+on a laptop; phonemisation is eSpeak NG compiled to WebAssembly, and the
 Azerbaijani text layer is ported to JavaScript. Once the page has loaded it
 works with the network switched off.
+
+**Both voices are there.** The English one comes from
+[`owensong/Inflect-Micro-v2-ONNX`](https://huggingface.co/owensong/Inflect-Micro-v2-ONNX),
+the base model's own ONNX release, and its 38 MB is downloaded only if you pick
+it.
 
 The port is not trusted on faith. It is checked against the Python original
 over golden files generated from it -- 24,022 number-word comparisons, 550

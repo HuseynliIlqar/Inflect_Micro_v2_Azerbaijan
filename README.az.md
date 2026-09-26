@@ -87,10 +87,15 @@ Model **tamamilə brauzerdə** də işləyir, heç nə heç yerə göndərilmir:
 
 **<https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan>**
 
-İki ONNX qrafı ONNX Runtime Web üzərindən WebGPU ilə işləyir — noutbukda təxminən
+ONNX qrafları ONNX Runtime Web üzərindən WebGPU ilə işləyir — noutbukda təxminən
 real vaxtdan 8 dəfə sürətli; fonemləşdirmə WebAssembly-yə kompilyasiya edilmiş
 eSpeak NG-dir, azərbaycanca mətn qatı isə JavaScript-ə portlanıb. Səhifə
 yükləndikdən sonra internetsiz də işləyir.
+
+**Hər iki səs oradadır.** İngiliscə olan
+[`owensong/Inflect-Micro-v2-ONNX`](https://huggingface.co/owensong/Inflect-Micro-v2-ONNX)
+reposundan — baza modelin öz ONNX buraxılışından — gəlir və onun 38 MB-ı yalnız
+siz həmin səsi seçsəniz yüklənir.
 
 Port sözə görə qəbul edilmir: Python orijinalından yaradılmış qızıl fayllarla
 yoxlanılır — 24 022 rəqəm müqayisəsi, 550 normallaşdırma cümləsi, 550 bölgü — və

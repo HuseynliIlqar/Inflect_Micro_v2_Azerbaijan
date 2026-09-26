@@ -14,12 +14,19 @@ import { Engine, toWav, SAMPLE_RATE } from "./js/tts.js";
 ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/";
 ort.env.wasm.numThreads = Math.min(4, navigator.hardwareConcurrency || 1);
 
-const EXAMPLES = [
-  "Salam, bu model tamamilə yerli maşında işləyir.",
-  "Payız gəlmişdi və şəhərin küçələri saralmış yarpaqlarla örtülmüşdü.",
-  "Sən bu kitabı oxumusan? Mənə çox maraqlı gəldi.",
-  "II Dünya müharibəsi 01/09/1939 tarixində başladı və 25% artım oldu.",
-];
+const EXAMPLES = {
+  az: [
+    "Salam, bu model tamamilə yerli maşında işləyir.",
+    "Payız gəlmişdi və şəhərin küçələri saralmış yarpaqlarla örtülmüşdü.",
+    "Sən bu kitabı oxumusan? Mənə çox maraqlı gəldi.",
+    "II Dünya müharibəsi 01/09/1939 tarixində başladı və 25% artım oldu.",
+  ],
+  en: [
+    "Hello, this model runs completely offline on your machine.",
+    "Autumn had come, and the streets were covered with yellow leaves.",
+    "Have you read this book? I found it very interesting.",
+  ],
+};
 
 const $ = (id) => document.getElementById(id);
 const els = {
@@ -37,18 +44,30 @@ const els = {
   maxWords: $("max-words"), maxWordsValue: $("max-words-value"),
   maxWordsLabel: $("max-words-label"), maxWordsInfo: $("max-words-info"),
   chunks: $("chunks"), chunksLabel: $("chunks-label"), chunksInfo: $("chunks-info"),
+  voiceLabel: $("voice-label"), voiceInfo: $("voice-info"),
   offlineNote: $("offline-note"), footer: $("footer"), enNote: $("en-note"),
 };
 
 let language = DEFAULT_LANGUAGE;
+let voice = "az";
 let lastResult = null;
 let busy = false;
 
-const engine = new Engine(ort, {
-  durationPath: "./onnx/duration.onnx",
-  decodePath: "./onnx/decode.onnx",
-  phonemize: (text) => phonemize(text, "az"),
-});
+// One engine per voice, both lazy: a visitor who never picks English never
+// downloads its 38 MB. The Azerbaijani model is this project's; the English one
+// is owensong/Inflect-Micro-v2, the checkpoint it was adapted from.
+const ENGINES = {
+  az: new Engine(ort, {
+    durationPath: "./onnx/duration.onnx",
+    decodePath: "./onnx/decode.onnx",
+    phonemize: (text) => phonemize(text, "az"),
+  }),
+  en: new Engine(ort, {
+    durationPath: "./onnx/en/duration.onnx",
+    decodePath: "./onnx/en/decode.onnx",
+    phonemize: (text) => phonemize(text, "en-us"),
+  }),
+};
 
 // -- labels -----------------------------------------------------------------
 
@@ -80,6 +99,11 @@ function applyLanguage(next) {
   els.advancedLabel.textContent = t("advanced");
   els.maxWordsLabel.textContent = t("max_words_label");
   els.maxWordsInfo.textContent = t("max_words_info");
+  els.voiceLabel.textContent = t("voice_label");
+  els.voiceInfo.textContent = t("voice_info");
+  for (const button of document.querySelectorAll("[data-voice]")) {
+    button.textContent = t(`voice_${button.dataset.voice}`);
+  }
   els.chunksLabel.textContent = t("chunks_label");
   els.chunksInfo.textContent = t("chunks_info");
   els.offlineNote.textContent = t("offline_note");
@@ -91,7 +115,42 @@ function applyLanguage(next) {
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", String(active));
   }
+  applyVoice(voice);
   if (lastResult) showStats(lastResult);
+}
+
+/**
+ * The Azerbaijani text layer does not apply to the English checkpoint --
+ * `normalizeAz` would rewrite numbers into Azerbaijani words -- so its control
+ * is disabled rather than quietly ignored.
+ */
+function applyVoice(next) {
+  voice = ENGINES[next] ? next : "az";
+  const azerbaijani = voice === "az";
+
+  for (const button of document.querySelectorAll("[data-voice]")) {
+    const active = button.dataset.voice === voice;
+    button.classList.toggle("is-active", active);
+    button.setAttribute("aria-pressed", String(active));
+  }
+
+  els.normalise.disabled = !azerbaijani;
+  els.normaliseInfo.textContent =
+    label(language, "normalise_info") +
+    (azerbaijani ? "" : " " + label(language, "az_only"));
+
+  els.examples.replaceChildren();
+  for (const sentence of EXAMPLES[voice]) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "example";
+    button.textContent = sentence;
+    button.addEventListener("click", () => {
+      els.text.value = sentence;
+      els.text.focus();
+    });
+    els.examples.appendChild(button);
+  }
 }
 
 function showStats(result) {
@@ -120,7 +179,11 @@ async function speak() {
   try {
     els.status.textContent = label(language, "loading_phonemes");
     await loadPhonemizer();
-    els.status.textContent = label(language, "loading_model");
+    const engine = ENGINES[voice];
+    els.status.textContent = label(
+      language,
+      voice === "en" && !engine.decode ? "en_loading" : "loading_model",
+    );
     await engine.load();
     els.status.textContent = label(language, "synthesising");
 
@@ -129,7 +192,7 @@ async function speak() {
       speed: Number(els.speed.value),
       variation: Number(els.variation.value),
       seed: Number(els.seed.value) || 0,
-      normalize: els.normalise.checked,
+      normalize: voice === "az" && els.normalise.checked,
       maxWords: Number(els.maxWords.value),
       onChunk: (index, total) => {
         els.status.textContent = `${label(language, "synthesising")} ${index + 1}/${total}`;
@@ -172,16 +235,8 @@ for (const button of document.querySelectorAll(".segment")) {
   button.addEventListener("click", () => applyLanguage(button.dataset.language));
 }
 
-for (const sentence of EXAMPLES) {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "example";
-  button.textContent = sentence;
-  button.addEventListener("click", () => {
-    els.text.value = sentence;
-    els.text.focus();
-  });
-  els.examples.appendChild(button);
+for (const button of document.querySelectorAll("[data-voice]")) {
+  button.addEventListener("click", () => applyVoice(button.dataset.voice));
 }
 
 els.speed.addEventListener("input", () => {
