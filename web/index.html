@@ -64,7 +64,22 @@
 
         <button id="speak" type="button" class="primary">Səsləndir</button>
 
-        <p id="status" class="status" role="status" aria-live="polite"></p>
+        <div
+          id="progress"
+          class="progress"
+          role="progressbar"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          hidden
+        >
+          <div class="progress-fill"></div>
+        </div>
+
+        <div class="status-row">
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+          <span id="elapsed" class="elapsed" aria-hidden="true"></span>
+        </div>
+        <p id="slow-note" class="note slow-note" hidden></p>
 
         <div class="examples">
           <span id="examples-label" class="field-label"></span>
@@ -154,6 +169,7 @@
         </div>
 
         <p id="offline-note" class="note"></p>
+        <p id="speed-note" class="note"></p>
       </section>
     </main>
 

@@ -91,29 +91,96 @@ export function edgeFade(waveform, sampleRate = SAMPLE_RATE) {
  * `onnxruntime-web` is passed in rather than imported, so this module stays
  * testable in Node with `onnxruntime-node`.
  */
+/**
+ * True when WebGPU can actually be used. `navigator.gpu` alone is not enough:
+ * many phones expose the object and then return no adapter.
+ */
+export async function hasWebGpu() {
+  try {
+    const gpu = globalThis.navigator?.gpu;
+    return Boolean(gpu && (await gpu.requestAdapter()));
+  } catch {
+    return false;
+  }
+}
+
 export class Engine {
-  constructor(ort, { durationPath, decodePath, phonemize }) {
+  /**
+   * `fetchModels(urls, onProgress)` is optional: given, the graphs are
+   * downloaded as bytes (with progress, and cached); omitted, onnxruntime
+   * fetches the paths itself, which is what a Node test wants.
+   */
+  constructor(ort, { durationPath, decodePath, phonemize, fetchModels, preferWasm = false }) {
     this.ort = ort;
     this.durationPath = durationPath;
     this.decodePath = decodePath;
     this.phonemize = phonemize;
+    this.fetchModels = fetchModels;
+    this.preferWasm = preferWasm;
     this.duration = null;
     this.decode = null;
+    this.backend = null;
   }
 
+  /** `onProgress(stage, detail)`: "download" with {loaded, total}, then "compile". */
   async load(onProgress) {
     if (this.duration && this.decode) return;
     // WebGPU where the browser has it: the decoder is a convolutional vocoder
     // and runs several times faster there than in single-threaded wasm, which
-    // is all a page without cross-origin isolation can use. Falls back quietly.
-    const providers = navigator.gpu ? ["webgpu", "wasm"] : ["wasm"];
-    const options = { executionProviders: providers, graphOptimizationLevel: "all" };
-    onProgress?.("duration");
-    this.duration = await this.ort.InferenceSession.create(this.durationPath, options);
-    onProgress?.("decode");
-    this.decode = await this.ort.InferenceSession.create(this.decodePath, options);
-    this.backend = providers[0];
-    onProgress?.("ready");
+    // is all a page without cross-origin isolation can use.
+    const gpu = !this.preferWasm && (await hasWebGpu());
+    if (gpu) {
+      try {
+        await this.createSessions("webgpu", onProgress);
+        return;
+      } catch (error) {
+        // Many phone drivers expose an adapter and then fail here.
+        console.warn("[aztts] WebGPU failed, using WebAssembly", error);
+      }
+    }
+    await this.createSessions("wasm", onProgress);
+  }
+
+  /**
+   * Both sessions on exactly one backend, so `this.backend` names what really
+   * runs -- onnxruntime's own fallback would switch silently. Committed only
+   * when both exist, so a failure halfway leaves nothing behind.
+   */
+  async createSessions(backend, onProgress) {
+    const paths = [this.durationPath, this.decodePath];
+    const [durationModel, decodeModel] = this.fetchModels
+      ? await this.fetchModels(paths, (loaded, total) =>
+          onProgress?.("download", { loaded, total }),
+        )
+      : paths;
+
+    onProgress?.("compile");
+    const options = {
+      executionProviders: [backend],
+      graphOptimizationLevel: "all",
+      // Errors only: with a single provider, onnxruntime warns on every load
+      // that it moved shape ops to the CPU -- expected, and it prints as an error.
+      logSeverityLevel: 3,
+    };
+    const duration = await this.ort.InferenceSession.create(durationModel, options);
+    let decode;
+    try {
+      decode = await this.ort.InferenceSession.create(decodeModel, options);
+    } catch (error) {
+      await duration.release?.();
+      throw error;
+    }
+    await this.release();
+    this.duration = duration;
+    this.decode = decode;
+    this.backend = backend;
+  }
+
+  async release() {
+    await Promise.all([this.duration?.release?.(), this.decode?.release?.()]);
+    this.duration = null;
+    this.decode = null;
+    this.backend = null;
   }
 
   /**
@@ -166,6 +233,7 @@ export class Engine {
       normalize = true,
       maxWords = DEFAULT_MAX_WORDS,
       onChunk,
+      onBackend,
     } = options;
 
     const prepared = normalize ? normalizeAz(text) : text.split(/\s+/u).filter(Boolean).join(" ");
@@ -185,11 +253,18 @@ export class Engine {
       }
       onChunk?.(index, chunks.length);
       const phonemes = await this.phonemize(chunks[index]);
-      const piece = await this.speakPhonemes(phonemes, {
-        speed,
-        variation,
-        seed: seed + index,
-      });
+      const settings = { speed, variation, seed: seed + index };
+      let piece;
+      try {
+        piece = await this.speakPhonemes(phonemes, settings);
+      } catch (error) {
+        // A GPU that loads the graphs can still fail to run them.
+        if (this.backend !== "webgpu") throw error;
+        console.warn("[aztts] WebGPU run failed, retrying on WebAssembly", error);
+        await this.createSessions("wasm");
+        onBackend?.(this.backend);
+        piece = await this.speakPhonemes(phonemes, settings);
+      }
       pieces.push(piece);
       total += piece.length;
     }

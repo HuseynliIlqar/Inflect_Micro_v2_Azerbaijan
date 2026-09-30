@@ -14,15 +14,17 @@ const CDN = "https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/buil
 
 let modulePromise = null;
 
-function loadScript(url) {
-  return new Promise((resolve, reject) => {
-    if (globalThis.createPiperPhonemize) return resolve();
-    const element = document.createElement("script");
-    element.src = url;
-    element.onload = () => resolve();
-    element.onerror = () => reject(new Error(`could not load ${url}`));
-    document.head.appendChild(element);
-  });
+/**
+ * The build is a classic script that declares one global. The page runs this
+ * module in a module worker, which has neither `<script>` nor a working
+ * `importScripts()`, so the source is fetched and evaluated for that global.
+ */
+async function loadScript(url) {
+  if (globalThis.createPiperPhonemize) return;
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`could not load ${url} (HTTP ${response.status})`);
+  const source = await response.text();
+  globalThis.createPiperPhonemize = new Function(`${source}\nreturn createPiperPhonemize;`)();
 }
 
 /** Start eSpeak NG once; later calls reuse the same instance. */
@@ -42,7 +44,11 @@ export function loadPhonemizer() {
               : path,
       });
       return { module, lines };
-    })();
+    })().catch((error) => {
+      // A dropped connection must not poison every later attempt.
+      modulePromise = null;
+      throw error;
+    });
   }
   return modulePromise;
 }
