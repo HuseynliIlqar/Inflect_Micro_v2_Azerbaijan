@@ -31,6 +31,7 @@ function writeDismissed(level) {
 export function deviceCopy(verdict, t) {
   const text = {
     gpu: () => t("device_text_gpu"),
+    phone: () => t("device_text_phone", { threads: verdict.threads }),
     threads: () => t("device_text_threads", { threads: verdict.threads }),
     "single-framed": () => t("device_text_single_framed"),
     single: () => t("device_text_single"),
@@ -38,8 +39,11 @@ export function deviceCopy(verdict, t) {
   const title = verdict.gpuFailed
     ? t("device_gpu_failed_title")
     : t(verdict.level === "gpu" ? "device_title_gpu"
+      : verdict.level === "phone" ? "device_title_phone"
       : verdict.level === "threads" ? "device_title_threads" : "device_title_single");
-  return { title, text, note: verdict.forced ? t("device_note_forced") : "" };
+  const note = verdict.forced ? t("device_note_forced")
+    : verdict.level === "phone" ? t("device_note_phone") : "";
+  return { title, text, note };
 }
 
 export function createDeviceView(els, { directUrl }) {

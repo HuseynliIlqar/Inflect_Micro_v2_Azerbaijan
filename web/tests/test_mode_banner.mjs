@@ -106,6 +106,17 @@ expect(
   false,
 );
 
+// A phone skips the GPU by policy: the report must not read as a GPU failure.
+const phoneLine = diagnosticsLine({ voice: "az", backend: "wasm", precision: "int8", phone: true, fallbacks: [] });
+expect("a phone says so", phoneLine.includes("phone=yes"), true);
+expect("and that the GPU was skipped, not failed", phoneLine.includes("gpu=skipped-on-phone") && phoneLine.includes("fallbacks=none"), true);
+expect(
+  "?backend=webgpu on a phone is marked as forced",
+  diagnosticsLine({ voice: "az", backend: "webgpu", precision: "fp32", phone: true, forceGpu: true }).includes("gpu=forced"),
+  true,
+);
+expect("a desktop", diagnosticsLine({ voice: "az", backend: "webgpu", precision: "fp32" }).includes("phone=no | gpu=default"), true);
+
 if (failures.length) {
   console.log(`FAIL ${failures.length} of ${checked}`);
   for (const f of failures) {

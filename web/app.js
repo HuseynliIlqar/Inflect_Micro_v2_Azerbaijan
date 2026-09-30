@@ -11,7 +11,7 @@ import { DEFAULT_LANGUAGE, label, chunkCount, LABELS } from "./js/i18n.js";
 import { toWav, SAMPLE_RATE, hasWebGpu, CancelledError } from "./js/tts.js";
 import { downloadFraction, chunkFraction, megabytes } from "./js/progress.js";
 import { applyTheme, initialTheme, readStoredTheme } from "./js/theme.js";
-import { planOptionsFromQuery } from "./js/backend-plan.js";
+import { planOptionsFromQuery, thisIsPhone } from "./js/backend-plan.js";
 import { bannerState, badgeParts, diagnosticsLine } from "./js/mode-banner.js";
 import { deviceVerdict, errorKind } from "./js/device-check.js";
 import { createDeviceView } from "./js/device-view.js";
@@ -94,14 +94,19 @@ const IN_FRAME = window.top !== window.self;
 // -- the device check ------------------------------------------------------------
 
 const device = createDeviceView(els, { directUrl: DIRECT_URL });
-const { preferWasm } = planOptionsFromQuery(location.search);
+const { preferWasm, forceGpu } = planOptionsFromQuery(location.search);
+// The worker applies the same rule; see js/backend-plan.js.
+const PHONE = thisIsPhone();
 // The same thread count the worker will use (worker.js).
 const expectedThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1;
 
 /** On page load, before any model is fetched: what will this device do? */
 async function checkDevice() {
-  const gpu = await hasWebGpu();
-  device.announce(deviceVerdict({ gpu, preferWasm, threads: expectedThreads, framed: IN_FRAME }));
+  // A phone does not ask for an adapter it will not use.
+  const gpu = PHONE && !forceGpu ? false : await hasWebGpu();
+  device.announce(deviceVerdict({
+    gpu, preferWasm, phone: PHONE, forceGpu, threads: expectedThreads, framed: IN_FRAME,
+  }));
 }
 
 /** WebGPU was expected and the worker fell back: say so, once. */
@@ -330,6 +335,8 @@ function diagnostics() {
     isolated: self.crossOriginIsolated,
     framed: IN_FRAME,
     fullQuality,
+    phone: PHONE,
+    forceGpu,
     fallbacks,
     seconds: lastResult?.seconds,
     elapsed: lastResult?.elapsed,

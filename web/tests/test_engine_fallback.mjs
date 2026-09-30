@@ -243,6 +243,36 @@ delete globalThis.navigator.gpu;
   expect("and back to int8", stepOf(engine), "wasm/int8");
 }
 
+// -- phones: with an adapter on offer, a phone still starts on the CPU ---------------
+
+{
+  let asked = 0;
+  const realNavigator = Object.getOwnPropertyDescriptor(globalThis, "navigator");
+  Object.defineProperty(globalThis, "navigator", {
+    configurable: true,
+    value: { gpu: { requestAdapter: async () => { asked += 1; return {}; } } },
+  });
+  try {
+    const desktop = engineWith(fakeOrt());
+    await desktop.load();
+    expect("a desktop with an adapter starts on the GPU", stepOf(desktop), "webgpu/fp32");
+
+    asked = 0;
+    const phone = engineWith(fakeOrt(), { phone: true });
+    await phone.load();
+    expect("a phone starts on int8 even with an adapter", stepOf(phone), "wasm/int8");
+    expect("and never asks for the adapter", asked, 0);
+    expect("skipping is not a failure", phone.failures, []);
+
+    const forced = engineWith(fakeOrt(), { phone: true, forceGpu: true });
+    await forced.load();
+    expect("?backend=webgpu on a phone uses the GPU", stepOf(forced), "webgpu/fp32");
+  } finally {
+    if (realNavigator) Object.defineProperty(globalThis, "navigator", realNavigator);
+    else delete globalThis.navigator;
+  }
+}
+
 if (failures.length) {
   console.log(`FAIL ${failures.length} of ${checked}`);
   for (const f of failures) {

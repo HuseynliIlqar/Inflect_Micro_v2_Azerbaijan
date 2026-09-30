@@ -8,18 +8,29 @@
 
 /**
  * @param {{ gpu?: boolean, gpuFailed?: boolean, preferWasm?: boolean,
+ *           phone?: boolean, forceGpu?: boolean,
  *           threads?: number, framed?: boolean }} facts
- * @returns {{ level: "gpu"|"threads"|"single-framed"|"single", bars: 1|2|3,
+ *   phone: the plan skips WebGPU here (js/backend-plan.js) unless forceGpu.
+ * @returns {{ level: "gpu"|"phone"|"threads"|"single-framed"|"single", bars: 1|2|3,
  *             tone: "good"|"warn"|"bad", dialog: boolean,
  *             action: "open-direct"|null, threads: number,
  *             gpuFailed: boolean, forced: boolean }}
  *   bars: the speed meter; dialog: a modal on load (degraded), else a toast;
  *   action: the extra button the popup offers.
  */
-export function deviceVerdict({ gpu = false, gpuFailed = false, preferWasm = false, threads = 1, framed = false }) {
-  const base = { threads, gpuFailed, forced: preferWasm && gpu };
-  if (gpu && !gpuFailed && !preferWasm) {
+export function deviceVerdict({
+  gpu = false, gpuFailed = false, preferWasm = false, phone = false, forceGpu = false,
+  threads = 1, framed = false,
+}) {
+  const skipped = phone && !forceGpu;
+  const base = { threads, gpuFailed, forced: preferWasm && gpu, phone };
+  if (gpu && !gpuFailed && !preferWasm && !skipped) {
     return { ...base, level: "gpu", bars: 3, tone: "good", dialog: false, action: null };
+  }
+  // On a phone the processor is the plan, not a fallback: say that, and say
+  // why, instead of "no WebGPU" -- the phone may well have it.
+  if (skipped && threads > 1) {
+    return { ...base, level: "phone", bars: 2, tone: "warn", dialog: true, action: null };
   }
   if (threads > 1) {
     return { ...base, level: "threads", bars: 2, tone: "warn", dialog: true, action: null };

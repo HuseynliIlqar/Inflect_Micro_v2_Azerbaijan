@@ -65,6 +65,16 @@ real time.
 driver problem on a particular phone apart from a model problem: if the audio
 is wrong with WebGPU and right with `?backend=wasm`, the driver is at fault.
 
+Phones and tablets start on the CPU and never ask for a WebGPU adapter. On a
+Redmi Note 10 Pro (Adreno 618, Chrome 154) the GPU step was no faster than
+int8 on four threads (0.3x real time either way, plus 6-20 s of GPU compile),
+computed wrong durations -- the same sentence and seed came out 4.03 s and
+4.12 s long where the CPU gives 3.79 s every time -- and lost the WebGPU
+instance after each use. `?backend=webgpu` still tries the GPU on a phone, for
+testing; the device card says *Phone -- running on the processor* and the
+diagnostics line carries `phone=yes | gpu=skipped-on-phone`. An iPad in its
+default desktop mode reports a Mac and keeps WebGPU.
+
 ## The fallback chain
 
 `js/backend-plan.js` decides the order and `Engine` walks it, moving down one
@@ -72,7 +82,7 @@ step whenever the current one fails to load or fails while running:
 
 | Step | Backend | Decoder | When |
 | --- | --- | --- | --- |
-| 1 | WebGPU | fp32 `decode.onnx` | a WebGPU adapter exists |
+| 1 | WebGPU | fp32 `decode.onnx` | a WebGPU adapter exists, and not a phone (unless `?backend=webgpu`) |
 | 2 | CPU (wasm) | int8 `decode.int8.onnx` | the voice ships one (Azerbaijani does) |
 | 3 | CPU (wasm) | fp32 `decode.onnx` | always, last |
 

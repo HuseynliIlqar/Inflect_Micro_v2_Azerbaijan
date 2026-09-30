@@ -23,7 +23,7 @@ import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/o
 import { phonemize, loadPhonemizer } from "./js/phonemize.js";
 import { CancelledError, Engine } from "./js/tts.js";
 import { fetchModels } from "./js/fetch-model.js";
-import { planOptionsFromQuery } from "./js/backend-plan.js";
+import { planOptionsFromQuery, thisIsPhone } from "./js/backend-plan.js";
 
 ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/";
 // Threads need cross-origin isolation, which a static Space does not send;
@@ -36,7 +36,8 @@ ort.env.wasm.numThreads = threads;
 // Tester switches on the page URL: `?backend=wasm` forces the CPU, to tell a
 // GPU driver problem apart from a model problem on a given phone, and
 // `?precision=fp32` starts with the full-quality decoder instead of int8.
-const { preferWasm, fullQuality } = planOptionsFromQuery(self.location.search);
+const { preferWasm, fullQuality, forceGpu } = planOptionsFromQuery(self.location.search);
+const phone = thisIsPhone(self.navigator);
 
 // Both lazy: a visitor who never picks English never downloads its 38 MB.
 const ENGINES = {
@@ -52,6 +53,8 @@ const ENGINES = {
     fetchModels,
     preferWasm,
     fullQuality,
+    phone,
+    forceGpu,
   }),
   en: new Engine(ort, {
     durationPath: "./onnx/en/duration.onnx",
@@ -60,6 +63,8 @@ const ENGINES = {
     fetchModels,
     preferWasm,
     fullQuality,
+    phone,
+    forceGpu,
   }),
 };
 

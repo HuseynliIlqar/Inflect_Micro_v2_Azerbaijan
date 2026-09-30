@@ -43,8 +43,11 @@ const oneLine = (text) => String(text ?? "").replace(/\s+/gu, " ").trim();
 /** Everything a bug report needs, on one line with no line breaks. */
 export function diagnosticsLine({
   voice, backend, precision, threads = 1, isolated = false, framed = false, fullQuality = false,
-  fallbacks = [], seconds, elapsed, chunks, userAgent = "",
+  phone = false, forceGpu = false, fallbacks = [], seconds, elapsed, chunks, userAgent = "",
 }) {
+  // A phone skips WebGPU by policy (js/backend-plan.js); say so, so a report
+  // from a phone is not read as a GPU that failed.
+  const gpuPolicy = forceGpu ? "forced" : phone ? "skipped-on-phone" : "default";
   const failed = fallbacks.length
     ? fallbacks.map((f) => `${f.backend}/${f.precision}:${f.stage}(${oneLine(f.message)})`).join(", ")
     : "none";
@@ -60,6 +63,8 @@ export function diagnosticsLine({
     `isolated=${isolated ? "yes" : "no"}`,
     `framed=${framed ? "yes" : "no"}`,
     `full-quality=${fullQuality ? "yes" : "no"}`,
+    `phone=${phone ? "yes" : "no"}`,
+    `gpu=${gpuPolicy}`,
     `fallbacks=${failed}`,
     speed,
     `chunks=${chunks ?? "-"}`,

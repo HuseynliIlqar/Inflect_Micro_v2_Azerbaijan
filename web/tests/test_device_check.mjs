@@ -81,6 +81,41 @@ for (const level of ["device_title_gpu", "device_text_gpu", "device_title_thread
     [label("az", level) !== level, label("en", level) !== level], [true, true]);
 }
 
+// -- phones: WebGPU is skipped on purpose, so the card must not promise it -----------
+
+expect(
+  "a phone with WebGPU and four threads: the phone verdict, not the GPU one",
+  pick(deviceVerdict({ gpu: true, phone: true, threads: 4, framed: false })),
+  { level: "phone", bars: 2, tone: "warn", dialog: true, action: null },
+);
+expect(
+  "a phone without WebGPU reads the same",
+  deviceVerdict({ gpu: false, phone: true, threads: 4, framed: false }).level,
+  "phone",
+);
+expect(
+  "one thread inside the Hub page is still the worse news on a phone",
+  deviceVerdict({ gpu: true, phone: true, threads: 1, framed: true }).level,
+  "single-framed",
+);
+expect(
+  "?backend=webgpu on a phone is the GPU verdict",
+  deviceVerdict({ gpu: true, phone: true, forceGpu: true, threads: 4, framed: false }).level,
+  "gpu",
+);
+expect(
+  "a desktop is unaffected",
+  deviceVerdict({ gpu: true, phone: false, threads: 4, framed: false }).level,
+  "gpu",
+);
+for (const lang of ["az", "en"]) {
+  const t = (key, values) => label(lang, key, values);
+  const copy = deviceCopy(deviceVerdict({ gpu: true, phone: true, threads: 4 }), t);
+  expect(`[${lang}] the phone card has its own title`, copy.title, t("device_title_phone"));
+  expect(`[${lang}] the phone text names the threads`, copy.text.includes("4"), true);
+  expect(`[${lang}] the phone note says why WebGPU is off`, copy.note, t("device_note_phone"));
+}
+
 if (failures.length) {
   console.log(`FAIL ${failures.length} of ${checked}`);
   for (const f of failures) {

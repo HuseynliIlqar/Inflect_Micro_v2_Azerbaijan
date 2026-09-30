@@ -159,7 +159,7 @@ export class Engine {
    */
   constructor(ort, {
     durationPath, decodePath, int8DecodePath = null, phonemize, fetchModels,
-    preferWasm = false, fullQuality = false, censor = true,
+    preferWasm = false, fullQuality = false, censor = true, phone = false, forceGpu = false,
   }) {
     this.ort = ort;
     this.durationPath = durationPath;
@@ -169,6 +169,9 @@ export class Engine {
     this.fetchModels = fetchModels;
     this.preferWasm = preferWasm;
     this.fullQuality = fullQuality;
+    // A phone starts on the CPU; see js/backend-plan.js.
+    this.phone = phone;
+    this.forceGpu = forceGpu;
     // On unless a caller builds the engine without it; `speak()` takes no
     // option that could lift it.
     this.censor = censor;
@@ -192,9 +195,13 @@ export class Engine {
    */
   async load(onProgress) {
     if (this.duration && this.decode) return;
+    // A phone does not even ask for an adapter unless the GPU was forced.
+    const wantsGpu = !this.preferWasm && (!this.phone || this.forceGpu);
     const plan = fallbackPlan({
-      gpu: !this.preferWasm && (await hasWebGpu()),
+      gpu: wantsGpu && (await hasWebGpu()),
       preferWasm: this.preferWasm,
+      phone: this.phone,
+      forceGpu: this.forceGpu,
       hasInt8: Boolean(this.int8DecodePath),
       fullQuality: this.fullQuality,
     });
