@@ -13,7 +13,7 @@ import { downloadFraction, chunkFraction, megabytes } from "./js/progress.js";
 import { applyTheme, initialTheme, readStoredTheme } from "./js/theme.js";
 import { planOptionsFromQuery, thisIsPhone } from "./js/backend-plan.js";
 import { bannerState, badgeParts, diagnosticsLine } from "./js/mode-banner.js";
-import { deviceVerdict, errorKind } from "./js/device-check.js";
+import { deviceVerdict, errorKind, adviceKey, isAppleMobile } from "./js/device-check.js";
 import { createDeviceView } from "./js/device-view.js";
 import { toast } from "./js/notify.js";
 import { barCount, drawWave, peaks, seekFraction } from "./js/waveform.js";
@@ -97,6 +97,8 @@ const device = createDeviceView(els, { directUrl: DIRECT_URL });
 const { preferWasm, forceGpu } = planOptionsFromQuery(location.search);
 // The worker applies the same rule; see js/backend-plan.js.
 const PHONE = thisIsPhone();
+// Every browser on an iPhone or iPad is WebKit: advice never names another one.
+const APPLE_MOBILE = isAppleMobile({ userAgent: navigator.userAgent, maxTouchPoints: navigator.maxTouchPoints });
 // The same thread count the worker will use (worker.js).
 const expectedThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1;
 
@@ -105,7 +107,8 @@ async function checkDevice() {
   // A phone does not ask for an adapter it will not use.
   const gpu = PHONE && !forceGpu ? false : await hasWebGpu();
   device.announce(deviceVerdict({
-    gpu, preferWasm, phone: PHONE, forceGpu, threads: expectedThreads, framed: IN_FRAME,
+    gpu, preferWasm, phone: PHONE, forceGpu, appleMobile: APPLE_MOBILE,
+    threads: expectedThreads, framed: IN_FRAME,
   }));
 }
 
@@ -113,7 +116,7 @@ async function checkDevice() {
 function reviseDevice() {
   if (device.verdict?.level !== "gpu" || backend !== "wasm") return;
   const reason = fallbacks.find((f) => f.backend === "webgpu")?.message ?? "";
-  device.revise(deviceVerdict({ gpu: true, gpuFailed: true, threads, framed: IN_FRAME }), reason);
+  device.revise(deviceVerdict({ gpu: true, gpuFailed: true, appleMobile: APPLE_MOBILE, threads, framed: IN_FRAME }), reason);
 }
 
 /** Empty text: said next to the field, not in a popup. */
@@ -135,7 +138,7 @@ function showError(message) {
   toast(els.toasts, {
     tone: "bad",
     title: label(language, "error_title"),
-    text: label(language, `error_next_${errorKind(message)}`),
+    text: label(language, adviceKey(errorKind(message), { appleMobile: APPLE_MOBILE })),
     closeLabel: label(language, "toast_close"),
   });
 }

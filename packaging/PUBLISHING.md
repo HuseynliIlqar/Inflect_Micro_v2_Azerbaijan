@@ -126,6 +126,13 @@ cd hf-space
 cp ../web/index.html ../web/*.css ../web/app.js ../web/worker.js .
 cp -r ../web/js .
 mkdir -p onnx && cp ../web/onnx/*.onnx onnx/
+# onnxruntime-web from the page's own origin -- WebKit (every iPhone browser)
+# refuses a CDN's modules in a worker. Without it the Space ships a page whose
+# worker cannot start, so stop here if the fetch fails.
+(cd .. && python tools/fetch_web_runtime.py) || exit 1
+mkdir -p vendor && cp -r ../web/vendor/onnxruntime-web vendor/
+# The 27 MB .wasm must go through LFS (the Space's *.wasm rule); check it is listed:
+git lfs ls-files | grep -q "ort-wasm-simd-threaded.asyncify.wasm" || git add --renormalize vendor/
 # README.md needs `sdk: static`, `app_file: index.html` and the `custom_headers`
 # block from web/README.md in its YAML header (the headers give wasm threads).
 git add -A && git commit -m "Update the playground" && git push

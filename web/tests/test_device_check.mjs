@@ -1,5 +1,5 @@
 // What the page tells a visitor about this device, before and after synthesis.
-import { deviceVerdict, errorKind } from "../js/device-check.js";
+import { deviceVerdict, errorKind, adviceKey, isAppleMobile } from "../js/device-check.js";
 import { deviceCopy } from "../js/device-view.js";
 import { label } from "../js/i18n.js";
 
@@ -114,6 +114,32 @@ for (const lang of ["az", "en"]) {
   expect(`[${lang}] the phone card has its own title`, copy.title, t("device_title_phone"));
   expect(`[${lang}] the phone text names the threads`, copy.text.includes("4"), true);
   expect(`[${lang}] the phone note says why WebGPU is off`, copy.note, t("device_note_phone"));
+}
+
+// -- iPhone and iPad: every browser there is WebKit, so "try Chrome" is no advice ------
+
+const IPHONE = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/140.0.0.0 Mobile/15E148 Safari/604.1";
+const MAC = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15";
+expect("Chrome on an iPhone is Apple mobile", isAppleMobile({ userAgent: IPHONE }), true);
+expect("an iPad in desktop mode: a Mac with a touch screen", isAppleMobile({ userAgent: MAC, maxTouchPoints: 5 }), true);
+expect("a real Mac", isAppleMobile({ userAgent: MAC, maxTouchPoints: 0 }), false);
+expect("Android is not Apple", isAppleMobile({ userAgent: "Mozilla/5.0 (Linux; Android 13) Mobile" }), false);
+expect("a worker failure on iOS gets the iOS advice", adviceKey("worker", { appleMobile: true }), "error_next_worker_ios");
+expect("so does a backend failure", adviceKey("backend", { appleMobile: true }), "error_next_backend_ios");
+expect("a network failure needs no iOS wording", adviceKey("network", { appleMobile: true }), "error_next_network");
+expect("elsewhere the usual advice", adviceKey("worker"), "error_next_worker");
+expect("one thread on iOS keeps its level", deviceVerdict({ threads: 1, appleMobile: true }).level, "single");
+for (const lang of ["az", "en"]) {
+  const t = (key, values) => label(lang, key, values);
+  for (const key of ["error_next_worker_ios", "error_next_backend_ios", "device_text_single_ios"]) {
+    expect(`[${lang}] ${key} exists`, t(key) !== key, true);
+    expect(`[${lang}] ${key} does not send an iPhone to Chrome`, /Chrome|Edge/u.test(t(key)), false);
+  }
+  expect(
+    `[${lang}] one thread on iOS reads the iOS text`,
+    deviceCopy(deviceVerdict({ threads: 1, appleMobile: true }), t).text,
+    t("device_text_single_ios"),
+  );
 }
 
 if (failures.length) {

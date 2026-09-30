@@ -121,7 +121,7 @@ that into "free for commercial use".
 - **Every CLI entry point calls `use_utf8()` first** (`aztts/console.py`).
   Without it, printing `ə` on a Windows console raises `UnicodeEncodeError`.
   Currently: `say.py`, `tools/seed_sweep.py`, `tools/audio_postprocess.py`,
-  `training/scripts/compare_checkpoints.py`.
+  `tools/fetch_web_runtime.py`, `training/scripts/compare_checkpoints.py`.
 - **Step order in `normalize_az()` is load-bearing.** Abbreviations run first so
   their full stops are not mistaken for sentence ends; acronyms run last so
   Roman numerals win the `II`-style ambiguity. Adding a step means choosing its

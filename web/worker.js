@@ -19,13 +19,18 @@
  *   out: { id, type: "cancelled" }
  */
 
-import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.webgpu.min.mjs";
+// onnxruntime-web 1.30.0, served from this origin rather than a CDN: WebKit --
+// every browser on an iPhone -- checks each module a worker imports against the
+// page's Cross-Origin-Embedder-Policy and refuses a CDN's, whatever its CORS
+// and CORP headers say, so the worker never started there. The files come from
+// `python tools/fetch_web_runtime.py`; they are not in the repository.
+import * as ort from "./vendor/onnxruntime-web/ort.webgpu.min.mjs";
 import { phonemize, loadPhonemizer } from "./js/phonemize.js";
 import { CancelledError, Engine } from "./js/tts.js";
 import { fetchModels } from "./js/fetch-model.js";
 import { planOptionsFromQuery, thisIsPhone } from "./js/backend-plan.js";
 
-ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/";
+ort.env.wasm.wasmPaths = new URL("./vendor/onnxruntime-web/", import.meta.url).href;
 // Threads need cross-origin isolation, which a static Space does not send;
 // asking for them anyway only prints a warning and falls back to one.
 // The Space sends COOP/COEP (`custom_headers` in its README), so the direct

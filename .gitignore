@@ -44,4 +44,7 @@ desktop.ini
 # page locally:
 #     cp <export>/onnx/*.onnx web/onnx/
 web/onnx/
+# onnxruntime-web, served from the page's origin because WebKit refuses a CDN's
+# modules in a worker (27 MB). Fetch it with: python tools/fetch_web_runtime.py
+web/vendor/
 web/node_modules/

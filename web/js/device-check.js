@@ -20,10 +20,10 @@
  */
 export function deviceVerdict({
   gpu = false, gpuFailed = false, preferWasm = false, phone = false, forceGpu = false,
-  threads = 1, framed = false,
+  appleMobile = false, threads = 1, framed = false,
 }) {
   const skipped = phone && !forceGpu;
-  const base = { threads, gpuFailed, forced: preferWasm && gpu, phone };
+  const base = { threads, gpuFailed, forced: preferWasm && gpu, phone, appleMobile };
   if (gpu && !gpuFailed && !preferWasm && !skipped) {
     return { ...base, level: "gpu", bars: 3, tone: "good", dialog: false, action: null };
   }
@@ -38,6 +38,25 @@ export function deviceVerdict({
   return framed
     ? { ...base, level: "single-framed", bars: 1, tone: "bad", dialog: true, action: "open-direct" }
     : { ...base, level: "single", bars: 1, tone: "bad", dialog: true, action: null };
+}
+
+/**
+ * An iPhone or iPad. Every browser there runs on WebKit -- Apple requires it --
+ * so advice to "try Chrome" sends the visitor to the same engine. An iPad in
+ * its default desktop mode reports a Mac; its touch screen gives it away.
+ *
+ * @param {{ userAgent?: string, maxTouchPoints?: number }} device
+ */
+export function isAppleMobile({ userAgent = "", maxTouchPoints = 0 } = {}) {
+  return /iPhone|iPad|iPod/u.test(userAgent) || (/Macintosh/u.test(userAgent) && maxTouchPoints > 1);
+}
+
+// The advice that names another browser, and so needs its own iOS wording.
+const APPLE_ADVICE = new Set(["worker", "backend"]);
+
+/** The label key for an error kind's advice on this device. */
+export function adviceKey(kind, { appleMobile = false } = {}) {
+  return appleMobile && APPLE_ADVICE.has(kind) ? `error_next_${kind}_ios` : `error_next_${kind}`;
 }
 
 /**

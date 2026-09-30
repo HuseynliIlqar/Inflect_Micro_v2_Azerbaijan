@@ -34,7 +34,7 @@ export function deviceCopy(verdict, t) {
     phone: () => t("device_text_phone", { threads: verdict.threads }),
     threads: () => t("device_text_threads", { threads: verdict.threads }),
     "single-framed": () => t("device_text_single_framed"),
-    single: () => t("device_text_single"),
+    single: () => t(verdict.appleMobile ? "device_text_single_ios" : "device_text_single"),
   }[verdict.level]();
   const title = verdict.gpuFailed
     ? t("device_gpu_failed_title")

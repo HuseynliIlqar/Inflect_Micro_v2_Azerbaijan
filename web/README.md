@@ -22,6 +22,7 @@ nothing and never sleeps.
 | `js/device-check.js` | The device verdict on page load, and which next step fits an error |
 | `js/device-view.js`, `js/notify.js` | The device card, its dialog, and toasts |
 | `worker.js` | Runs the phonemiser and the graphs off the page's main thread |
+| `vendor/onnxruntime-web/` | onnxruntime-web 1.30.0, served from this origin; not in git -- `python tools/fetch_web_runtime.py` |
 | `js/fetch-model.js` | Downloads the graphs with byte progress and keeps them in Cache Storage |
 | `js/progress.js` | The progress bar's arithmetic |
 | `js/theme.js` | Light, dark or automatic; the choice is remembered on the device |
@@ -184,6 +185,14 @@ for name in ('duration', 'decode'):
     shutil.copy(hf_hub_download('owensong/Inflect-Micro-v2-ONNX', f'onnx/{name}.onnx'),
                 f'web/onnx/en/{name}.onnx')
 "
+```
+
+The page also needs onnxruntime-web next to it, in `web/vendor/` (git-ignored,
+27 MB): WebKit refuses a CDN's modules in a worker, so it is served from the
+page's own origin. Fetch it once:
+
+```bash
+python tools/fetch_web_runtime.py
 ```
 
 Then serve the directory:

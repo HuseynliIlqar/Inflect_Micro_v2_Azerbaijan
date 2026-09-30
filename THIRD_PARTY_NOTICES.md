@@ -101,6 +101,19 @@ The anti-aliased activation resampling design used by the compact waveform
 runtime includes concepts and adapted implementation structure from
 `alias-free-torch`.
 
+### ONNX Runtime Web
+
+- Project: [`microsoft/onnxruntime`](https://github.com/microsoft/onnxruntime), npm package `onnxruntime-web` 1.30.0
+- Licence: MIT, Copyright (c) Microsoft Corporation
+
+The browser playground runs the model with it. Three of its files are served
+from the playground's own origin (`web/vendor/onnxruntime-web/`, fetched by
+`tools/fetch_web_runtime.py`, which also writes the MIT notice beside them), so
+the Hugging Face Space redistributes them; keep that `LICENSE` with them. The
+bundle also contains other permissively licensed components (protobuf,
+flatbuffers, abseil and more), listed in onnxruntime's own
+[`ThirdPartyNotices.txt`](https://github.com/microsoft/onnxruntime/blob/main/ThirdPartyNotices.txt).
+
 ### Base checkpoint
 
 - Model: [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)
