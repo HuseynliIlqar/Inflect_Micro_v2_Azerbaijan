@@ -16,14 +16,19 @@ const hasFailure = (fallbacks, backend, precision) =>
  *         | "gpu-failed" (no int8 for this voice, but WebGPU failed)
  *   action: the button to offer -- "full", "fast" or null
  *   gpuFailure: WebGPU's error message, when it failed on this page
+ *   phone: fast mode is how a phone's browser always runs, not news worth a
+ *   banner -- the device check has already said how it will go
  */
-export function bannerState({ voice, backend, precision, fallbacks = [], fullQuality = false }) {
+export function bannerState({ voice, backend, precision, fallbacks = [], fullQuality = false, phone = false }) {
   const gpuFailed = fallbacks.find((f) => f.backend === "webgpu");
   const gpuFailure = gpuFailed ? gpuFailed.message : null;
   const none = { kind: "none", action: null, gpuFailure: null };
   if (backend !== "wasm") return none;
 
-  if (precision === "int8") return { kind: "fast", action: "full", gpuFailure };
+  if (precision === "int8") {
+    if (phone) return gpuFailure ? { kind: "gpu-failed", action: null, gpuFailure } : none;
+    return { kind: "fast", action: "full", gpuFailure };
+  }
   if (voice === "az" && hasFailure(fallbacks, "wasm", "int8")) {
     return { kind: "int8-failed", action: null, gpuFailure };
   }
@@ -32,8 +37,8 @@ export function bannerState({ voice, backend, precision, fallbacks = [], fullQua
 }
 
 /**
- * The label keys for a banner's title and text. A phone gets its own plain
- * words for the two modes it lives in; everything else reads the same.
+ * The label keys for a banner's title and text. A phone that chose full
+ * quality gets plainer words; everything else reads the same.
  *
  * @param {{ kind: string }} state  from bannerState
  * @returns {{ title: string, text: string|null }}
@@ -41,7 +46,6 @@ export function bannerState({ voice, backend, precision, fallbacks = [], fullQua
 export function bannerCopyKeys({ kind }, { phone = false } = {}) {
   const key = { fast: "fast", full: "full", "int8-failed": "int8_failed", "gpu-failed": "gpu_failed" }[kind];
   if (kind === "gpu-failed") return { title: `mode_${key}_title`, text: null };
-  if (phone && kind === "fast") return { title: "mode_fast_title_phone", text: "mode_fast_text_phone" };
   if (phone && kind === "full") return { title: "mode_full_title", text: "mode_full_text_phone" };
   return { title: `mode_${key}_title`, text: `mode_${key}_text` };
 }

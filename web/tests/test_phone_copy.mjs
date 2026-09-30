@@ -4,7 +4,7 @@ import { label, LABELS } from "../js/ui/i18n.js";
 
 const PHONE_KEYS = [
   "device_title_phone", "device_text_phone", "device_note_phone",
-  "phone_note", "phone_why", "mode_fast_title_phone", "mode_fast_text_phone",
+  "phone_note", "phone_why",
   "mode_full_text_phone", "result_ready", "result_ready_badge",
 ];
 const JARGON = /WebGPU|WASM|WebAssembly|int8|fp32|CPU|GPU|backend|thread|axın|\?backend/iu;

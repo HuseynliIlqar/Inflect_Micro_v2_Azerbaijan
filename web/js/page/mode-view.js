@@ -34,7 +34,7 @@ export function renderSlowNote() {
 /** The banner above the player: which step of the fallback chain is speaking. */
 export function renderModeBanner() {
   const { modeVoice, backend, precision, fallbacks, fullQuality } = state;
-  const banner = bannerState({ voice: modeVoice, backend, precision, fallbacks, fullQuality });
+  const banner = bannerState({ voice: modeVoice, backend, precision, fallbacks, fullQuality, phone: phoneOnCpu() });
   els.modeBanner.hidden = banner.kind === "none";
   if (els.modeBanner.hidden) return;
 

@@ -120,7 +120,17 @@ expect("a desktop", diagnosticsLine({ voice: "az", backend: "webgpu", precision:
 // -- the words on a phone -----------------------------------------------------------
 
 expect("fast mode on a desktop", bannerCopyKeys({ kind: "fast" }), { title: "mode_fast_title", text: "mode_fast_text" });
-expect("fast mode on a phone reads plainly", bannerCopyKeys({ kind: "fast" }, { phone: true }), { title: "mode_fast_title_phone", text: "mode_fast_text_phone" });
+expect(
+  "fast mode on a phone: no banner, it is how a phone's browser runs",
+  bannerState({ voice: "az", backend: "wasm", precision: "int8", phone: true }).kind,
+  "none",
+);
+expect(
+  "a phone still hears about a GPU that failed",
+  bannerState({ voice: "az", backend: "wasm", precision: "int8", phone: true, fallbacks: [{ backend: "webgpu", precision: "fp32", stage: "run", message: "lost" }] }),
+  { kind: "gpu-failed", action: null, gpuFailure: "lost" },
+);
+expect("fast mode on a desktop keeps its banner", bannerState({ voice: "az", backend: "wasm", precision: "int8" }).kind, "fast");
 expect("full quality on a phone", bannerCopyKeys({ kind: "full" }, { phone: true }), { title: "mode_full_title", text: "mode_full_text_phone" });
 expect("full quality on a desktop", bannerCopyKeys({ kind: "full" }), { title: "mode_full_title", text: "mode_full_text" });
 expect("int8 failed", bannerCopyKeys({ kind: "int8-failed" }, { phone: true }), { title: "mode_int8_failed_title", text: "mode_int8_failed_text" });

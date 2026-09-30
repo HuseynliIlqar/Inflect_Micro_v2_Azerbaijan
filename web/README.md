@@ -126,8 +126,8 @@ computed wrong durations -- the same sentence and seed came out 4.03 s and
 instance after each use. `?backend=webgpu` still tries the GPU on a phone, for
 testing; the device card says *Phone -- running on the processor* and the
 diagnostics line carries `phone=yes | gpu=skipped-on-phone`. A phone visitor is told
-this in plain words -- the device popup, a note under *Speak* and the mode
-banner say the speech is made in the phone's browser, which -- not the phone:
+this in plain words -- the device popup and a note under *Speak* say the
+speech is made in the phone's browser, which -- not the phone:
 the same model as an installed app runs at normal speed -- makes it slower and
 simplified, and that a computer with Chrome or Edge gives full speed and
 quality. The popup's *Show the technical reason* lists why: WebAssembly instead
@@ -215,7 +215,7 @@ decoder and goes straight to step 3 without WebGPU.
 
 **What a tester sees.** Above the player, a banner names the step that is
 speaking whenever it is not WebGPU: *Fast mode* (int8, with a *Speak in full
-quality* button), *Full quality* (fp32 on the CPU by choice, with the way
+quality* button; not on a phone, where it is simply how the browser runs), *Full quality* (fp32 on the CPU by choice, with the way
 back), *Fallback mode* (int8 failed on this device), and WebGPU's own error
 when it failed. Beside the download button a badge reads `GPU · fp32` or
 `CPU · int8 · 4 threads`, so a screenshot says which model was heard, and
