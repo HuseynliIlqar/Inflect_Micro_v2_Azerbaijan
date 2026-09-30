@@ -14,6 +14,67 @@
   background: rgb(0 0 0 / 0.5);
 }
 
+/* Opening: the backdrop fades in and the dialog rises into place. Closing
+   plays it back -- .is-closing is set by js/ui/device-view.js, which closes
+   the dialog when the animation ends. */
+.device-dialog[open] {
+  animation: dialog-in 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.device-dialog[open]::backdrop {
+  animation: backdrop-in 0.22s ease-out;
+}
+
+.device-dialog.is-closing {
+  animation: dialog-out 0.18s ease-in forwards;
+}
+
+.device-dialog.is-closing::backdrop {
+  animation: backdrop-out 0.18s ease-in forwards;
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+}
+
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.97);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* The page's global reduced-motion rule reaches every element but not the
+   ::backdrop pseudo-element. */
+@media (prefers-reduced-motion: reduce) {
+  .device-dialog[open]::backdrop,
+  .device-dialog.is-closing::backdrop {
+    animation: none;
+  }
+}
+
+/* While it is open the page behind stays still; the gutter keeps a desktop
+   layout from jumping sideways when the scrollbar goes. */
+html:has(.device-dialog[open]) {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
 .dialog-inner {
   display: flex;
   flex-direction: column;

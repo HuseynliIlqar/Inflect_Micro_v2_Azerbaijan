@@ -51,6 +51,21 @@ export function deviceCopy(verdict, t) {
   return { title, text, note, tech };
 }
 
+// A little longer than the closing animation in css/components/dialog.css.
+const CLOSE_FALLBACK_MS = 300;
+
+/**
+ * Whether a point lies outside a box -- for the dialog, a tap on its backdrop.
+ *
+ * @param {{ left: number, top: number, right: number, bottom: number }} rect
+ * @param {number} x
+ * @param {number} y
+ * @returns {boolean}
+ */
+export function outsideRect({ left, top, right, bottom }, x, y) {
+  return x < left || x > right || y < top || y > bottom;
+}
+
 export function createDeviceView(els, { directUrl }) {
   let verdict = null;
   let t = (key) => key;
@@ -125,6 +140,55 @@ export function createDeviceView(els, { directUrl }) {
     const { title, text } = deviceCopy(verdict, t);
     toast(els.toasts, { tone: verdict.tone, title, text, closeLabel: t("toast_close") });
   }
+
+  // Every way out -- Got it, Escape, a tap on the backdrop -- plays the closing
+  // animation in css/components/dialog.css first. Under reduced motion there is
+  // no animation (and no animationend), so it closes at once; the timer covers
+  // a browser that never reports the end.
+  let closing = false;
+  function closeDialog() {
+    if (!els.dialog.open || closing) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      els.dialog.close();
+      return;
+    }
+    closing = true;
+    const finish = () => {
+      clearTimeout(timer);
+      els.dialog.removeEventListener("animationend", onEnd);
+      els.dialog.classList.remove("is-closing");
+      closing = false;
+      els.dialog.close();
+    };
+    const onEnd = (event) => {
+      if (event.target === els.dialog) finish();
+    };
+    const timer = setTimeout(finish, CLOSE_FALLBACK_MS);
+    els.dialog.addEventListener("animationend", onEnd);
+    els.dialog.classList.add("is-closing");
+  }
+
+  // The form's method="dialog" would close it with no animation.
+  els.dialog.querySelector("form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    closeDialog();
+  });
+  els.dialog.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeDialog();
+  });
+  // A tap on the backdrop reaches the <dialog> itself, outside its box. It must
+  // start there too: dragging a text selection out of the dialog is not a tap.
+  let pressedOutside = false;
+  const outside = (event) => event.target === els.dialog
+    && outsideRect(els.dialog.getBoundingClientRect(), event.clientX, event.clientY);
+  els.dialog.addEventListener("pointerdown", (event) => {
+    pressedOutside = outside(event);
+  });
+  els.dialog.addEventListener("click", (event) => {
+    if (pressedOutside && outside(event)) closeDialog();
+    pressedOutside = false;
+  });
 
   els.dialog.addEventListener("close", () => {
     if (els.dialogDontShow.checked) writeDismissed(verdict.level);
