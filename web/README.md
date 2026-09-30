@@ -18,6 +18,7 @@ nothing and never sleeps.
 | `worker.js` | Runs the phonemiser and the graphs off the page's main thread |
 | `js/fetch-model.js` | Downloads the graphs with byte progress and keeps them in Cache Storage |
 | `js/progress.js` | The progress bar's arithmetic |
+| `js/theme.js` | Light, dark or automatic; the choice is remembered on the device |
 | `js/i18n.js` | Interface labels, generated from `webui/i18n.py` |
 
 Synthesis runs through ONNX Runtime Web on WebGPU where the browser has it

@@ -10,6 +10,7 @@
 import { DEFAULT_LANGUAGE, label, chunkCount, LABELS } from "./js/i18n.js";
 import { toWav, SAMPLE_RATE } from "./js/tts.js";
 import { downloadFraction, chunkFraction, megabytes } from "./js/progress.js";
+import { applyTheme, initialTheme, readStoredTheme } from "./js/theme.js";
 
 const EXAMPLES = {
   az: [
@@ -28,6 +29,7 @@ const EXAMPLES = {
 const $ = (id) => document.getElementById(id);
 const els = {
   title: $("title"), subtitle: $("subtitle"), languageLabel: $("language-label"),
+  themeLabel: $("theme-label"),
   text: $("text"), textLabel: $("text-label"), speak: $("speak"), status: $("status"),
   examplesLabel: $("examples-label"), examples: $("examples"),
   audio: $("audio"), audioLabel: $("audio-label"), download: $("download"), stats: $("stats"),
@@ -264,6 +266,10 @@ function applyLanguage(next) {
   els.title.textContent = t("title");
   els.subtitle.textContent = t("subtitle");
   els.languageLabel.textContent = t("language_label");
+  els.themeLabel.textContent = t("theme_label");
+  for (const button of document.querySelectorAll("[data-theme-choice]")) {
+    button.textContent = t(`theme_${button.dataset.themeChoice}`);
+  }
   els.textLabel.textContent = t("text_label");
   els.text.placeholder = t("text_placeholder");
   els.speak.textContent = t("speak");
@@ -297,7 +303,7 @@ function applyLanguage(next) {
   els.enNote.textContent = t("en_note");
   els.footer.textContent = t("footer");
 
-  for (const button of document.querySelectorAll(".segment")) {
+  for (const button of document.querySelectorAll("[data-language]")) {
     const active = button.dataset.language === language;
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", String(active));
@@ -425,12 +431,16 @@ async function speak() {
 
 // -- wiring ------------------------------------------------------------------
 
-for (const button of document.querySelectorAll(".segment")) {
+for (const button of document.querySelectorAll("[data-language]")) {
   button.addEventListener("click", () => applyLanguage(button.dataset.language));
 }
 
 for (const button of document.querySelectorAll("[data-voice]")) {
   button.addEventListener("click", () => applyVoice(button.dataset.voice));
+}
+
+for (const button of document.querySelectorAll("[data-theme-choice]")) {
+  button.addEventListener("click", () => applyTheme(button.dataset.themeChoice));
 }
 
 els.speed.addEventListener("input", () => {
@@ -450,5 +460,6 @@ els.text.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) speak();
 });
 
+applyTheme(initialTheme(readStoredTheme(), location.search), { remember: false });
 applyLanguage(DEFAULT_LANGUAGE);
 els.status.textContent = label(language, "loading");

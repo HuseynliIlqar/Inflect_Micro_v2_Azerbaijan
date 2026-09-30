@@ -2,14 +2,40 @@
 <html lang="az">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Azərbaycan dilində mətn-nitq sintezi</title>
     <meta
       name="description"
       content="Offline Azerbaijani text-to-speech running entirely in the browser: a 9.36M-parameter VITS model through ONNX Runtime Web."
     />
-    <meta name="theme-color" content="#fbfbfa" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#121417" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="theme-color"
+      content="#fbfbfa"
+      data-color="#fbfbfa"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#121417"
+      data-color="#121417"
+      media="(prefers-color-scheme: dark)"
+    />
+    <script>
+      // Before the first paint, so a dark choice never flashes white.
+      // The same rule as initialTheme() in js/theme.js.
+      (function () {
+        var theme = null;
+        try {
+          theme = localStorage.getItem("theme");
+        } catch (e) {}
+        if (theme !== "light" && theme !== "dark") {
+          theme = new URLSearchParams(location.search).get("__theme");
+        }
+        if (theme === "light" || theme === "dark") {
+          document.documentElement.setAttribute("data-theme", theme);
+        }
+      })();
+    </script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="stylesheet" href="./styles.css" />
     <link
@@ -24,13 +50,25 @@
         <h1 id="title">Azərbaycan dilində mətn-nitq sintezi</h1>
         <p id="subtitle" class="subtitle"></p>
       </div>
-      <div class="language" role="group" aria-labelledby="language-label">
-        <span id="language-label" class="language-label"></span>
-        <div class="segmented">
-          <button type="button" class="segment is-active" data-language="az">
-            Azərbaycanca
-          </button>
-          <button type="button" class="segment" data-language="en">English</button>
+      <div class="head-controls">
+        <div class="language" role="group" aria-labelledby="language-label">
+          <span id="language-label" class="language-label"></span>
+          <div class="segmented">
+            <button type="button" class="segment is-active" data-language="az">
+              Azərbaycanca
+            </button>
+            <button type="button" class="segment" data-language="en">English</button>
+          </div>
+        </div>
+        <div class="language" role="group" aria-labelledby="theme-label">
+          <span id="theme-label" class="language-label">Görünüş</span>
+          <div class="segmented">
+            <button type="button" class="segment is-active" data-theme-choice="auto">
+              Avtomatik
+            </button>
+            <button type="button" class="segment" data-theme-choice="light">Açıq</button>
+            <button type="button" class="segment" data-theme-choice="dark">Tünd</button>
+          </div>
         </div>
       </div>
     </header>

@@ -17,8 +17,10 @@
   --measure: 68ch;
 }
 
+/* Dark follows the device unless the visitor picked light; `data-theme` is set
+   by js/theme.js (and the inline script in index.html, before first paint). */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --ink: #e8eaed;
     --ink-soft: #9aa2af;
     --paper: #121417;
@@ -28,6 +30,22 @@
     --accent-ink: #0b0d10;
     --focus: #7fb4ff;
   }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #e8eaed;
+  --ink-soft: #9aa2af;
+  --paper: #121417;
+  --panel: #1a1d21;
+  --line: #2b2f36;
+  --accent: #5b9dff;
+  --accent-ink: #0b0d10;
+  --focus: #7fb4ff;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 * {
@@ -43,7 +61,10 @@ body {
   margin: 0;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  padding: clamp(1rem, 3vw, 2.5rem) 16px;
+  /* 16px gutters, widened by the notch on a phone held sideways. */
+  padding: clamp(1rem, 3vw, 2.5rem) max(16px, env(safe-area-inset-right))
+    max(clamp(1rem, 3vw, 2.5rem), env(safe-area-inset-bottom))
+    max(16px, env(safe-area-inset-left));
   background: var(--paper);
   color: var(--ink);
   font: 16px/1.55 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
@@ -92,6 +113,12 @@ a {
   margin-bottom: 1.5rem;
 }
 
+.head-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+}
+
 .language {
   display: flex;
   flex-direction: column;
@@ -129,15 +156,19 @@ a {
   color: var(--accent-ink);
 }
 
-.segment:hover:not(.is-active),
-.example:hover,
-.ghost:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
+/* Only where a pointer can hover: on a touch screen the hover colour would
+   stick to the last button tapped. */
+@media (hover: hover) {
+  .segment:hover:not(.is-active),
+  .example:hover,
+  .ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
 
-.primary:hover:not([disabled]) {
-  filter: brightness(1.08);
+  .primary:hover:not([disabled]) {
+    filter: brightness(1.08);
+  }
 }
 
 a:hover {
@@ -255,6 +286,7 @@ button,
   color: inherit;
   font-size: 0.9rem;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 :focus-visible {
@@ -449,6 +481,108 @@ button,
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* -- phones ------------------------------------------------------------------ */
+
+/* A finger needs about 44px; a mouse does not, so the desktop stays compact. */
+@media (pointer: coarse) {
+  .segment,
+  .ghost,
+  .example {
+    min-height: 44px;
+  }
+
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .primary {
+    min-height: 48px;
+  }
+
+  .advanced summary {
+    padding-block: 0.4rem;
+  }
+}
+
+@media (max-width: 560px) {
+  :root {
+    --gap: 0.75rem;
+  }
+
+  .page-head {
+    margin-bottom: 1rem;
+  }
+
+  /* The switches span the width instead of sitting as small islands, and a
+     longer label ("İngiliscə (baza model)") takes the room it needs. */
+  .head-controls,
+  .head-controls .language {
+    width: 100%;
+  }
+
+  .segmented {
+    display: flex;
+    width: 100%;
+  }
+
+  .segment {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-inline: 0.5rem;
+    text-align: center;
+  }
+
+  .panel {
+    padding: 1rem 0.9rem;
+  }
+
+  .page-foot {
+    font-size: 0.92rem;
+  }
+}
+
+/* A phone held sideways has ~360px of height: the header must not eat half. */
+@media (max-height: 500px) and (orientation: landscape) {
+  body {
+    padding-top: 0.75rem;
+  }
+
+  .page-head {
+    margin-bottom: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+  }
+}
+
+/* 320px phones: keep "İngiliscə (baza model)" on one line. */
+@media (max-width: 360px) {
+  .segment {
+    padding-inline: 0.35rem;
+    font-size: 0.82rem;
+  }
+}
+
+/* Folding phones (~280px): the voice labels cannot share a line, so the
+   options stack instead of being clipped. */
+@media (max-width: 300px) {
+  .field .segmented {
+    flex-direction: column;
+  }
+
+  .field .segment + .segment {
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--line);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
