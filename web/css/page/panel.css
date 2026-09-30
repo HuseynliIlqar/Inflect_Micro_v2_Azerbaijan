@@ -1,0 +1,124 @@
+/* -- below the result: the knobs, and what the model actually read -------------- */
+
+.lower {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin-top: clamp(2rem, 5vw, 3rem);
+}
+
+@media (max-width: 820px) {
+  .lower {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.panel {
+  padding: clamp(1rem, 2.5vw, 1.4rem);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+}
+
+.field {
+  display: block;
+  margin-bottom: 1.1rem;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.field-info {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+input[type="number"] {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.slider-row {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+output {
+  min-width: 4ch;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+  text-align: end;
+}
+
+.checkbox {
+  display: flex;
+  gap: 0.6rem;
+  align-items: start;
+}
+
+.checkbox input {
+  margin-top: 0.25rem;
+  accent-color: var(--accent);
+}
+
+.chunks {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  min-height: 4.5rem;
+  max-height: 14rem;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font: 0.85rem/1.55 var(--mono);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.advanced,
+.about {
+  border-top: 1px solid var(--line);
+  padding-top: 0.8rem;
+}
+
+.about {
+  margin-top: 1.2rem;
+}
+
+.advanced summary,
+.about summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.advanced .field {
+  margin: 0.9rem 0 0.2rem;
+}
+
+.note {
+  margin: 0.6rem 0 0;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}

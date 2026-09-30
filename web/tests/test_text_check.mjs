@@ -1,6 +1,6 @@
 // What the playground accepts, and that every message exists in both languages.
-import { checkText, cleanText, charCount, MAX_CHARS, ERROR_KEYS } from "../js/text-check.js";
-import { label, LABELS } from "../js/i18n.js";
+import { checkText, cleanText, charCount, MAX_CHARS, ERROR_KEYS } from "../js/text/text-check.js";
+import { label, LABELS } from "../js/ui/i18n.js";
 
 let checks = 0;
 function check(condition, message) {

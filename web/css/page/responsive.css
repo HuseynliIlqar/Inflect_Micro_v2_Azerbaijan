@@ -1,0 +1,167 @@
+/* Phones, sideways screens and reduced motion. Loaded after every page file so these rules win. */
+
+/* -- phones ------------------------------------------------------------------ */
+
+/* A finger needs about 44px; a mouse does not, so the desktop stays compact. */
+@media (pointer: coarse) {
+  .segment,
+  .ghost,
+  .example {
+    min-height: 44px;
+  }
+
+  .segmented-small .segment {
+    min-width: 44px;
+  }
+
+  .ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .primary {
+    min-height: 48px;
+  }
+
+  /* Padding, not display: flex -- flex would drop the disclosure triangle. */
+  .advanced summary,
+  .about summary {
+    padding-block: 0.7rem;
+  }
+
+  .links a {
+    display: inline-block;
+    min-width: 44px;
+    padding-block: 0.75rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar-controls {
+    display: contents;
+  }
+
+  .brand {
+    margin-inline-end: auto;
+  }
+
+  /* The heading right below names the page; the mark is enough up here. */
+  .brand-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .subtitle {
+    margin-bottom: 1.2rem;
+    font-size: 0.95rem;
+  }
+
+  .script-input {
+    min-height: 8rem;
+    padding: 0.85rem 0.9rem;
+  }
+
+  .speak {
+    flex: 1;
+  }
+
+  .elapsed {
+    flex-basis: 100%;
+    margin-inline-start: 0;
+    text-align: end;
+  }
+
+  .wave {
+    height: 88px;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .voice-row .segmented {
+    display: flex;
+    width: 100%;
+  }
+
+  .voice-row .segment {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-inline: 0.5rem;
+  }
+
+  .panel {
+    padding: 1rem 0.9rem;
+  }
+}
+
+/* A phone held sideways has ~360px of height: the header must not eat half. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .stage {
+    padding-top: 1rem;
+  }
+
+  /* So the text box and the button share the first screen. */
+  .script-input {
+    min-height: 5rem;
+  }
+
+  /* Descriptions only: upright, the same phone shows them again. */
+  .subtitle,
+  .voice-info {
+    display: none;
+  }
+
+  .voice-row {
+    margin-bottom: 0.6rem;
+  }
+
+  /* One line: the width is there, the height is not. */
+  h1 {
+    max-width: none;
+    margin-bottom: 0.7rem;
+    font-size: 1.35rem;
+  }
+
+  .topbar {
+    padding-block: 0.4rem;
+  }
+}
+
+/* 320px phones: keep "İngiliscə (baza model)" on one line. */
+@media (max-width: 360px) {
+  .voice-row .segment {
+    padding-inline: 0.35rem;
+    font-size: 0.82rem;
+  }
+}
+
+/* Folding phones (~280px): the voice labels cannot share a line, so the
+   options stack instead of being clipped. */
+@media (max-width: 300px) {
+  .voice-row .segmented {
+    flex-direction: column;
+  }
+
+  .voice-row .segment + .segment {
+    border-inline-start: 0;
+    border-block-start: 1px solid var(--line);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  /* Without the sweep, show that work is running as a dimmed full bar. */
+  .progress.is-indeterminate .progress-fill {
+    left: 0;
+    width: 100%;
+    opacity: 0.45;
+  }
+}

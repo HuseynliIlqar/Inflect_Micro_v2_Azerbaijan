@@ -1,6 +1,6 @@
 // The JavaScript normaliser must produce exactly what the Python one does.
 import { readFileSync } from "node:fs";
-import { normalizeAz } from "../js/az-text.js";
+import { normalizeAz } from "../js/text/az-text.js";
 
 const golden = JSON.parse(
   readFileSync(new URL("./golden/normalise.json", import.meta.url), "utf-8"),

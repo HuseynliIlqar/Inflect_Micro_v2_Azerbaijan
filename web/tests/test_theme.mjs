@@ -1,5 +1,5 @@
 // Which theme the page starts in.
-import { initialTheme } from "../js/theme.js";
+import { initialTheme } from "../js/ui/theme.js";
 
 const failures = [];
 let checked = 0;

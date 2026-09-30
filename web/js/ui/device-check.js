@@ -10,7 +10,7 @@
  * @param {{ gpu?: boolean, gpuFailed?: boolean, preferWasm?: boolean,
  *           phone?: boolean, forceGpu?: boolean,
  *           threads?: number, framed?: boolean }} facts
- *   phone: the plan skips WebGPU here (js/backend-plan.js) unless forceGpu.
+ *   phone: the plan skips WebGPU here (js/engine/backend-plan.js) unless forceGpu.
  * @returns {{ level: "gpu"|"phone"|"threads"|"single-framed"|"single", bars: 1|2|3,
  *             tone: "good"|"warn"|"bad", dialog: boolean,
  *             action: "open-direct"|null, threads: number,

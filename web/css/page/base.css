@@ -1,0 +1,54 @@
+/* A quiet page with one loud thing: the waveform of what was just spoken.
+   Caspian teal on cool paper; Onest for everything, monospace only where the
+   text is literally machine input (the chunks, the diagnostics). */
+
+* {
+  box-sizing: border-box;
+}
+
+/* `hidden` must win over any `display` a class sets, e.g. `.ghost`. */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.55 var(--font);
+  -webkit-text-size-adjust: 100%;
+}
+
+h1 {
+  margin: 0 0 0.4rem;
+  max-width: 22ch;
+  text-wrap: balance;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  font-weight: 650;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+
+.section-title {
+  margin: 0 0 0.9rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}

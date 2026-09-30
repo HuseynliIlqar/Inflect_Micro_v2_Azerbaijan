@@ -1,7 +1,7 @@
 // What the page tells a visitor about this device, before and after synthesis.
-import { deviceVerdict, errorKind, adviceKey, isAppleMobile } from "../js/device-check.js";
-import { deviceCopy } from "../js/device-view.js";
-import { label } from "../js/i18n.js";
+import { deviceVerdict, errorKind, adviceKey, isAppleMobile } from "../js/ui/device-check.js";
+import { deviceCopy } from "../js/ui/device-view.js";
+import { label } from "../js/ui/i18n.js";
 
 const failures = [];
 let checked = 0;

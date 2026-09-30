@@ -1,6 +1,6 @@
 // Every number in the golden file must come out exactly as num2words wrote it.
 import { readFileSync } from "node:fs";
-import { numberToWords, ordinalToWords } from "../js/num-az.js";
+import { numberToWords, ordinalToWords } from "../js/text/num-az.js";
 
 const golden = JSON.parse(
   readFileSync(new URL("./golden/numbers.json", import.meta.url), "utf-8"),

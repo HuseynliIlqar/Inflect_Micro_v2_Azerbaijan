@@ -1,7 +1,7 @@
 /**
  * Light, dark, or whatever the device prefers.
  *
- * The choice lives on `<html data-theme>`; `styles.css` reads it. "auto" is the
+ * The choice lives on `<html data-theme>`; the stylesheets in css/ read it. "auto" is the
  * absence of the attribute, so the stylesheet's `prefers-color-scheme` rule
  * decides. An inline script in `index.html` applies the saved choice before the
  * first paint, so a dark page never flashes white while this module loads.

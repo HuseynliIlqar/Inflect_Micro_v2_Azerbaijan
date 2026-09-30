@@ -1,0 +1,103 @@
+/* -- phones: the plain note under Speak, and finding the result ----------------- */
+
+.phone-note {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  margin-top: 0.9rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  font-size: 0.88rem;
+}
+
+.phone-note p {
+  margin: 0;
+}
+
+/* On its own line: a 44px target inside a line of text would split it. */
+.phone-note .link-button {
+  display: flex;
+  align-items: center;
+  margin-top: 0.35rem;
+}
+
+.phone-note-icon {
+  flex: none;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-top: 0.1rem;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.result {
+  scroll-margin-top: 1rem;
+}
+
+.result-head {
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+
+.result-head .section-title {
+  margin: 0;
+}
+
+.ready-chip {
+  display: inline-flex;
+  gap: 0.3rem;
+  align-items: center;
+  padding: 0.15rem 0.6rem 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.ready-chip svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* A pulse round the waveform when a clip lands, twice; none under reduced
+   motion, where the global rule stops every animation. */
+.wave.is-new {
+  animation: wave-ready 1.2s ease-out 2;
+}
+
+@keyframes wave-ready {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 12px transparent;
+  }
+}
+
+@media (pointer: coarse) {
+  .link-button {
+    min-height: 44px;
+  }
+}

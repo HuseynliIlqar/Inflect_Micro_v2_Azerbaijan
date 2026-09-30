@@ -22,7 +22,7 @@
     />
     <script>
       // Before the first paint, so a dark choice never flashes white.
-      // The same rule as initialTheme() in js/theme.js.
+      // The same rule as initialTheme() in js/ui/theme.js.
       (function () {
         var theme = null;
         try {
@@ -45,9 +45,24 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap"
     />
-    <link rel="stylesheet" href="./tokens.css" />
-    <link rel="stylesheet" href="./styles.css" />
-    <link rel="stylesheet" href="./components.css" />
+    <!-- Order is the cascade: tokens, the page, then the components. -->
+    <link rel="stylesheet" href="./css/tokens.css" />
+    <link rel="stylesheet" href="./css/page/base.css" />
+    <link rel="stylesheet" href="./css/page/topbar.css" />
+    <link rel="stylesheet" href="./css/page/controls.css" />
+    <link rel="stylesheet" href="./css/page/stage.css" />
+    <link rel="stylesheet" href="./css/page/result.css" />
+    <link rel="stylesheet" href="./css/page/panel.css" />
+    <link rel="stylesheet" href="./css/page/footer.css" />
+    <link rel="stylesheet" href="./css/page/responsive.css" />
+    <link rel="stylesheet" href="./css/components/mode-banner.css" />
+    <link rel="stylesheet" href="./css/components/device-check.css" />
+    <link rel="stylesheet" href="./css/components/dialog.css" />
+    <link rel="stylesheet" href="./css/components/toasts.css" />
+    <link rel="stylesheet" href="./css/components/char-count.css" />
+    <link rel="stylesheet" href="./css/components/device-card.css" />
+    <link rel="stylesheet" href="./css/components/phone-result.css" />
+    <link rel="stylesheet" href="./css/components/dialog-compact.css" />
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='4' fill='%230b6770'/><path d='M3 8h1M5.5 5v6M8 3v10M10.5 6v4M13 8h0' stroke='white' stroke-width='1.6' stroke-linecap='round'/></svg>"
@@ -88,7 +103,7 @@
           </div>
         </div>
 
-        <!-- Checked the moment the page opens; js/device-check.js decides. -->
+        <!-- Checked the moment the page opens; js/ui/device-check.js decides. -->
         <aside id="device-card" class="device-card" data-tone="pending" aria-labelledby="device-label">
           <span class="meter" data-bars="0" aria-hidden="true"><i></i><i></i><i></i></span>
           <div class="device-body" aria-live="polite">
@@ -157,7 +172,7 @@
           spellcheck="false"
           enterkeyhint="go"
         ></textarea>
-        <!-- The limit and what is wrong with the text; js/text-check.js decides. -->
+        <!-- The limit and what is wrong with the text; js/text/text-check.js decides. -->
         <p id="text-count" class="char-count" translate="no"></p>
         <p id="text-error" class="field-error" aria-live="polite" hidden></p>
         <p id="text-warning" class="field-warning" aria-live="polite" hidden></p>
@@ -339,6 +354,6 @@
       </p>
     </footer>
 
-    <script type="module" src="./app.js"></script>
+    <script type="module" src="./js/app.js"></script>
   </body>
 </html>

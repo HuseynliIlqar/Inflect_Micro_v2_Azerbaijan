@@ -1,6 +1,6 @@
 // The progress bar's arithmetic, and the model download that feeds it.
-import { downloadFraction, chunkFraction, megabytes } from "../js/progress.js";
-import { fetchModels, CACHE_NAME } from "../js/fetch-model.js";
+import { downloadFraction, chunkFraction, megabytes } from "../js/ui/progress.js";
+import { fetchModels, CACHE_NAME } from "../js/engine/fetch-model.js";
 
 const failures = [];
 let checked = 0;

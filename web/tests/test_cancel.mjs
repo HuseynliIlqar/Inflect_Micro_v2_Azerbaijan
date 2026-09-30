@@ -1,5 +1,5 @@
 // Cancelling a synthesis: the engine stops at the next chunk and says why.
-import { CancelledError, Engine } from "../js/tts.js";
+import { CancelledError, Engine } from "../js/engine/engine.js";
 
 let checks = 0;
 function check(condition, message) {

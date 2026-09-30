@@ -8,28 +8,61 @@ nothing and never sleeps.
 
 ## How it works
 
+The folder is laid out by role. Each directory holds small, single-purpose
+files; nothing at the top level except the page, this README and
+`package.json`.
+
+```
+web/
+  index.html          the page
+  css/tokens.css      colour tokens (light and both dark blocks)
+  css/page/           the page, top to bottom, then its responsive rules
+  css/components/     banner, device card and dialog, toasts, phone notes
+  js/app.js           page entry point: wiring only
+  js/worker.js        worker entry point: synthesis off the main thread
+  js/page/            what each part of the page does (DOM and state)
+  js/engine/          the ONNX graphs, audio, phonemiser, model download
+  js/text/            the Azerbaijani text layer, ported from aztts/
+  js/ui/              pure logic behind the interface, tested in Node
+  tests/              node tests and the golden files from the Python side
+  onnx/, vendor/      git-ignored: the graphs and onnxruntime-web
+```
+
+The stylesheets are listed in `index.html` in cascade order: tokens, every
+file in `css/page/`, then `css/components/`. A new file goes where its rules
+belong in that order, not at the end.
+
 | Piece | What it does |
 | --- | --- |
-| `js/phonemize.js` | eSpeak NG compiled to WebAssembly, the same phonemiser the Python frontend calls |
-| `js/az-text.js` | `normalize_az` ported from `aztts/az_text.py` |
-| `js/num-az.js` | Azerbaijani number words, standing in for `num2words` |
-| `js/az-chunk.js` | `chunk_text` ported from `aztts/az_chunk.py` |
-| `js/tts.js` | The ONNX graphs, the pauses between chunks, the bleep and WAV encoding |
-| `js/az-censor.js` | `censor_az` ported from `aztts/az_profanity.py`; always on here |
-| `js/waveform.js` | The result's waveform: bar heights, drawing, click-to-seek |
-| `js/wave-view.js` | That waveform wired to the page: redraws on play, resize and theme |
-| `js/reveal.js` | When a finished clip is off screen, scroll to it (phones lost the result) |
-| `js/backend-plan.js` | The fallback chain: which backend and precision to try, in what order |
-| `js/mode-banner.js` | What the page says about it: the mode banner, the badge, the diagnostics line |
-| `js/device-check.js` | The device verdict on page load, and which next step fits an error |
-| `js/device-view.js`, `js/notify.js` | The device card, its dialog, and toasts |
-| `worker.js` | Runs the phonemiser and the graphs off the page's main thread |
+| `js/engine/phonemize.js` | eSpeak NG compiled to WebAssembly, the same phonemiser the Python frontend calls |
+| `js/text/az-text.js` | `normalize_az` ported from `aztts/az_text.py`: the step order |
+| `js/text/az-dates.js`, `az-amounts.js` | Its rules: phones, dates and times; money, percent, units, fractions, ranges (`az_dates.py`, `az_amounts.py`) |
+| `js/text/az-tables.js`, `az-words.js` | Its word tables and shared helpers: casing, vowel harmony, numbers as words (`az_tables.py`, `az_words.py`) |
+| `js/text/num-az.js` | Azerbaijani number words, standing in for `num2words` |
+| `js/text/az-chunk.js` | `chunk_text` ported from `aztts/az_chunk.py` |
+| `js/text/az-censor.js` | `censor_az` ported from `aztts/az_profanity.py`; always on here |
+| `js/text/text-check.js` | The 500-character limit and what is wrong with a text |
+| `js/engine/engine.js` | The ONNX graphs and the fallback chain that runs them |
+| `js/engine/audio.js` | The pauses between chunks, click-free joins, the bleep and WAV encoding |
+| `js/engine/inputs.js` | Token ids from phonemes, and the seeded noise |
+| `js/engine/backend-plan.js` | The fallback chain: which backend and precision to try, in what order |
+| `js/engine/fetch-model.js` | Downloads the graphs with byte progress and keeps them in Cache Storage |
+| `js/ui/waveform.js` | The result's waveform: bar heights, drawing, click-to-seek |
+| `js/ui/wave-view.js` | That waveform wired to the page: redraws on play, resize and theme |
+| `js/ui/reveal.js` | When a finished clip is off screen, scroll to it (phones lost the result) |
+| `js/ui/mode-banner.js` | What the page says about the chain: the mode banner, the badge, the diagnostics line |
+| `js/ui/device-check.js` | The device verdict on page load, and which next step fits an error |
+| `js/ui/device-view.js`, `js/ui/notify.js` | The device card, its dialog, and toasts |
+| `js/ui/progress.js` | The progress bar's arithmetic |
+| `js/ui/theme.js` | Light, dark or automatic; the choice is remembered on the device |
+| `js/ui/i18n.js` | Interface labels, generated from `webui/i18n.py` |
+| `js/page/context.js`, `dom.js` | The page's shared state and constants; every element it touches |
+| `js/page/worker-client.js` | The page's side of the worker: requests, cancel, a dead worker replaced |
+| `js/page/speak.js` | Speak: check the text, ask the worker, show the clip |
+| `js/page/progress-view.js`, `mode-view.js` | The status line and bar; the CPU note, banner, badge, statistics |
+| `js/page/text-view.js`, `language.js`, `device.js` | The character counter and errors; every label; the device check |
+| `js/worker.js` | Runs the phonemiser and the graphs off the page's main thread |
 | `vendor/onnxruntime-web/` | onnxruntime-web 1.30.0, served from this origin; not in git -- `python tools/fetch_web_runtime.py` |
-| `js/fetch-model.js` | Downloads the graphs with byte progress and keeps them in Cache Storage |
-| `js/progress.js` | The progress bar's arithmetic |
-| `js/theme.js` | Light, dark or automatic; the choice is remembered on the device |
-| `js/i18n.js` | Interface labels, generated from `webui/i18n.py` |
-| `tokens.css`, `styles.css`, `components.css` | Colour tokens (light and both dark blocks), the page, then the banner, device card, dialog and toasts -- loaded in that order |
 
 Synthesis runs through ONNX Runtime Web on WebGPU where the browser has it
 (about 8x faster than real time on a laptop), falling back to WebAssembly
@@ -42,7 +75,7 @@ onnxruntime-web runs a graph synchronously on the thread that calls it. When
 that was the page's own thread, a phone without WebGPU froze solid for the
 whole synthesis -- 57 seconds for a four-second sentence in a phone-class CPU
 emulation -- and Android offered to kill the tab. Everything now runs in
-`worker.js`; the page only draws the status, the elapsed seconds and the bar.
+`js/worker.js`; the page only draws the status, the elapsed seconds and the bar.
 
 The WASM path is slower than WebGPU, and how much depends on threads. Threads
 need cross-origin isolation, so the Space's README sets it:
@@ -89,7 +122,7 @@ if it is off screen -- not while the visitor is typing or the device dialog is
 open, and without smooth scrolling under reduced motion. An iPad in its
 default desktop mode reports a Mac and keeps WebGPU.
 
-The text box takes at most 500 characters (`MAX_CHARS` in `js/text-check.js`):
+The text box takes at most 500 characters (`MAX_CHARS` in `js/text/text-check.js`):
 a phone's browser needs 10-20 s a sentence, so a longer paste would hold it for
 minutes. A counter under the box turns amber at 90% and red past the limit,
 and the error beside the field says so at once; empty text, and text with
@@ -102,8 +135,8 @@ in both languages.
 
 ## The fallback chain
 
-`js/backend-plan.js` decides the order and `Engine` walks it, moving down one
-step whenever the current one fails to load or fails while running:
+`js/engine/backend-plan.js` decides the order and `Engine` walks it, moving
+down one step whenever the current one fails to load or fails while running:
 
 | Step | Backend | Decoder | When |
 | --- | --- | --- | --- |
@@ -153,7 +186,7 @@ backend), and stay until closed; empty text is flagged under the field itself.
 
 The Space answers `onnx/decode.onnx` with a `no-store` redirect to a freshly
 signed CDN URL, so the browser's HTTP cache never hits and every visit
-downloaded 37 MB again. `js/fetch-model.js` keeps the bytes in Cache Storage
+downloaded 37 MB again. `js/engine/fetch-model.js` keeps the bytes in Cache Storage
 under the page's own path instead. **When the graphs on the Space change, bump
 `CACHE_NAME`** in that file; older caches are deleted on the next visit.
 

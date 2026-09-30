@@ -13,84 +13,12 @@
  * same audio within this page but not the same audio as the command line.
  */
 
-import { SYMBOLS } from "./symbols.js";
-import { chunkText, DEFAULT_MAX_WORDS } from "./az-chunk.js";
-import { normalizeAz } from "./az-text.js";
-import { BLEEP, bleepSegments, censorAz } from "./az-censor.js";
+import { chunkText, DEFAULT_MAX_WORDS } from "../text/az-chunk.js";
+import { normalizeAz } from "../text/az-text.js";
+import { BLEEP, bleepSegments, censorAz } from "../text/az-censor.js";
 import { fallbackPlan, sameStep, stepsAfter } from "./backend-plan.js";
-
-export const SAMPLE_RATE = 24000;
-
-const SYMBOL_TO_ID = new Map(SYMBOLS.map((symbol, index) => [symbol, index]));
-
-// How long to rest after a chunk, taken from the mark it ends with.
-const PAUSES = {
-  "?": 0.28, "！": 0.24, "!": 0.24, "？": 0.28,
-  ".": 0.22, "。": 0.22, ";": 0.16, "；": 0.16,
-  ":": 0.13, "：": 0.13, ",": 0.09, "，": 0.09,
-};
-const DEFAULT_PAUSE = 0.08;
-const EDGE_FADE_MS = 5;
-
-// The tone that stands in for an obscenity -- the same as aztts/engine.py.
-const BLEEP_HZ = 1000;
-const BLEEP_SECONDS = 0.35;
-const BLEEP_LEVEL = 0.25;
-
-/** A deterministic normal generator, so a seed reproduces a reading. */
-function makeNoise(seed) {
-  // mulberry32, then Box-Muller. Not torch's generator -- see the note above.
-  let state = seed >>> 0;
-  const uniform = () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let t = state;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-  return () => {
-    const u = Math.max(uniform(), Number.MIN_VALUE);
-    const v = uniform();
-    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-  };
-}
-
-/** Phoneme string -> token ids, with the blank symbol interspersed. */
-export function tokenise(phonemes) {
-  const ids = [];
-  for (const character of phonemes) {
-    const id = SYMBOL_TO_ID.get(character);
-    if (id !== undefined) ids.push(id);
-  }
-  // add_blank: a 0 before, between and after every token.
-  const spread = new Array(ids.length * 2 + 1).fill(0);
-  for (let index = 0; index < ids.length; index += 1) {
-    spread[index * 2 + 1] = ids[index];
-  }
-  return spread;
-}
-
-export function pauseAfter(chunk) {
-  const trimmed = chunk.replace(/\s+$/u, "");
-  const ending = trimmed ? trimmed[trimmed.length - 1] : "";
-  return PAUSES[ending] ?? DEFAULT_PAUSE;
-}
-
-/** Ramp the first and last few milliseconds, so chunks join without a click. */
-export function edgeFade(waveform, sampleRate = SAMPLE_RATE) {
-  const frames = Math.min(
-    Math.round((sampleRate * EDGE_FADE_MS) / 1000),
-    Math.floor(waveform.length / 2),
-  );
-  if (frames <= 0) return waveform;
-  const output = Float32Array.from(waveform);
-  for (let index = 0; index < frames; index += 1) {
-    const ramp = frames === 1 ? 1 : index / (frames - 1);
-    output[index] *= ramp;
-    output[output.length - 1 - index] *= ramp;
-  }
-  return output;
-}
+import { SAMPLE_RATE, bleep, concatenate, edgeFade, pauseAfter } from "./audio.js";
+import { makeNoise, tokenise } from "./inputs.js";
 
 /**
  * The visitor pressed Cancel. Thrown between chunks, never inside
@@ -107,31 +35,6 @@ function throwIfCancelled(isCancelled) {
   if (isCancelled?.()) throw new CancelledError();
 }
 
-/** The tone played in place of a censored word. */
-export function bleep(sampleRate = SAMPLE_RATE) {
-  const tone = new Float32Array(Math.round(sampleRate * BLEEP_SECONDS));
-  for (let index = 0; index < tone.length; index += 1) {
-    tone[index] = BLEEP_LEVEL * Math.sin((2 * Math.PI * BLEEP_HZ * index) / sampleRate);
-  }
-  return edgeFade(tone, sampleRate);
-}
-
-function concatenate(pieces) {
-  const joined = new Float32Array(pieces.reduce((sum, piece) => sum + piece.length, 0));
-  let offset = 0;
-  for (const piece of pieces) {
-    joined.set(piece, offset);
-    offset += piece.length;
-  }
-  return joined;
-}
-
-/**
- * Loads the two graphs once and keeps them resident.
- *
- * `onnxruntime-web` is passed in rather than imported, so this module stays
- * testable in Node with `onnxruntime-node`.
- */
 /**
  * True when WebGPU can actually be used. `navigator.gpu` alone is not enough:
  * many phones expose the object and then return no adapter.
@@ -148,6 +51,12 @@ export async function hasWebGpu() {
 const messageOf = (error) => String(error?.message ?? error);
 const stepName = ({ backend, precision }) => `${backend}/${precision}`;
 
+/**
+ * Loads the two graphs once and keeps them resident.
+ *
+ * `onnxruntime-web` is passed in rather than imported, so this module stays
+ * testable in Node with `onnxruntime-node`.
+ */
 export class Engine {
   /**
    * `fetchModels(urls, onProgress)` is optional: given, the graphs are
@@ -169,7 +78,7 @@ export class Engine {
     this.fetchModels = fetchModels;
     this.preferWasm = preferWasm;
     this.fullQuality = fullQuality;
-    // A phone starts on the CPU; see js/backend-plan.js.
+    // A phone starts on the CPU; see js/engine/backend-plan.js.
     this.phone = phone;
     this.forceGpu = forceGpu;
     // On unless a caller builds the engine without it; `speak()` takes no
@@ -190,7 +99,7 @@ export class Engine {
   }
 
   /**
-   * Walk the fallback chain (js/backend-plan.js) until a step loads.
+   * Walk the fallback chain (js/engine/backend-plan.js) until a step loads.
    * `onProgress(stage, detail)`: "download" with {loaded, total}, then "compile".
    */
   async load(onProgress) {
@@ -447,32 +356,4 @@ export class Engine {
     }
     return { waveform, chunks, sampleRate: SAMPLE_RATE };
   }
-}
-
-/** A finished waveform as a 16-bit PCM WAV file. */
-export function toWav(waveform, sampleRate = SAMPLE_RATE) {
-  const buffer = new ArrayBuffer(44 + waveform.length * 2);
-  const view = new DataView(buffer);
-  const text = (offset, value) => {
-    for (let index = 0; index < value.length; index += 1) {
-      view.setUint8(offset + index, value.charCodeAt(index));
-    }
-  };
-  text(0, "RIFF");
-  view.setUint32(4, 36 + waveform.length * 2, true);
-  text(8, "WAVEfmt ");
-  view.setUint32(16, 16, true);
-  view.setUint16(20, 1, true);
-  view.setUint16(22, 1, true);
-  view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * 2, true);
-  view.setUint16(32, 2, true);
-  view.setUint16(34, 16, true);
-  text(36, "data");
-  view.setUint32(40, waveform.length * 2, true);
-  for (let index = 0; index < waveform.length; index += 1) {
-    const sample = Math.max(-1, Math.min(1, waveform[index]));
-    view.setInt16(44 + index * 2, sample * 0x7fff, true);
-  }
-  return new Blob([buffer], { type: "audio/wav" });
 }

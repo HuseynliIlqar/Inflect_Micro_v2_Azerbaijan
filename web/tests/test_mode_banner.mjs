@@ -1,5 +1,5 @@
 // Which mode banner the page shows, and the diagnostics line a tester copies.
-import { bannerState, badgeParts, diagnosticsLine, bannerCopyKeys } from "../js/mode-banner.js";
+import { bannerState, badgeParts, diagnosticsLine, bannerCopyKeys } from "../js/ui/mode-banner.js";
 
 const failures = [];
 let checked = 0;

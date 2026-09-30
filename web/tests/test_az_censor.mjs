@@ -1,7 +1,8 @@
 // The JavaScript censor must bleep exactly what the Python one does.
 import { readFileSync } from "node:fs";
-import { BLEEP, bleepSegments, censorAz } from "../js/az-censor.js";
-import { Engine, SAMPLE_RATE, bleep } from "../js/tts.js";
+import { BLEEP, bleepSegments, censorAz } from "../js/text/az-censor.js";
+import { Engine } from "../js/engine/engine.js";
+import { SAMPLE_RATE, bleep } from "../js/engine/audio.js";
 
 const golden = JSON.parse(
   readFileSync(new URL("./golden/censor.json", import.meta.url), "utf-8"),

@@ -7,7 +7,7 @@
  * the tab. Here the page stays responsive and draws the progress bar.
  *
  * Protocol, one request at a time:
- *   in:  { id, voice, text, options } -- text is checked by js/text-check.js;
+ *   in:  { id, voice, text, options } -- text is checked by js/text/text-check.js;
  *        a refused one comes back as an error whose message is the reason
  *   out: { id, type: "progress", stage, ...detail }
  *        { id, type: "result", waveform, chunks, backend, precision, fallbacks, threads }
@@ -25,14 +25,14 @@
 // page's Cross-Origin-Embedder-Policy and refuses a CDN's, whatever its CORS
 // and CORP headers say, so the worker never started there. The files come from
 // `python tools/fetch_web_runtime.py`; they are not in the repository.
-import * as ort from "./vendor/onnxruntime-web/ort.webgpu.min.mjs";
-import { phonemize, loadPhonemizer } from "./js/phonemize.js";
-import { CancelledError, Engine } from "./js/tts.js";
-import { fetchModels } from "./js/fetch-model.js";
-import { planOptionsFromQuery, thisIsPhone } from "./js/backend-plan.js";
-import { checkText } from "./js/text-check.js";
+import * as ort from "../vendor/onnxruntime-web/ort.webgpu.min.mjs";
+import { phonemize, loadPhonemizer } from "./engine/phonemize.js";
+import { CancelledError, Engine } from "./engine/engine.js";
+import { fetchModels } from "./engine/fetch-model.js";
+import { planOptionsFromQuery, thisIsPhone } from "./engine/backend-plan.js";
+import { checkText } from "./text/text-check.js";
 
-ort.env.wasm.wasmPaths = new URL("./vendor/onnxruntime-web/", import.meta.url).href;
+ort.env.wasm.wasmPaths = new URL("../vendor/onnxruntime-web/", import.meta.url).href;
 // Threads need cross-origin isolation, which a static Space does not send;
 // asking for them anyway only prints a warning and falls back to one.
 // The Space sends COOP/COEP (`custom_headers` in its README), so the direct
@@ -49,10 +49,10 @@ const phone = thisIsPhone(self.navigator);
 // Both lazy: a visitor who never picks English never downloads its 38 MB.
 const ENGINES = {
   az: new Engine(ort, {
-    durationPath: "./onnx/duration.onnx",
-    decodePath: "./onnx/decode.onnx",
-    // The CPU step of the fallback chain; see js/backend-plan.js.
-    int8DecodePath: "./onnx/decode.int8.onnx",
+    durationPath: "../onnx/duration.onnx",
+    decodePath: "../onnx/decode.onnx",
+    // The CPU step of the fallback chain; see js/engine/backend-plan.js.
+    int8DecodePath: "../onnx/decode.int8.onnx",
     phonemize: (text) => phonemize(text, "az"),
     // On for both voices (the Engine default), and no request option can turn
     // it off: the playground is public. Only a clone, with say.py, can.
@@ -64,8 +64,8 @@ const ENGINES = {
     forceGpu,
   }),
   en: new Engine(ort, {
-    durationPath: "./onnx/en/duration.onnx",
-    decodePath: "./onnx/en/decode.onnx",
+    durationPath: "../onnx/en/duration.onnx",
+    decodePath: "../onnx/en/decode.onnx",
     phonemize: (text) => phonemize(text, "en-us"),
     fetchModels,
     preferWasm,

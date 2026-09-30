@@ -1,7 +1,7 @@
 // The JavaScript chunker must cut in exactly the same places as the Python one.
 import { readFileSync } from "node:fs";
-import { normalizeAz } from "../js/az-text.js";
-import { chunkText } from "../js/az-chunk.js";
+import { normalizeAz } from "../js/text/az-text.js";
+import { chunkText } from "../js/text/az-chunk.js";
 
 const golden = JSON.parse(
   readFileSync(new URL("./golden/chunks.json", import.meta.url), "utf-8"),

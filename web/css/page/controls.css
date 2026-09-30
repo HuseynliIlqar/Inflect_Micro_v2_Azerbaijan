@@ -1,0 +1,100 @@
+/* -- controls ------------------------------------------------------------------ */
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--panel);
+}
+
+.segment {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.85rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.segment + .segment {
+  border-inline-start: 1px solid var(--line);
+}
+
+.segment.is-active {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.segmented-small .segment {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.segment svg {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.segment svg .fill {
+  fill: currentColor;
+  stroke: none;
+}
+
+button,
+.ghost {
+  font: inherit;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.primary {
+  width: 100%;
+  padding: 0.75rem 1.2rem;
+  border: 0;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.primary[disabled] {
+  opacity: 0.55;
+  cursor: progress;
+}
+
+.ghost {
+  display: inline-block;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: inherit;
+  font-size: 0.9rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Only where a pointer can hover: on a touch screen the hover colour would
+   stick to the last button tapped. */
+@media (hover: hover) {
+  .segment:hover:not(.is-active),
+  .example:hover,
+  .ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .primary:hover:not([disabled]) {
+    filter: brightness(1.08);
+  }
+}

@@ -1,5 +1,5 @@
 // After a clip is ready, the page brings the result into view only when needed.
-import { needsReveal } from "../js/reveal.js";
+import { needsReveal } from "../js/ui/reveal.js";
 
 let checks = 0;
 function check(condition, message) {

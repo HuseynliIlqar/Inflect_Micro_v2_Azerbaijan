@@ -1,7 +1,7 @@
 /**
  * The result's waveform on the page: drawn once a clip is ready, redrawn as it
  * plays, when the canvas changes width and when the theme flips. The drawing
- * itself is js/waveform.js; this is the wiring to the DOM.
+ * itself is js/ui/waveform.js; this is the wiring to the DOM.
  */
 
 import { barCount, drawWave, peaks, seekFraction } from "./waveform.js";

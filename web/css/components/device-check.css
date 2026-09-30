@@ -1,0 +1,110 @@
+/* -- the device check: card, meter, dialog, toasts ------------------------------ */
+
+/* One tone per verdict; every surface below reads these three. */
+[data-tone="good"] {
+  --tone-bg: var(--good-bg);
+  --tone-line: var(--good-line);
+  --tone-ink: var(--good-ink);
+}
+
+[data-tone="warn"] {
+  --tone-bg: var(--warn-bg);
+  --tone-line: var(--warn-line);
+  --tone-ink: var(--warn-ink);
+}
+
+[data-tone="bad"] {
+  --tone-bg: var(--bad-bg);
+  --tone-line: var(--bad-line);
+  --tone-ink: var(--bad-ink);
+}
+
+[data-tone="pending"] {
+  --tone-bg: var(--panel);
+  --tone-line: var(--line);
+  --tone-ink: var(--ink-soft);
+}
+
+/* The speed meter: three rising bars, as many lit as the device is fast. */
+.meter {
+  display: inline-flex;
+  flex: none;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+  color: var(--tone-line);
+}
+
+.meter i {
+  width: 5px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.22;
+  transition: opacity 0.25s ease-out;
+}
+
+.meter i:nth-child(1) {
+  height: 40%;
+}
+
+.meter i:nth-child(2) {
+  height: 70%;
+  transition-delay: 0.12s;
+}
+
+.meter i:nth-child(3) {
+  height: 100%;
+  transition-delay: 0.24s;
+}
+
+.meter[data-bars="1"] i:nth-child(-n + 1),
+.meter[data-bars="2"] i:nth-child(-n + 2),
+.meter[data-bars="3"] i {
+  opacity: 1;
+}
+
+.meter-large {
+  height: 34px;
+  gap: 5px;
+}
+
+.meter-large i {
+  width: 9px;
+  border-radius: 3px;
+}
+
+.device-card {
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--tone-line);
+  border-inline-start-width: 4px;
+  border-radius: var(--radius);
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+}
+
+.device-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.device-label {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.device-title {
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.device-details {
+  flex: none;
+  border-color: currentColor;
+  color: inherit;
+}

@@ -1,0 +1,179 @@
+/* -- the stage ----------------------------------------------------------------- */
+
+.stage {
+  max-width: var(--stage);
+  margin: 0 auto;
+  padding: clamp(1.5rem, 4vw, 3rem) var(--gutter) 0;
+}
+
+.subtitle {
+  margin: 0 0 1.6rem;
+  max-width: var(--measure);
+  color: var(--ink-soft);
+}
+
+.voice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+
+.voice-row .field-label {
+  margin: 0;
+}
+
+.voice-info {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+/* The script: what will be spoken, set large, because it is the point. */
+.script-input {
+  display: block;
+  width: 100%;
+  min-height: 9.5rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  color: var(--ink);
+  font: 400 clamp(1.15rem, 2.2vw, 1.45rem) / 1.5 var(--font);
+  letter-spacing: -0.005em;
+  resize: vertical;
+}
+
+.script-input::placeholder {
+  color: var(--ink-soft);
+  opacity: 0.75;
+}
+
+.script-input:focus-visible {
+  /* Transparent, not none: forced-colors mode paints it where the shadow vanishes. */
+  outline: 2px solid transparent;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.speak {
+  width: auto;
+  min-width: 11rem;
+  padding-inline: 1.6rem;
+  font-size: 1.02rem;
+}
+
+.cancel {
+  padding-block: 0.7rem;
+}
+
+.elapsed {
+  margin-inline-start: auto;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.status {
+  min-height: 1.5rem;
+  margin: 0.5rem 0 0;
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+.progress {
+  position: relative;
+  height: 4px;
+  margin-top: 0.9rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.25s ease-out;
+}
+
+/* A known fraction can sit still for a whole chunk; a faint shimmer on the
+   track shows the work has not stalled. */
+.progress:not(.is-indeterminate)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 35%, transparent),
+    transparent
+  );
+  transform: translateX(-100%);
+  animation: progress-shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes progress-shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* Unknown size: a segment sweeps across instead of a width that means nothing. */
+.progress.is-indeterminate .progress-fill {
+  position: absolute;
+  inset-block: 0;
+  width: 35%;
+  animation: progress-sweep 1.2s ease-in-out infinite;
+}
+
+@keyframes progress-sweep {
+  from {
+    left: -35%;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+.slow-note {
+  margin-top: 0.2rem;
+}
+
+.examples {
+  margin-top: 1rem;
+}
+
+.examples-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.example-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.example {
+  max-width: 100%;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  color: inherit;
+  font-size: 0.86rem;
+  text-align: start;
+  white-space: normal;
+}

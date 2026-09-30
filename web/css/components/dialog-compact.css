@@ -1,0 +1,99 @@
+/* -- the device dialog, compact: it fits a 320x568 phone without scrolling ------ */
+
+.dialog-head {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.dialog-head .dialog-title {
+  font-size: 1.1rem;
+  line-height: 1.25;
+}
+
+.dialog-main,
+.dialog-tech {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.dialog-text {
+  line-height: 1.45;
+}
+
+.dialog-tech ul {
+  margin: 0;
+  padding-inline-start: 1.1rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.dialog-tech li + li {
+  margin-top: 0.35rem;
+}
+
+.dialog-tech-open {
+  align-self: flex-start;
+}
+
+/* Back to the plain words: left of "Got it", in the same row. */
+.dialog-tech-back {
+  margin-inline-end: auto;
+}
+
+/* If a very small or sideways screen still runs out of room, the dialog
+   scrolls as one and its button stays reachable. */
+.device-dialog {
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 400px), (max-height: 700px) {
+  .device-dialog .dialog-inner {
+    gap: 0.55rem;
+    padding: 1rem;
+  }
+
+  .device-dialog .meter-large {
+    height: 26px;
+  }
+
+  .device-dialog .meter-large i {
+    width: 7px;
+  }
+
+  .dialog-text {
+    font-size: 0.95rem;
+  }
+
+  .dialog-note {
+    font-size: 0.85rem;
+  }
+
+  .device-dialog .dialog-check {
+    min-height: 40px;
+  }
+}
+
+/* A phone held sideways: little height, plenty of width. */
+@media (max-height: 420px) {
+  .device-dialog .dialog-inner {
+    gap: 0.4rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .dialog-main,
+  .dialog-tech {
+    gap: 0.35rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .dialog-tech-open {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}

@@ -60,7 +60,7 @@ export function diagnosticsLine({
   voice, backend, precision, threads = 1, isolated = false, framed = false, fullQuality = false,
   phone = false, forceGpu = false, fallbacks = [], seconds, elapsed, chunks, userAgent = "",
 }) {
-  // A phone skips WebGPU by policy (js/backend-plan.js); say so, so a report
+  // A phone skips WebGPU by policy (js/engine/backend-plan.js); say so, so a report
   // from a phone is not read as a GPU that failed.
   const gpuPolicy = forceGpu ? "forced" : phone ? "skipped-on-phone" : "default";
   const failed = fallbacks.length

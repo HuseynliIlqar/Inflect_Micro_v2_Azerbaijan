@@ -1,0 +1,81 @@
+/* Toasts: an error that names the next step, bottom of the screen. */
+
+.toasts {
+  position: fixed;
+  z-index: 20;
+  inset-inline: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+@media (min-width: 720px) {
+  .toasts {
+    inset-inline: auto 24px;
+    width: 24rem;
+  }
+}
+
+.toast {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.75rem 0.6rem 0.75rem 0.85rem;
+  border: 1px solid var(--tone-line);
+  border-inline-start-width: 4px;
+  border-radius: var(--radius);
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+  pointer-events: auto;
+  animation: toast-in 0.2s ease-out;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.toast-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.toast-text {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.toast-close {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.toast-close:hover {
+  background: rgb(127 127 127 / 0.18);
+}
+
+@media (pointer: coarse) {
+  .toast-close {
+    width: 44px;
+    height: 44px;
+  }
+}

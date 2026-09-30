@@ -1,0 +1,93 @@
+/* The components, loaded after every file in css/page/, whose tokens and base
+   controls they build on. This one: the fallback chain's mode banner. */
+
+/* -- the mode banner: which step of the fallback chain is speaking -------------- */
+
+.mode-banner {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  margin: 0.5rem 0;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--warn-line);
+  border-inline-start-width: 4px;
+  border-radius: var(--radius);
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+}
+
+/* Full quality was chosen: information, not a warning. */
+.mode-banner[data-kind="full"] {
+  border-color: var(--accent);
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.mode-icon {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.1rem;
+  fill: currentColor;
+}
+
+.mode-icon path {
+  display: none;
+}
+
+.mode-banner[data-kind="fast"] .icon-fast,
+.mode-banner[data-kind="full"] .icon-full,
+.mode-banner[data-kind="int8-failed"] .icon-warn,
+.mode-banner[data-kind="gpu-failed"] .icon-warn {
+  display: inline;
+}
+
+.mode-body {
+  min-width: 0;
+}
+
+.mode-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.mode-text {
+  margin: 0.2rem 0 0;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.mode-action {
+  margin-top: 0.6rem;
+  min-height: 44px;
+  border-color: currentColor;
+  font-weight: 600;
+}
+
+.mode-badge {
+  display: inline-flex;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font: 0.8rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--ink-soft);
+}
+
+.mode-badge[data-precision="int8"] {
+  border-color: var(--warn-line);
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+}
+
+.diagnostics {
+  margin: 0.4rem 0 0;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font: 0.78rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: all;
+}

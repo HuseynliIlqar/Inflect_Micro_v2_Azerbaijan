@@ -1,6 +1,6 @@
 // What a phone visitor reads must be plain: no engine names, no model jargon,
 // and it must say how to get full speed and quality.
-import { label, LABELS } from "../js/i18n.js";
+import { label, LABELS } from "../js/ui/i18n.js";
 
 const PHONE_KEYS = [
   "device_title_phone", "device_text_phone", "device_note_phone",

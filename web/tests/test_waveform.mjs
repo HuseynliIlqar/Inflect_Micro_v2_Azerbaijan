@@ -1,5 +1,5 @@
 // The waveform drawn under the player: bar heights from the synthesised audio.
-import { barCount, peaks, seekFraction } from "../js/waveform.js";
+import { barCount, peaks, seekFraction } from "../js/ui/waveform.js";
 
 let checks = 0;
 function check(condition, message) {

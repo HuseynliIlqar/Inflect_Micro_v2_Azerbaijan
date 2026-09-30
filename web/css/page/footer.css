@@ -1,0 +1,50 @@
+/* The footer, the skip link, and text only a screen reader reads. */
+
+.page-foot {
+  max-width: var(--stage);
+  margin: clamp(2.5rem, 6vw, 4rem) auto 0;
+  padding: 1.5rem var(--gutter) 2rem;
+  /* A rule as wide as the stage's content, not its padding. */
+  background: linear-gradient(var(--line), var(--line)) center top /
+    calc(100% - 2 * var(--gutter)) 1px no-repeat;
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+.page-foot > p:first-child {
+  max-width: var(--measure);
+  margin-top: 0;
+  color: var(--ink);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  padding: 0.5rem 0.9rem;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: var(--radius);
+}
+
+.skip-link:focus-visible {
+  left: 16px;
+  top: 16px;
+  z-index: 10;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,5 +1,5 @@
 // Engine walks the fallback chain -- against a stand-in onnxruntime, no model.
-import { Engine } from "../js/tts.js";
+import { Engine } from "../js/engine/engine.js";
 
 // Engine warns on every step it abandons; here that is the point, not noise.
 console.warn = () => {};

@@ -1,5 +1,5 @@
 // The fallback chain: which backend and precision to try, in what order.
-import { fallbackPlan, stepsAfter, planOptionsFromQuery, sameStep, isPhone } from "../js/backend-plan.js";
+import { fallbackPlan, stepsAfter, planOptionsFromQuery, sameStep, isPhone } from "../js/engine/backend-plan.js";
 
 const failures = [];
 let checked = 0;
