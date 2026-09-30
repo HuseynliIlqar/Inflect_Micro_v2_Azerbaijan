@@ -118,6 +118,7 @@ python say.py --voice en "Hello there."           # ingilis baza modeli
 | `--max-words` | `15` | Hissə uzunluğu. `0` bölgünü modelə buraxır |
 | `--prosody` | `off` | `safe` / `wide` — vurğu işarələrini seyrəldir (təcrübi) |
 | `--show-text` | — | Normallaşdırılmış mətni və hissə sərhədlərini çap edir |
+| `--allow-profanity` | — | Söyüşləri bip əvəzinə olduğu kimi oxuyur |
 
 ## Python-dan
 
@@ -165,7 +166,10 @@ göndərilmir. Səhifə yükləndikdən sonra internetsiz də işləyir.
 - Sintez Web Worker-də gedir, ona görə səhifə donmur və irəliləyiş zolağı göstərilir
 
 **Playground yavaş görünürsə, səbəb modeldə yox, brauzerdədir.** WebGPU
-olmayanda (bir çox telefon, Firefox) model prosessorda işləyir.
+olmayanda (bir çox telefon, Firefox) model prosessorda, int8 decoder ilə işləyir:
+təxminən 1.5 dəfə sürətlidir və yarı həcmdə yüklənir. Onun səsə təsiri modelin
+iki oxunuşu arasındakı öz fərqindən kiçik ölçülüb; səhifə bu rejimin işlədiyini
+bildirir (`?precision=fp32` onu söndürür).
 [Birbaşa linkdə](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/index.html)
 səhifə cross-origin izolyasiyalıdır və 4 axına qədər istifadə edir, bu da bir
 axından təxminən iki dəfə sürətlidir. Hugging Face səhifəsinin içində izolyasiya
@@ -241,6 +245,21 @@ pauza qoyulur ki, nəticə kəsik-kəsik səslənməsin.
 
 `--show-text` nə baş verdiyini göstərir, `--raw` isə bunu söndürür.
 
+**Hər ikisindən əvvəl, senzura** (`aztts/az_profanity.py`) — söyüşlər
+televiziyadakı kimi 1 kHz bip səsi ilə əvəz olunur: `Sən qəhbəsən, bildin?`
+"Sən *(bip)*, bildin?" kimi səslənir. Şəkilçili formalar, Azərbaycan hərfləri
+olmadan yazılış (`qehbe`) və hərf yerinə rəqəm (`s1kdir`) tutulur; eyni
+hərflərlə başlayan təmiz sözlər (`şikayət`, `sikkə`, `götürmək`) tutulmur.
+`axmaq`, `eşşək` kimi yüngül təhqirlər olduğu kimi oxunur.
+
+Brauzer playground-unda və host edilən interfeysdə senzura həmişə açıqdır və
+onu söndürmək üçün heç bir düymə yoxdur. Clone edilmiş repoda da default
+açıqdır və yalnız qəsdən söndürülür: `python say.py --allow-profanity`,
+`python app.py --allow-profanity` və ya
+`AzTTS().synthesize(text, censor=False)`. `--raw` onu söndürmür; İngilis səsinə
+də aiddir, çünki hər iki səsə Azərbaycanca yazmaq olar. Bu, adi mətn üçün
+filtrdir, zəmanət deyil: hərf-hərf ayrı yazılmış söz (`s i k`) keçir.
+
 ## Kod üzərində işləmək
 
 ```bash
@@ -278,6 +297,7 @@ aztts/
   az_text.py      Rəqəm / Roma rəqəmi / qısaltma → söz
   az_chunk.py     Cümlələri modelin bacardığı uzunluğa bölür
   az_prosody.py   Vurğu qatı (könüllü, --prosody)
+  az_profanity.py Söyüşlər -> bip (--allow-profanity olmadıqca açıq)
   en_voice.py     İngilis baza modeli, eyni runtime ilə
   console.py      Windows konsolunu UTF-8-ə keçirir
 webui/

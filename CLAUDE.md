@@ -30,7 +30,7 @@ nothing to download for normal work.
 
 ```bash
 python -m pytest                     # ~3 seconds, never loads the model
-node web/tests/test_num_az.mjs && node web/tests/test_az_text.mjs && node web/tests/test_az_chunk.mjs && node web/tests/test_progress.mjs && node web/tests/test_theme.mjs
+node web/tests/test_num_az.mjs && node web/tests/test_az_text.mjs && node web/tests/test_az_chunk.mjs && node web/tests/test_progress.mjs && node web/tests/test_theme.mjs && node web/tests/test_backend_plan.mjs && node web/tests/test_engine_fallback.mjs && node web/tests/test_mode_banner.mjs && node web/tests/test_device_check.mjs && node web/tests/test_az_censor.mjs && node web/tests/test_cancel.mjs && node web/tests/test_waveform.mjs
 python -m compileall -q say.py app.py aztts webui tools training
 cd model && sha256sum -c checksums.sha256       # 24 files, all must say OK
 cd model-en && sha256sum -c checksums.sha256    # 6 files, all must say OK
@@ -75,6 +75,8 @@ help, Markdown. Azerbaijani appears only as *language data*:
   `az_text.py`
 - `_CONJUNCTIONS` in `az_chunk.py`
 - `CLITICS`, `WEAK_HEADS`, `_WIDE_WEAK`, `_PARTICIPLE_WORDS` in `az_prosody.py`
+- `PROFANE_STEMS`, `CLEAN_PREFIXES`, `PROFANE_WORDS` in `az_profanity.py`
+  (and their copies in `web/js/az-censor.js`)
 - the `_AZ` table in `webui/i18n.py` -- the interface's own labels; the page has
   to speak Azerbaijani, and this is the only module where it does
 - phoneme strings anywhere
@@ -136,6 +138,15 @@ that into "free for commercial use".
   lines; the next rule it grows by should move dates, times and phone numbers
   into their own module (and the same split in `web/js/`).
 - No new runtime dependencies without a reason stated in the PR.
+- **Censoring is on unless someone with a clone turns it off.** `censor_az`
+  runs before normalisation, survives `--raw` and covers the English voice
+  too -- it only removes words, so it is the one Azerbaijani layer `EnVoice`
+  may use. The static playground's `Engine` censors by default and `speak()`
+  reads no option that lifts it; the Gradio page has no widget for it and only
+  `python app.py --allow-profanity` does. Do not add a switch to either page:
+  both are hosted publicly. A stem that collides with a clean word needs a
+  `CLEAN_PREFIXES` entry and a test in `tests/test_az_profanity.py`; then
+  regenerate `web/tests/golden/censor.json` (see `packaging/PUBLISHING.md`).
 - **The interface's dependency stays optional.** Gradio is declared under
   `[project.optional-dependencies] app` and in `requirements-app.txt`, never in
   `requirements.txt`: someone importing `aztts` as a library should not pay for
@@ -143,7 +154,8 @@ that into "free for commercial use".
 - **The English voice is a guest, not a second product.** `EnVoice` exists so a
   visitor can hear where this model started. None of the Azerbaijani text
   layers apply to it: no `normalize_az`, no `restress`. Keep it that way --
-  Azerbaijani number words in an English sentence is the failure mode.
+  Azerbaijani number words in an English sentence is the failure mode. The one
+  exception is `censor_az`, which writes nothing, only bleeps.
 - **`web/` is a port, and a port drifts.** The JavaScript in `web/js/` mirrors
   `az_text.py`, `az_chunk.py` and `num2words`. When any of those change,
   regenerate the golden files and run `node web/tests/*.mjs`; the snippet that
@@ -160,6 +172,7 @@ that into "free for commercial use".
 | Fix how a number, date, unit or acronym is read | `aztts/az_text.py` |
 | Change where sentences are cut | `aztts/az_chunk.py` |
 | Change stress placement (`--prosody`) | `aztts/az_prosody.py` |
+| Change which words are bleeped | `aztts/az_profanity.py`, then `web/js/az-censor.js` |
 | Change synthesis, chunk pauses, model loading | `aztts/engine.py` |
 | Add or change a CLI flag | `say.py` |
 | Change the browser interface, its labels or parameters | `app.py`, `webui/` |

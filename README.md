@@ -119,6 +119,7 @@ python say.py --voice en "Hello there."           # the English base model
 | `--max-words` | `15` | Chunk length. `0` leaves splitting to the model |
 | `--prosody` | `off` | `safe` / `wide` -- thins out stress marks (experimental) |
 | `--show-text` | -- | Print the normalised text and the chunk boundaries |
+| `--allow-profanity` | -- | Speak obscenities as written instead of bleeping them |
 
 ## From Python
 
@@ -166,7 +167,10 @@ anywhere. Once the page has loaded it works with the network switched off.
 - synthesis in a Web Worker, so the page never freezes, with a progress bar
 
 **If the playground feels slow, it is the browser, not the model.** Without
-WebGPU --- many phones, Firefox --- the model runs on the CPU. On the
+WebGPU --- many phones, Firefox --- the model runs on the CPU, with an int8
+decoder that is about 1.5x faster and half the download; its change to the
+sound measured smaller than the model's own variation between two takes, and
+the page says when it is in use (`?precision=fp32` turns it off). On the
 [direct link](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/index.html)
 the page is cross-origin isolated and uses up to 4 threads, about twice as fast
 as one. Inside the Hugging Face page it cannot be isolated and gets a single
@@ -244,6 +248,21 @@ punctuation is inserted between chunks, so the result does not sound choppy.
 
 `--show-text` shows what is happening; `--raw` turns it off.
 
+**Before both, censoring** (`aztts/az_profanity.py`) --- obscene words are
+replaced by a 1 kHz bleep, the way television does it: `Sən qəhbəsən, bildin?`
+is spoken as "Sən *(bip)*, bildin?". Inflected forms, spellings without
+Azerbaijani letters (`qehbe`) and look-alike digits (`s1kdir`) are caught;
+clean words that share the letters (`şikayət`, `sikkə`, `götürmək`) are not.
+Mild insults such as `axmaq` or `eşşək` are read as written.
+
+It is always on in the browser playground and in the hosted interface, with no
+switch to turn it off. In a clone it is on by default too, and turned off only
+on purpose: `python say.py --allow-profanity`, `python app.py
+--allow-profanity`, or `AzTTS().synthesize(text, censor=False)`. `--raw` does
+not turn it off, and it covers the English voice too, since Azerbaijani can be
+typed into either. It is a filter for ordinary text, not a guarantee: a word
+spelled out letter by letter (`s i k`) still gets through.
+
 ## Working on the code
 
 ```bash
@@ -281,6 +300,7 @@ aztts/
   az_text.py      Digits / Roman numerals / abbreviations -> words
   az_chunk.py     Cuts sentences to a length the model handles
   az_prosody.py   Stress layer (optional, --prosody)
+  az_profanity.py Obscenities -> a bleep (on unless --allow-profanity)
   en_voice.py     The English base model, through the same runtime
   console.py      Switches the Windows console to UTF-8
 webui/

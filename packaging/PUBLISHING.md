@@ -123,7 +123,7 @@ one is static.
 ```bash
 git clone https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan hf-space
 cd hf-space
-cp ../web/index.html ../web/styles.css ../web/app.js ../web/worker.js .
+cp ../web/index.html ../web/*.css ../web/app.js ../web/worker.js .
 cp -r ../web/js .
 mkdir -p onnx && cp ../web/onnx/*.onnx onnx/
 # README.md needs `sdk: static`, `app_file: index.html` and the `custom_headers`
@@ -135,11 +135,23 @@ The ONNX export is not in this repository (`web/onnx/` is ignored): the
 repository already carries two checkpoints, and the Space is where the graphs
 belong. Copy them in from the training workspace when working on the page.
 
+`onnx/decode.int8.onnx` is the CPU step of the fallback chain. Rebuild it
+whenever `decode.onnx` changes, then bump `CACHE_NAME` in `web/js/fetch-model.js`:
+
+```bash
+pip install onnx                       # the tool's only extra need
+python tools/quantize_decoder.py       # web/onnx/decode.onnx -> web/onnx/decode.int8.onnx
+```
+
+It caps its own memory (3 GiB by default, `--memory-gib`) and calibrates one
+sample at a time. Without that, onnxruntime's calibrator holds ~24 GiB of
+activations and froze a 16 GB machine.
+
 #### Regenerating the golden files
 
 `web/` is a port of the Python text layer, so its tests compare against output
-generated from the Python side. After changing `az_text.py`, `az_chunk.py` or
-the number words, regenerate:
+generated from the Python side. After changing `az_text.py`, `az_chunk.py`,
+`az_profanity.py` or the number words, regenerate:
 
 ```bash
 python - <<'PY'
@@ -158,12 +170,24 @@ json.dump({t: normalize_az(t) for t in old},
           open('web/tests/golden/normalise.json', 'w', encoding='utf-8'), ensure_ascii=False)
 json.dump({t: list(chunk_text(normalize_az(t))) for t in old if normalize_az(t)},
           open('web/tests/golden/chunks.json', 'w', encoding='utf-8'), ensure_ascii=False)
+# censor.json: keep the existing inputs, refresh the bleeped text and segments
+from aztts.az_profanity import censor_az, bleep_segments
+old = json.load(open('web/tests/golden/censor.json', encoding='utf-8'))
+json.dump({t: [censor_az(t), list(bleep_segments(censor_az(t)))] for t in old},
+          open('web/tests/golden/censor.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=0)
 PY
 node web/tests/test_num_az.mjs
 node web/tests/test_az_text.mjs
 node web/tests/test_az_chunk.mjs
 node web/tests/test_progress.mjs
 node web/tests/test_theme.mjs
+node web/tests/test_backend_plan.mjs
+node web/tests/test_engine_fallback.mjs
+node web/tests/test_mode_banner.mjs
+node web/tests/test_device_check.mjs
+node web/tests/test_az_censor.mjs
+node web/tests/test_cancel.mjs
+node web/tests/test_waveform.mjs
 ```
 
 ### The Gradio Space (needs Pro)
