@@ -30,7 +30,7 @@ nothing to download for normal work.
 
 ```bash
 python -m pytest                     # ~3 seconds, never loads the model
-node web/tests/test_num_az.mjs && node web/tests/test_az_text.mjs && node web/tests/test_az_chunk.mjs && node web/tests/test_progress.mjs && node web/tests/test_theme.mjs && node web/tests/test_backend_plan.mjs && node web/tests/test_engine_fallback.mjs && node web/tests/test_mode_banner.mjs && node web/tests/test_device_check.mjs && node web/tests/test_az_censor.mjs && node web/tests/test_cancel.mjs && node web/tests/test_waveform.mjs && node web/tests/test_reveal.mjs && node web/tests/test_phone_copy.mjs
+node web/tests/test_num_az.mjs && node web/tests/test_az_text.mjs && node web/tests/test_az_chunk.mjs && node web/tests/test_progress.mjs && node web/tests/test_theme.mjs && node web/tests/test_backend_plan.mjs && node web/tests/test_engine_fallback.mjs && node web/tests/test_mode_banner.mjs && node web/tests/test_device_check.mjs && node web/tests/test_az_censor.mjs && node web/tests/test_cancel.mjs && node web/tests/test_waveform.mjs && node web/tests/test_reveal.mjs && node web/tests/test_phone_copy.mjs && node web/tests/test_text_check.mjs
 python -m compileall -q say.py app.py aztts webui tools training
 cd model && sha256sum -c checksums.sha256       # 24 files, all must say OK
 cd model-en && sha256sum -c checksums.sha256    # 6 files, all must say OK

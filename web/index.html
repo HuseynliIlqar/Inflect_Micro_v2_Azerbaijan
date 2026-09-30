@@ -150,7 +150,10 @@
           spellcheck="false"
           enterkeyhint="go"
         ></textarea>
-        <p id="text-error" class="field-error" hidden></p>
+        <!-- The limit and what is wrong with the text; js/text-check.js decides. -->
+        <p id="text-count" class="char-count" translate="no"></p>
+        <p id="text-error" class="field-error" aria-live="polite" hidden></p>
+        <p id="text-warning" class="field-warning" aria-live="polite" hidden></p>
 
         <div class="actions">
           <button id="speak" type="button" class="primary speak">Səsləndir</button>

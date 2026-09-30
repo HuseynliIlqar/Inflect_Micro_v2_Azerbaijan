@@ -89,6 +89,17 @@ if it is off screen -- not while the visitor is typing or the device dialog is
 open, and without smooth scrolling under reduced motion. An iPad in its
 default desktop mode reports a Mac and keeps WebGPU.
 
+The text box takes at most 500 characters (`MAX_CHARS` in `js/text-check.js`):
+a phone's browser needs 10-20 s a sentence, so a longer paste would hold it for
+minutes. A counter under the box turns amber at 90% and red past the limit,
+and the error beside the field says so at once; empty text, and text with
+nothing to read (punctuation or emoji only), are refused when *Speak* is
+pressed. Two warnings do not block: letters outside the Latin alphabet, and
+Azerbaijani letters (`ə`, `ı`, `ğ`) sent to the English voice. The worker runs
+the same check, so a request posted around the page is refused too.
+`web/tests/test_text_check.mjs` covers the rules and that every message exists
+in both languages.
+
 ## The fallback chain
 
 `js/backend-plan.js` decides the order and `Engine` walks it, moving down one

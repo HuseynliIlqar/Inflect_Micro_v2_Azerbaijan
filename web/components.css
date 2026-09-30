@@ -364,14 +364,39 @@
   }
 }
 
-.field-error {
-  margin: -0.6rem 0 1rem;
+/* Below the text box: "123 / 500", a caution near the limit, red past it. */
+.char-count {
+  margin: 0.35rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+
+.char-count.is-near {
+  color: var(--warn-ink);
+}
+
+.char-count.is-over {
+  color: var(--bad-ink);
+  font-weight: 600;
+}
+
+.field-error,
+.field-warning {
+  margin: 0.4rem 0 0;
   padding: 0.45rem 0.65rem;
   border-inline-start: 3px solid var(--bad-line);
   border-radius: 6px;
   background: var(--bad-bg);
   color: var(--bad-ink);
   font-size: 0.88rem;
+}
+
+.field-warning {
+  border-inline-start-color: var(--warn-line);
+  background: var(--warn-bg);
+  color: var(--warn-ink);
 }
 
 textarea[aria-invalid="true"] {

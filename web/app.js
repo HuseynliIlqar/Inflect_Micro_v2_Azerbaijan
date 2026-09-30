@@ -18,6 +18,7 @@ import { createDeviceView } from "./js/device-view.js";
 import { toast } from "./js/notify.js";
 import { createWaveView } from "./js/wave-view.js";
 import { needsReveal } from "./js/reveal.js";
+import { checkText, ERROR_KEYS } from "./js/text-check.js";
 
 const EXAMPLES = {
   az: [
@@ -70,7 +71,8 @@ const els = {
   dialogDontShow: $("dialog-dont-show"), dialogDontShowLabel: $("dialog-dont-show-label"),
   dialogDirect: $("dialog-direct"), dialogOk: $("dialog-ok"),
   dialogTech: $("dialog-tech"), dialogTechLabel: $("dialog-tech-label"), dialogTechList: $("dialog-tech-list"),
-  toasts: $("toasts"), textError: $("text-error"),
+  toasts: $("toasts"), textError: $("text-error"), textCount: $("text-count"),
+  textWarning: $("text-warning"),
 };
 
 // The Azerbaijani model is this project's; the English one is
@@ -124,18 +126,57 @@ function reviseDevice() {
   device.revise(deviceVerdict({ gpu: true, gpuFailed: true, appleMobile: APPLE_MOBILE, threads, framed: IN_FRAME }), reason);
 }
 
-/** Empty text: said next to the field, not in a popup. */
-function showTextError(show, { focus = true } = {}) {
-  els.textError.hidden = !show;
-  if (show) {
-    els.textError.textContent = `${label(language, "error_empty")} ${label(language, "error_empty_hint")}`;
-    els.text.setAttribute("aria-invalid", "true");
-    els.text.setAttribute("aria-describedby", "text-error");
-    if (focus) els.text.focus();
+// -- the text: its limit and what is wrong with it (js/text-check.js) -------------
+
+// The error beside the field, if one is shown: a key of ERROR_KEYS.
+let shownTextError = null;
+
+/** "123 / 500" under the field, with a spoken form for screen readers. */
+function renderCounter(check) {
+  const visible = document.createElement("span");
+  visible.setAttribute("aria-hidden", "true");
+  visible.textContent = label(language, "char_count", { count: check.count, max: check.max });
+  const spoken = document.createElement("span");
+  spoken.className = "visually-hidden";
+  spoken.textContent = label(language, "char_count_label", { count: check.count, max: check.max });
+  els.textCount.replaceChildren(visible, spoken);
+  const over = check.error === "too_long";
+  els.textCount.classList.toggle("is-over", over);
+  els.textCount.classList.toggle("is-near", check.near && !over);
+}
+
+/**
+ * Check the text and say what is wrong next to the field, not in a popup.
+ * Too long is said as soon as it happens; empty and nothing-to-say only once
+ * Speak is pressed (`insist`), so an untouched field is not shouted at.
+ * An error already shown stays until the text no longer has it.
+ */
+function renderTextCheck({ insist = false, error: forced = null } = {}) {
+  const check = checkText(els.text.value, { voice });
+  const error = forced ?? check.error;
+  renderCounter(check);
+
+  if (error && (insist || forced || error === "too_long" || error === shownTextError)) {
+    shownTextError = error;
   } else {
-    els.text.removeAttribute("aria-invalid");
-    els.text.removeAttribute("aria-describedby");
+    shownTextError = null;
   }
+  els.textError.hidden = !shownTextError;
+  if (shownTextError) {
+    els.textError.textContent = ERROR_KEYS[shownTextError]
+      .map((key) => label(language, key, { count: check.count, max: check.max }))
+      .join(" ");
+  }
+
+  const warnings = shownTextError ? [] : check.warnings;
+  els.textWarning.hidden = warnings.length === 0;
+  els.textWarning.textContent = warnings.map((key) => label(language, key)).join(" ");
+
+  const described = ["text-count", shownTextError && "text-error", warnings.length && "text-warning"];
+  els.text.setAttribute("aria-describedby", described.filter(Boolean).join(" "));
+  if (shownTextError) els.text.setAttribute("aria-invalid", "true");
+  else els.text.removeAttribute("aria-invalid");
+  return { ...check, error };
 }
 
 /** An error as a toast that names the next step, not just the problem. */
@@ -503,7 +544,7 @@ function applyLanguage(next) {
   renderModeBanner();
   if (lastResult) renderBadge(lastResult);
   device.setLanguage((key, values) => label(language, key, values));
-  if (!els.textError.hidden) showTextError(true, { focus: false });
+  renderTextCheck();
   els.censorNote.textContent = t("censor_note");
   els.phoneNote.hidden = !(PHONE && !forceGpu);
   els.phoneNoteText.textContent = t("phone_note");
@@ -540,6 +581,8 @@ function applyVoice(next) {
   }
 
   els.normalise.disabled = !azerbaijani;
+  // Whether the text suits the voice is part of the check.
+  renderTextCheck();
   els.normaliseInfo.textContent =
     label(language, "normalise_info") +
     (azerbaijani ? "" : " " + label(language, "az_only"));
@@ -552,6 +595,7 @@ function applyVoice(next) {
     button.textContent = sentence;
     button.addEventListener("click", () => {
       els.text.value = sentence;
+      renderTextCheck();
       els.text.focus();
     });
     els.examples.appendChild(button);
@@ -601,12 +645,12 @@ els.phoneWhy.addEventListener("click", () => els.deviceDetails.click());
 
 async function speak() {
   if (busy) return;
-  const text = els.text.value.trim();
-  if (!text) {
-    showTextError(true);
+  const check = renderTextCheck({ insist: true });
+  if (check.error) {
+    els.text.focus();
     return;
   }
-  showTextError(false);
+  const { text } = check;
 
   busy = true;
   els.speak.disabled = true;
@@ -686,9 +730,10 @@ async function speak() {
   } catch (error) {
     if (error instanceof CancelledError) {
       els.status.textContent = label(language, "status_cancelled");
-    } else if (error?.message === "empty") {
-      console.error("[aztts] synthesis failed", error);
-      showTextError(true);
+    } else if (Object.hasOwn(ERROR_KEYS, error?.message)) {
+      // The worker's own check, or a text that normalises to nothing.
+      console.error("[aztts] synthesis refused", error);
+      renderTextCheck({ error: error.message });
       els.status.textContent = "";
     } else {
       console.error("[aztts] synthesis failed", error);
@@ -746,9 +791,7 @@ els.modeAction.addEventListener("click", () => {
   speak();
 });
 els.copyDiagnostics.addEventListener("click", copyDiagnostics);
-els.text.addEventListener("input", () => {
-  if (!els.textError.hidden && els.text.value.trim()) showTextError(false);
-});
+els.text.addEventListener("input", () => renderTextCheck());
 els.text.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) speak();
 });

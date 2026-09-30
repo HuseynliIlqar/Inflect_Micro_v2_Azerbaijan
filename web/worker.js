@@ -7,7 +7,8 @@
  * the tab. Here the page stays responsive and draws the progress bar.
  *
  * Protocol, one request at a time:
- *   in:  { id, voice, text, options }
+ *   in:  { id, voice, text, options } -- text is checked by js/text-check.js;
+ *        a refused one comes back as an error whose message is the reason
  *   out: { id, type: "progress", stage, ...detail }
  *        { id, type: "result", waveform, chunks, backend, precision, fallbacks, threads }
  *          (waveform transferred; precision is "fp32" or "int8"; fallbacks lists
@@ -29,6 +30,7 @@ import { phonemize, loadPhonemizer } from "./js/phonemize.js";
 import { CancelledError, Engine } from "./js/tts.js";
 import { fetchModels } from "./js/fetch-model.js";
 import { planOptionsFromQuery, thisIsPhone } from "./js/backend-plan.js";
+import { checkText } from "./js/text-check.js";
 
 ort.env.wasm.wasmPaths = new URL("./vendor/onnxruntime-web/", import.meta.url).href;
 // Threads need cross-origin isolation, which a static Space does not send;
@@ -84,6 +86,9 @@ async function handle({ id, voice, text, options }) {
     if (isCancelled()) throw new CancelledError();
   };
   checkpoint();
+  // The page checks first; this catches a request posted around it.
+  const verdict = checkText(text, { voice });
+  if (verdict.error) throw new Error(verdict.error);
   const engine = ENGINES[voice] ?? ENGINES.az;
   // The page's "full quality" choice, per request; the engine reloads only if
   // that changes what runs.
@@ -105,7 +110,7 @@ async function handle({ id, voice, text, options }) {
   post({ type: "progress", stage: "backend", ...state() });
   checkpoint();
 
-  const { waveform, chunks } = await engine.speak(text, {
+  const { waveform, chunks } = await engine.speak(verdict.text, {
     ...options,
     isCancelled,
     onChunk: (done, total) => post({ type: "progress", stage: "chunk", done, total }),

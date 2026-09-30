@@ -197,6 +197,7 @@ node web/tests/test_cancel.mjs
 node web/tests/test_waveform.mjs
 node web/tests/test_reveal.mjs
 node web/tests/test_phone_copy.mjs
+node web/tests/test_text_check.mjs
 ```
 
 ### The Gradio Space (needs Pro)
