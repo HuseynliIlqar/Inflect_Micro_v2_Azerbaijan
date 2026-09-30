@@ -1,8 +1,9 @@
 # Third-Party Notices
 
-This project's own code -- everything under `aztts/`, `tools/`, `tests/`,
-`training/` and `say.py` -- is Apache-2.0. The components below are not ours,
-and their own licences apply to them.
+This project's own code -- everything under `aztts/`, `webui/`, `web/` (except
+`web/vendor/`), `tools/`, `tests/`, `training/`, plus `say.py` and `app.py` -- is
+Apache-2.0. The components below are not ours, and their own licences apply to
+them.
 
 Two of them are copyleft. If you only install and run this project, nothing here
 asks anything of you. If you **redistribute** a combined work -- a packaged
@@ -104,6 +105,27 @@ runtime includes concepts and adapted implementation structure from
 ---
 
 ## Browser playground
+
+### eSpeak NG in WebAssembly (piper-wasm)
+
+- Package: npm [`@diffusionstudio/piper-wasm`](https://www.npmjs.com/package/@diffusionstudio/piper-wasm)
+  1.0.0 -- MIT on npm; its GitHub repository carries no licence file
+- Contains: piper-phonemize ([`wide-video/piper-phonemize`](https://github.com/wide-video/piper-phonemize),
+  a fork of `rhasspy/piper-phonemize`, MIT) with eSpeak NG
+  ([`rhasspy/espeak-ng`](https://github.com/rhasspy/espeak-ng), **GPL-3.0-or-later**)
+  and its `espeak-ng-data` compiled in
+
+The playground phonemises in the browser with this build
+(`web/js/engine/phonemize.js`); for Azerbaijani its output is byte-identical to
+the Python frontend's. The package's MIT label cannot relicense the eSpeak NG
+compiled into it, which stays GPL-3.0-or-later, exactly as in "Phonemisation"
+above.
+
+Neither this repository nor the Space ships these files: the visitor's browser
+fetches `piper_phonemize.js`, `.wasm` and `.data` from jsDelivr at run time.
+Anyone who self-hosts them -- copying them into `vendor/` the way onnxruntime-web
+is -- redistributes eSpeak NG and takes on GPL-3.0 for that part, including the
+offer of corresponding source.
 
 ### ONNX Runtime Web
 

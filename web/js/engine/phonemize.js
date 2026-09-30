@@ -6,8 +6,9 @@
  * to `model/deployment_frontend.py`, which is what makes a browser playground
  * possible at all -- the model only ever heard eSpeak's output.
  *
- * eSpeak NG is GPL-3.0-or-later. It is loaded from a CDN here and redistributed
- * by whoever hosts this page; see THIRD_PARTY_NOTICES.md.
+ * eSpeak NG is GPL-3.0-or-later. The browser fetches it from a CDN; this page
+ * does not serve it, and whoever self-hosts it redistributes it under the GPL.
+ * See THIRD_PARTY_NOTICES.md.
  */
 
 const CDN = "https://cdn.jsdelivr.net/npm/@diffusionstudio/piper-wasm@1.0.0/build/piper_phonemize";

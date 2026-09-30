@@ -172,9 +172,11 @@ import json, random, re, sys
 sys.path.insert(0, '.')
 from aztts import normalize_az, chunk_text
 from num2words import num2words as n
-# numbers.json: every integer to 10,000 plus a sample above it
+# numbers.json: every integer to 10,000, a sample above it, and the edges
+# (negatives, round thousands and millions, the top of the range) -- 12,011 keys
 vals = list(range(10001)); random.seed(7)
 vals += [random.randint(10001, 10**12) for _ in range(2000)]
+vals += [-1, -5, -1234, 10**6, 10**9, 10**12, 11000, 101000, 1001000, 10**12 - 1]
 json.dump({str(v): [n(v, lang='az'), n(v, lang='az', to='ordinal')] for v in vals},
           open('web/tests/golden/numbers.json', 'w', encoding='utf-8'), ensure_ascii=False)
 # normalise.json / chunks.json: keep the existing inputs, refresh the outputs
