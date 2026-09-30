@@ -70,7 +70,8 @@ const els = {
   dialogTitle: $("dialog-title"), dialogText: $("dialog-text"), dialogNote: $("dialog-note"),
   dialogDontShow: $("dialog-dont-show"), dialogDontShowLabel: $("dialog-dont-show-label"),
   dialogDirect: $("dialog-direct"), dialogOk: $("dialog-ok"),
-  dialogTech: $("dialog-tech"), dialogTechLabel: $("dialog-tech-label"), dialogTechList: $("dialog-tech-list"),
+  dialogMain: $("dialog-main"), dialogTech: $("dialog-tech"), dialogTechList: $("dialog-tech-list"),
+  dialogTechOpen: $("dialog-tech-open"), dialogTechBack: $("dialog-tech-back"),
   toasts: $("toasts"), textError: $("text-error"), textCount: $("text-count"),
   textWarning: $("text-warning"),
 };
@@ -618,10 +619,8 @@ const wave = createWaveView({ canvas: els.wave, box: els.waveBox, audio: els.aud
 
 // -- the finished clip: show where it is ------------------------------------------
 
-// On a phone the result sits a screen or two below Speak, and people did not
-// find it. When a clip is ready: a "Ready" chip, a pulse round the waveform,
-// and a scroll to the result if it is off screen -- unless the visitor has
-// started typing again, or the device dialog is open.
+// On a phone the result sits a screen or two below Speak and people lost it: a
+// Ready chip, a pulse, and a scroll to it -- unless typing, or the dialog is open.
 let typedSinceSpeak = false;
 els.text.addEventListener("input", () => {
   if (busy) typedSinceSpeak = true;
@@ -721,8 +720,7 @@ async function speak() {
     renderBadge(lastResult);
     els.copyDiagnostics.hidden = false;
     els.copyStatus.textContent = "";
-    // Said in the live status line, not by moving focus: a screen-reader user
-    // stays by Speak and Cancel.
+    // Said in the live status line, not by moving focus: readers stay by Speak.
     els.status.textContent = label(language, "result_ready");
     // After the finally block: hiding Cancel and the bar there moves the page,
     // which would leave a scroll started now short of the result.

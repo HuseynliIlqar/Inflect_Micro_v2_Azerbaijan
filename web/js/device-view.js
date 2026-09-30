@@ -73,17 +73,16 @@ export function createDeviceView(els, { directUrl }) {
   function fillDialog() {
     const { title, text, note, tech } = deviceCopy(verdict, t);
     els.dialog.dataset.tone = verdict.tone;
-    // One tap away, closed each time the dialog opens.
-    els.dialogTech.hidden = tech.length === 0;
-    els.dialogTech.open = false;
-    els.dialogTechLabel.textContent = t("tech_label");
+    els.dialogTechOpen.hidden = tech.length === 0;
+    els.dialogTechOpen.textContent = t("tech_label");
+    els.dialogTechBack.textContent = t("tech_back");
     els.dialogTechList.replaceChildren(...tech.map((line) => {
       const item = document.createElement("li");
       item.textContent = line;
       return item;
     }));
     els.dialogMeter.dataset.bars = String(verdict.bars);
-    els.dialogTitle.textContent = title;
+    els.dialogTitle.textContent = showingTech ? t("tech_title") : title;
     els.dialogText.textContent = text;
     els.dialogNote.textContent = note;
     els.dialogNote.hidden = !note;
@@ -94,8 +93,28 @@ export function createDeviceView(els, { directUrl }) {
     els.dialogDirect.textContent = t("dialog_open_direct");
   }
 
+  // The technical reasons replace the plain words rather than stacking under
+  // them: stacked, the dialog outgrew a small phone's screen.
+  let showingTech = false;
+  function showTech(on) {
+    showingTech = on;
+    els.dialogMain.hidden = on;
+    els.dialogTech.hidden = !on;
+    els.dialogTechBack.hidden = !on;
+    els.dialogDontShow.closest("label").hidden = on;
+    fillDialog();
+    (on ? els.dialogTechBack : els.dialogTechOpen).focus();
+  }
+  els.dialogTechOpen.addEventListener("click", () => showTech(true));
+  els.dialogTechBack.addEventListener("click", () => showTech(false));
+
   function openDialog() {
     if (!verdict) return;
+    showingTech = false;
+    els.dialogMain.hidden = false;
+    els.dialogTech.hidden = true;
+    els.dialogTechBack.hidden = true;
+    els.dialogDontShow.closest("label").hidden = false;
     fillDialog();
     els.dialogDontShow.checked = false;
     if (typeof els.dialog.showModal === "function") els.dialog.showModal();

@@ -32,6 +32,20 @@ for (const lang of Object.keys(LABELS)) {
     expect(`[${lang}] ${key} puts it on the browser`, /(brauzer|browser)/iu.test(label(lang, key)));
   }
   expect(`[${lang}] device_text_phone says an app runs normally`, /(tətbiq|app)/iu.test(label(lang, "device_text_phone")));
+  // Short enough that the popup fits a small phone without scrolling
+  // (checked in a browser at 320x568; these limits keep it that way).
+  const limits = { device_title_phone: 45, device_text_phone: 240, device_note_phone: 90 };
+  for (const [key, max] of Object.entries(limits)) {
+    const length = label(lang, key).length;
+    expect(`[${lang}] ${key} is at most ${max} characters (it is ${length})`, length <= max);
+  }
+  for (const key of ["tech_wasm", "tech_threads", "tech_gpu", "tech_int8", "tech_download", "tech_screen"]) {
+    const length = label(lang, key, { threads: 4 }).length;
+    expect(`[${lang}] ${key} is at most 95 characters (it is ${length})`, length <= 95);
+  }
+  for (const key of ["tech_title", "tech_back"]) {
+    expect(`[${lang}] ${key} exists`, label(lang, key) !== key);
+  }
   // Where the audio will appear, for people who lose it on a phone.
   expect(`[${lang}] phone_note says where the result appears`, label(lang, "phone_note").includes(label(lang, "audio_label")));
 }

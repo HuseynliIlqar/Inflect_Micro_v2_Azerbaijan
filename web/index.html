@@ -102,19 +102,26 @@
 
     <dialog id="device-dialog" class="device-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-text">
       <form method="dialog" class="dialog-inner">
-        <span class="meter meter-large" data-bars="0" aria-hidden="true"><i></i><i></i><i></i></span>
-        <h2 id="dialog-title" class="dialog-title"></h2>
-        <p id="dialog-text" class="dialog-text"></p>
-        <p id="dialog-note" class="dialog-note" hidden></p>
-        <details id="dialog-tech" class="dialog-tech" hidden>
-          <summary id="dialog-tech-label"></summary>
+        <div class="dialog-head">
+          <span class="meter meter-large" data-bars="0" aria-hidden="true"><i></i><i></i><i></i></span>
+          <h2 id="dialog-title" class="dialog-title"></h2>
+        </div>
+        <!-- One panel at a time, so the dialog fits a small phone without
+             scrolling: the plain words, or the technical reasons. -->
+        <div id="dialog-main" class="dialog-main">
+          <p id="dialog-text" class="dialog-text"></p>
+          <p id="dialog-note" class="dialog-note" hidden></p>
+          <button id="dialog-tech-open" type="button" class="link-button dialog-tech-open" hidden></button>
+        </div>
+        <div id="dialog-tech" class="dialog-tech" hidden>
           <ul id="dialog-tech-list"></ul>
-        </details>
+        </div>
         <label class="dialog-check">
           <input id="dialog-dont-show" type="checkbox" name="dont-show" />
           <span id="dialog-dont-show-label"></span>
         </label>
         <div class="dialog-actions">
+          <button id="dialog-tech-back" type="button" class="ghost dialog-tech-back" hidden></button>
           <a id="dialog-direct" class="ghost" target="_blank" rel="noopener" hidden></a>
           <button id="dialog-ok" class="primary dialog-ok" value="ok" autofocus></button>
         </div>
