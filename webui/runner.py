@@ -73,7 +73,12 @@ class Engine(Protocol):
     sample_rate: int
 
     def prepare(
-        self, text: str, *, normalize: bool = ..., max_words: int = ...
+        self,
+        text: str,
+        *,
+        normalize: bool = ...,
+        max_words: int = ...,
+        censor: bool = ...,
     ) -> tuple[str, ...]: ...
 
     def synthesize(self, text: str, **options: object) -> np.ndarray: ...
@@ -93,6 +98,9 @@ class Settings:
     cleanup: bool = False
     device: str = "cpu"
     voice: str = "az"
+    # Not a widget: the interface bleeps unless `app.py --allow-profanity`
+    # was launched on purpose, so a hosted Space can never turn it off.
+    censor: bool = True
 
     def __post_init__(self) -> None:
         # The interface is not the only caller, so the bounds are checked here
@@ -123,6 +131,8 @@ class Settings:
             "variation": self.variation,
             "seed": self.seed,
             "max_words": self.max_words,
+            # Both voices: Azerbaijani obscenities can be typed into either.
+            "censor": self.censor,
         }
         if self.voice == "az":
             options.update(
@@ -186,6 +196,8 @@ def cli_command(text: str, settings: Settings) -> str:
             parts.append("--prosody-drop")
     if settings.device != "cpu":
         parts += ["--device", settings.device]
+    if not settings.censor:
+        parts.append("--allow-profanity")
     parts.append(_quote(" ".join(text.split())))
     line = " ".join(parts)
     if settings.cleanup:
@@ -255,10 +267,15 @@ def synthesise(
         worker = load_engine(DEFAULT_MODEL_DIR, settings.device)
 
     if settings.voice == "en":
-        chunks = worker.prepare(text, max_words=settings.max_words)
+        chunks = worker.prepare(
+            text, max_words=settings.max_words, censor=settings.censor
+        )
     else:
         chunks = worker.prepare(
-            text, normalize=settings.normalize, max_words=settings.max_words
+            text,
+            normalize=settings.normalize,
+            max_words=settings.max_words,
+            censor=settings.censor,
         )
     if not chunks:
         raise EmptyTextError("the text is empty once prepared")

@@ -2,6 +2,7 @@
 
     pip install -e ".[app]"      # or: pip install -r requirements-app.txt
     python app.py                # http://127.0.0.1:7860
+    python app.py --allow-profanity   # a local run that speaks obscenities
 
 Everything with logic in it lives in `webui/`, which is why this file has no
 tests of its own: there is nothing here but widgets and the calls between them.
@@ -42,6 +43,11 @@ from webui.runner import (  # noqa: E402
 use_utf8()
 
 EXAMPLES: list[list[str]] = [[text] for _, text in DEMO]
+
+# Obscenities are bleeped, and the page offers no switch: a hosted Space runs
+# `python app.py` with no arguments, so only someone who cloned the repository
+# and asked for it on the command line hears them.
+ALLOW_PROFANITY = "--allow-profanity" in sys.argv[1:]
 
 # The English weights ship with the repository, so this is normally true. It
 # is false in a clone made without Git LFS, which is worth saying in the voice
@@ -111,6 +117,7 @@ def speak(
             cleanup=bool(cleanup),
             device=device,
             voice=voice,
+            censor=not ALLOW_PROFANITY,
         )
     except ValueError as error:
         return None, "", i18n.label(language, "error_failed", error=error), "", None

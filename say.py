@@ -4,6 +4,7 @@
     python say.py --text-file text.txt --one-file --out out/book
     python say.py --show-text "II Dünya müharibəsi, 25% artım"
     python say.py --voice en "Hello there."     # the English base model
+    python say.py --allow-profanity "..."        # speak obscenities as written
     python say.py                       # renders the demo sentences
 
 Audio lands in `out/` unless you say otherwise.
@@ -85,6 +86,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--prosody-drop", action="store_true", help="With --prosody: remove the accent outright instead of demoting it.")
     parser.add_argument("--show-text", action="store_true", help="Print the normalised text and the chunk boundaries.")
+    parser.add_argument(
+        "--allow-profanity", action="store_true",
+        help="Speak obscenities as written. By default each one is replaced by "
+             "a bleep, in either voice and even with --raw.",
+    )
     return parser
 
 
@@ -130,10 +136,12 @@ def main(argv: list[str] | None = None) -> int:
     print(f"device: {args.device}   load: {time.perf_counter() - started:.2f}s")
     if english:
         # Azerbaijani normalisation and the stress layer do not apply.
-        print(f"text  : voice=en  max-words={args.max_words or 'package'}")
+        print(f"text  : voice=en  max-words={args.max_words or 'package'}  "
+              f"censor={'off' if args.allow_profanity else 'on'}")
     else:
         print(f"text  : normalise={'off' if args.raw else 'on'}  "
-              f"max-words={args.max_words or 'package'}  prosody={args.prosody}")
+              f"max-words={args.max_words or 'package'}  prosody={args.prosody}  "
+              f"censor={'off' if args.allow_profanity else 'on'}")
     print()
 
     items = collect_items(args)
@@ -148,6 +156,7 @@ def main(argv: list[str] | None = None) -> int:
         variation=args.variation,
         seed=args.seed,
         max_words=args.max_words,
+        censor=not args.allow_profanity,
     )
     if not english:
         options.update(
@@ -159,9 +168,18 @@ def main(argv: list[str] | None = None) -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     for name, source in items:
         chunks = (
-            tts.prepare(source, max_words=args.max_words)
+            tts.prepare(
+                source,
+                max_words=args.max_words,
+                censor=not args.allow_profanity,
+            )
             if english
-            else tts.prepare(source, normalize=not args.raw, max_words=args.max_words)
+            else tts.prepare(
+                source,
+                normalize=not args.raw,
+                max_words=args.max_words,
+                censor=not args.allow_profanity,
+            )
         )
         if not chunks:
             print(f"skipped (empty): {name}", file=sys.stderr)

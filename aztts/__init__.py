@@ -7,7 +7,10 @@
 
 The text normalisation and chunking helpers can also be used on their own:
 
-    from aztts import normalize_az, chunk_text
+    from aztts import normalize_az, chunk_text, censor_az
+
+Obscenities are bleeped by default; `censor=False` on `synthesize` turns that
+off.
 
 The English checkpoint this model was adapted from can be spoken too, when it
 has been downloaded -- a different voice, trained by someone else:
@@ -16,6 +19,7 @@ has been downloaded -- a different voice, trained by someone else:
 """
 
 from .az_chunk import DEFAULT_MAX_WORDS, chunk_text
+from .az_profanity import BLEEP, censor_az
 from .az_prosody import restress
 from .az_text import normalize_az
 from .en_voice import DEFAULT_EN_MODEL_DIR, EnVoice
@@ -23,11 +27,13 @@ from .engine import DEFAULT_MODEL_DIR, AzTTS, ModelNotFoundError
 
 __all__ = [
     "AzTTS",
+    "BLEEP",
     "DEFAULT_EN_MODEL_DIR",
     "DEFAULT_MAX_WORDS",
     "DEFAULT_MODEL_DIR",
     "EnVoice",
     "ModelNotFoundError",
+    "censor_az",
     "chunk_text",
     "normalize_az",
     "restress",

@@ -21,6 +21,11 @@ Instead it loads only the weights, into the runtime `model/` already ships:
 What this is not: the English model is a different voice, trained by someone
 else. It shares nothing with the Azerbaijani voice but its shape.
 
+The one Azerbaijani layer it does share is `censor_az`: a visitor can type an
+Azerbaijani obscenity with the English voice selected, and eSpeak would voice
+it. Censoring only removes words -- it writes no Azerbaijani -- so it is safe
+here where `normalize_az` is not. `censor=False` turns it off.
+
     >>> from aztts import EnVoice          # doctest: +SKIP
     >>> EnVoice().save("Hello there.", "out/en.wav")   # doctest: +SKIP
 """
@@ -34,7 +39,8 @@ from pathlib import Path
 import numpy as np
 
 from .az_chunk import DEFAULT_MAX_WORDS, chunk_text
-from .engine import DEFAULT_MODEL_DIR, ModelNotFoundError, _load_package
+from .az_profanity import BLEEP, bleep_segments, censor_az
+from .engine import DEFAULT_MODEL_DIR, ModelNotFoundError, _load_package, bleep
 
 __all__ = [
     "DEFAULT_EN_MODEL_DIR",
@@ -158,18 +164,34 @@ class EnVoice:
             )
         return self._backend.phonemize([chunk])[0]
 
+    def _speak_chunk(self, chunk: str, **options) -> np.ndarray:
+        """Speak a chunk, playing a bleep wherever `censor_az` left one."""
+        pieces = [
+            bleep(self.sample_rate)
+            if segment == BLEEP
+            else self._tts.synthesize(
+                segment, phonemes=self._phonemise(segment), **options
+            )[1]
+            for segment in (bleep_segments(chunk) if BLEEP in chunk else (chunk,))
+        ]
+        return np.concatenate(pieces) if pieces else np.zeros(0, dtype=np.float32)
+
     # -- public API -------------------------------------------------------
 
     def prepare(
-        self, text: str, *, max_words: int = DEFAULT_MAX_WORDS
+        self,
+        text: str,
+        *,
+        max_words: int = DEFAULT_MAX_WORDS,
+        censor: bool = True,
     ) -> tuple[str, ...]:
         """The chunks that would reach the model, without synthesising.
 
         There is no normalisation step: `normalize_az` rewrites numbers into
         Azerbaijani words and would be wrong here. eSpeak reads English digits
-        on its own.
+        on its own. Obscenities are a `BLEEP` unless `censor=False`.
         """
-        prepared = " ".join(text.split())
+        prepared = " ".join((censor_az(text) if censor else text).split())
         if not prepared:
             return ()
         if max_words <= 0:
@@ -184,9 +206,10 @@ class EnVoice:
         variation: float = 0.667,
         seed: int = 7,
         max_words: int = DEFAULT_MAX_WORDS,
+        censor: bool = True,
     ) -> np.ndarray:
         """Synthesise English into a float32 mono array ([-1, 1], 24 kHz)."""
-        chunks = self.prepare(text, max_words=max_words)
+        chunks = self.prepare(text, max_words=max_words, censor=censor)
         if not chunks:
             raise ValueError("The text is empty.")
         pause = self._package.boundary_pause_seconds
@@ -196,13 +219,9 @@ class EnVoice:
                 silence = round(self.sample_rate * pause(chunks[index - 1]))
                 pieces.append(np.zeros(silence, dtype=np.float32))
             pieces.append(
-                self._tts.synthesize(
-                    chunk,
-                    phonemes=self._phonemise(chunk),
-                    speed=speed,
-                    variation=variation,
-                    seed=seed + index,
-                )[1]
+                self._speak_chunk(
+                    chunk, speed=speed, variation=variation, seed=seed + index
+                )
             )
         return np.clip(np.concatenate(pieces), -1.0, 1.0)
 

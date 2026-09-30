@@ -38,8 +38,10 @@ class FakeEngine:
         self.options: dict[str, object] = {}
         self.prepared: dict[str, object] = {}
 
-    def prepare(self, text, *, normalize=True, max_words=DEFAULT_MAX_WORDS):
-        self.prepared = {"text": text, "normalize": normalize, "max_words": max_words}
+    def prepare(self, text, *, normalize=True, max_words=DEFAULT_MAX_WORDS, censor=True):
+        self.prepared = {
+            "text": text, "normalize": normalize, "max_words": max_words, "censor": censor,
+        }
         return self._chunks
 
     def synthesize(self, text, **options):
@@ -98,7 +100,7 @@ def test_synthesis_options_cover_every_engine_keyword() -> None:
     options = Settings().synthesis_options
     assert set(options) == {
         "speed", "variation", "seed", "normalize",
-        "max_words", "prosody", "prosody_drop",
+        "max_words", "prosody", "prosody_drop", "censor",
     }
     # `cleanup` and `device` are ours, not the engine's.
     assert "cleanup" not in options and "device" not in options
@@ -211,8 +213,8 @@ def test_cleanup_on_reports_a_tuple(tmp_path) -> None:
 class FakeEnEngine(FakeEngine):
     """`EnVoice` has no `normalize` keyword -- its absence is the point."""
 
-    def prepare(self, text, *, max_words=DEFAULT_MAX_WORDS):
-        self.prepared = {"text": text, "max_words": max_words}
+    def prepare(self, text, *, max_words=DEFAULT_MAX_WORDS, censor=True):
+        self.prepared = {"text": text, "max_words": max_words, "censor": censor}
         return self._chunks
 
 
@@ -227,7 +229,7 @@ def test_an_unknown_voice_is_refused() -> None:
 
 def test_english_drops_the_azerbaijani_only_options() -> None:
     options = Settings(voice="en", normalize=False, prosody="wide").synthesis_options
-    assert set(options) == {"speed", "variation", "seed", "max_words"}
+    assert set(options) == {"speed", "variation", "seed", "max_words", "censor"}
 
 
 def test_azerbaijani_keeps_them() -> None:
@@ -240,7 +242,7 @@ def test_the_english_engine_is_called_without_normalise(tmp_path) -> None:
         "Hello there.", Settings(voice="en", max_words=9),
         engine=engine, out_dir=tmp_path,
     )
-    assert engine.prepared == {"text": "Hello there.", "max_words": 9}
+    assert engine.prepared == {"text": "Hello there.", "max_words": 9, "censor": True}
     assert "normalize" not in engine.options
     assert result.path.exists()
 
@@ -274,3 +276,41 @@ def test_a_clone_without_git_lfs_is_not_called_present(tmp_path) -> None:
     )
     assert english_model_status(tmp_path) == "pointer"
     assert english_model_present(tmp_path) is False
+
+
+# -- censoring --------------------------------------------------------------
+
+
+def test_the_interface_censors_by_default() -> None:
+    assert Settings().censor is True
+    assert Settings().synthesis_options["censor"] is True
+
+
+def test_a_default_command_line_does_not_mention_profanity() -> None:
+    assert "--allow-profanity" not in cli_command("Salam.", Settings())
+
+
+def test_an_uncensored_run_says_so_on_its_command_line() -> None:
+    command = cli_command("Salam.", Settings(censor=False))
+    assert "--allow-profanity" in command
+
+
+def test_the_censor_choice_reaches_prepare_and_synthesize(tmp_path) -> None:
+    engine = FakeEngine()
+    synthesise("Salam.", Settings(censor=False), engine=engine, out_dir=tmp_path)
+    assert engine.prepared["censor"] is False
+    assert engine.options["censor"] is False
+
+
+def test_english_is_censored_too(tmp_path) -> None:
+    # Azerbaijani obscenities can be typed with the English voice selected.
+    assert Settings(voice="en").synthesis_options["censor"] is True
+    engine = FakeEnEngine()
+    synthesise("Hello.", Settings(voice="en"), engine=engine, out_dir=tmp_path)
+    assert engine.prepared["censor"] is True
+    assert engine.options["censor"] is True
+
+
+def test_an_uncensored_english_run_says_so_on_its_command_line() -> None:
+    command = cli_command("Hello.", Settings(voice="en", censor=False))
+    assert "--allow-profanity" in command
