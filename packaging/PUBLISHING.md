@@ -14,7 +14,7 @@ before publishing there.
 
 ```bash
 git lfs install          # required: both model.pth files and the samples
-python -m pytest         # 303 tests, three seconds, no model load
+python -m pytest         # 443 tests, three seconds, no model load
 ```
 
 The repository carries two checkpoints -- `model/` (Azerbaijani, 37 MB) and
@@ -87,7 +87,8 @@ from aztts import AzTTS
 tts = AzTTS(snapshot_download("ilqarrrr/Inflect_Micro_v2_Azerbaijan"))
 ```
 
-Plus `onnx/` (the two graphs the playground runs), `samples/`, `CITATION.cff`
+Plus `onnx/` (the two graphs; the playground's int8 decoder lives only in the
+Space), `samples/`, `CITATION.cff`
 and `NOTICES.md`. The English base model is **not** copied there: it is one
 click away at `owensong/Inflect-Micro-v2`, and the card links it.
 
@@ -116,7 +117,8 @@ The playground at
 <https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan> is a
 **static** Space, named after the checkpoint it descends from, the same as the
 GitHub repository:
-`web/` plus the 38 MB ONNX export, no server. Static Spaces are free for
+`web/` plus the ONNX export (38 MB, and the 15 MB int8 decoder) and
+onnxruntime-web (27 MB), no server. Static Spaces are free for
 everyone; Gradio and Docker Spaces need a Pro subscription, which is why this
 one is static.
 
@@ -149,7 +151,7 @@ belong. Copy them in from the training workspace when working on the page.
 whenever `decode.onnx` changes, then bump `CACHE_NAME` in `web/js/engine/fetch-model.js`:
 
 ```bash
-pip install onnx                       # the tool's only extra need
+pip install onnx onnxruntime           # the tool's extra needs; neither is a runtime dependency
 python tools/quantize_decoder.py       # web/onnx/decode.onnx -> web/onnx/decode.int8.onnx
 ```
 

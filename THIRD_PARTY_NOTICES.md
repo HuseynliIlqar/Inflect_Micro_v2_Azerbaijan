@@ -101,6 +101,10 @@ The anti-aliased activation resampling design used by the compact waveform
 runtime includes concepts and adapted implementation structure from
 `alias-free-torch`.
 
+---
+
+## Browser playground
+
 ### ONNX Runtime Web
 
 - Project: [`microsoft/onnxruntime`](https://github.com/microsoft/onnxruntime), npm package `onnxruntime-web` 1.30.0

@@ -48,7 +48,7 @@ by Owen Song — 200,000 steps on 25.07 hours of Azerbaijani speech, 409 of its
 | `II Dünya müharibəsi 01/09/1939 tarixində başladı və 25% artım oldu.` | <audio controls src="https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan/resolve/main/samples/04-reqem.wav"></audio> |
 
 The last one shows why the text layer matters: `II` becomes `İkinci`,
-`01/09/1939` becomes `birinci sentyabr min doqquz yüz otuz doqquz`, `25%`
+`01/09/1939` becomes `bir sentyabr min doqquz yüz otuz doqquzuncu il`, `25%`
 becomes `iyirmi beş faiz`.
 
 ## Usage
@@ -88,7 +88,9 @@ at a waveform correlation of 0.9999999999916:
 | `onnx/duration.onnx` | `tokens`, `lengths`, `length_scale` | `m_p_exp`, `logs_p_exp`, `y_mask` |
 | `onnx/decode.onnx` | `m_p_exp`, `logs_p_exp`, `y_mask`, `zp_noise`, `noise_scale` | `waveform` |
 
-This is what the browser playground runs, through ONNX Runtime Web. `web/` in
+This is what the browser playground runs, through ONNX Runtime Web. On the CPU
+it swaps `decode.onnx` for an int8 copy, built by `tools/quantize_decoder.py` in
+the GitHub repository. `web/` in
 the GitHub repository is a working implementation, including the Azerbaijani
 text layer ported to JavaScript.
 
@@ -103,10 +105,10 @@ text layer ported to JavaScript.
 | Data | 25.07 hours, 9,674 clips |
 | Speed | 2-4x real time on CPU; ~0.3 s to load |
 
-The text layer ahead of the model does two things the checkpoint cannot:
-rewrites digits, Roman numerals, dates, units and abbreviations into spoken
-words, and cuts sentences into ~15-word chunks, because this model's intonation
-flattens towards the end of a long sentence.
+The text layer ahead of the model does three things the checkpoint cannot:
+bleeps obscenities, rewrites digits, Roman numerals, dates, units and
+abbreviations into spoken words, and cuts sentences into ~15-word chunks,
+because this model's intonation flattens towards the end of a long sentence.
 
 ## Limitations
 

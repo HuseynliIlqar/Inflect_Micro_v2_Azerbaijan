@@ -120,8 +120,9 @@ that into "free for commercial use".
   a new one. Nothing is mutated in place.
 - **Every CLI entry point calls `use_utf8()` first** (`aztts/console.py`).
   Without it, printing `ə` on a Windows console raises `UnicodeEncodeError`.
-  Currently: `say.py`, `tools/seed_sweep.py`, `tools/audio_postprocess.py`,
-  `tools/fetch_web_runtime.py`, `training/scripts/compare_checkpoints.py`.
+  Currently: `say.py`, `app.py`, `tools/seed_sweep.py`,
+  `tools/audio_postprocess.py`, `tools/fetch_web_runtime.py`,
+  `tools/quantize_decoder.py`, `training/scripts/compare_checkpoints.py`.
 - **Step order in `normalize_az()` is load-bearing.** Abbreviations run first so
   their full stops are not mistaken for sentence ends; acronyms run last so
   Roman numerals win the `II`-style ambiguity. Adding a step means choosing its
@@ -162,7 +163,8 @@ that into "free for commercial use".
 - **`web/` is a port, and a port drifts.** The JavaScript in `web/js/text/` mirrors
   `az_text.py` (with `az_dates.py`, `az_amounts.py`, `az_tables.py`,
   `az_words.py`), `az_chunk.py` and `num2words`. When any of those change,
-  regenerate the golden files and run `node web/tests/*.mjs`; the snippet that
+  regenerate the golden files and run every web suite
+  (`for f in web/tests/*.mjs; do node "$f" || break; done`); the snippet that
   writes them is in `packaging/PUBLISHING.md`. A change to the text layer that
   does not reach `web/` makes the page and the CLI say different things.
 - **Interface logic belongs in `webui/`, not in `app.py`.** That is what keeps
@@ -213,6 +215,8 @@ stylesheets of 640-800 lines loose at its top level, next to the page.
 | Change the browser playground (the static Space) | `web/` (its layout is in `web/README.md`) |
 | Change how the English base model is spoken | `aztts/en_voice.py` |
 | Audio cleanup, seed selection | `tools/` |
+| Rebuild the int8 decoder the playground runs on the CPU | `tools/quantize_decoder.py` |
+| Change the self-hosted onnxruntime-web version | `tools/fetch_web_runtime.py` (`VERSION` + integrity) |
 | Anything about how the model was trained | `training/` (archive; the pod is gone) |
 | Publish to GitHub / HF / Kaggle | `packaging/PUBLISHING.md` |
 
@@ -230,6 +234,9 @@ CLI, and `app.py` plus `webui/` are the browser interface.
   READMEs list the sentences, so a new sample means editing both.
 - `model-en/` **is** tracked, through Git LFS: 37 MB of English weights so a
   clone speaks both languages. It is the reason the repository is ~75 MB.
+- `web/onnx/` (the graphs, 38 MB plus the int8 decoder) and `web/vendor/`
+  (onnxruntime-web, 27 MB, fetched by `python tools/fetch_web_runtime.py`) are
+  git-ignored; see `web/README.md`.
 - `training/base-model/` is not tracked. It is the complete 38 MB upstream
   package, only needed for training work; fetch it with
   `python training/scripts/download_model.py`.

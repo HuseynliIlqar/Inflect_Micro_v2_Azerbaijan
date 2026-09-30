@@ -45,6 +45,7 @@ belong in that order, not at the end.
 | `js/engine/engine.js` | The ONNX graphs and the fallback chain that runs them |
 | `js/engine/audio.js` | The pauses between chunks, click-free joins, the bleep and WAV encoding |
 | `js/engine/inputs.js` | Token ids from phonemes, and the seeded noise |
+| `js/engine/symbols.js` | The checkpoint's symbol inventory in token id order, copied from `model/symbols.json` |
 | `js/engine/backend-plan.js` | The fallback chain: which backend and precision to try, in what order |
 | `js/engine/fetch-model.js` | Downloads the graphs with byte progress and keeps them in Cache Storage |
 | `js/ui/waveform.js` | The result's waveform: bar heights, drawing, click-to-seek |
@@ -64,10 +65,11 @@ belong in that order, not at the end.
 | `js/worker.js` | Runs the phonemiser and the graphs off the page's main thread |
 | `vendor/onnxruntime-web/` | onnxruntime-web 1.30.0, served from this origin; not in git -- `python tools/fetch_web_runtime.py` |
 
-Synthesis runs through ONNX Runtime Web on WebGPU where the browser has it
-(about 8x faster than real time on a laptop), falling back to WebAssembly
-otherwise. The WASM path is single-threaded on a static host -- no
-cross-origin isolation -- and is several times slower.
+Synthesis runs through ONNX Runtime Web on WebGPU where the browser has it and
+the device is not a phone (about 8x faster than real time on a laptop), falling
+back to WebAssembly on the CPU otherwise -- see "The fallback chain" below. The
+WASM path uses up to 4 threads on the direct link and one inside the Hugging
+Face page, and is several times slower than WebGPU.
 
 ## Why it can be slow, and why the page no longer freezes
 
@@ -92,8 +94,12 @@ On the direct `*.static.hf.space` link the worker then runs on up to 4 threads:
 Inside the huggingface.co page the Space is an iframe without the
 `cross-origin-isolated` permission, so it stays on one thread; there the note
 under the button links to the direct URL. Everything cross-origin the page
-loads -- jsdelivr (CORP `cross-origin`) and the Hub CDN (CORS `*`) -- passes
-`require-corp`; anything new must too, or it will be blocked. The statistics
+loads -- the phonemiser from jsdelivr (CORP `cross-origin`) and the graphs from
+the Hub CDN (CORS `*`) -- passes `require-corp`; anything new must too, or it
+will be blocked. A module the worker imports must come from the page's own
+origin: WebKit refuses a CDN's module in a worker even with those headers,
+which is why onnxruntime-web is served from `vendor/`. The phonemiser is
+fetched as text, not imported, so the CDN is fine for it. The statistics
 name the backend and the thread count. The CLI runs the same model at 2-4x
 real time.
 
@@ -211,13 +217,21 @@ original rather than against expectations:
 
 ```bash
 node tests/test_num_az.mjs      # 24,022 checks against num2words
-node tests/test_az_text.mjs     # 550 sentences against normalize_az
-node tests/test_az_chunk.mjs    # the same 550 against chunk_text
+node tests/test_az_text.mjs     # 655 cases against normalize_az
+node tests/test_az_chunk.mjs    # the same 655 against chunk_text
 node tests/test_progress.mjs    # the progress bar and the cached download
 node tests/test_backend_plan.mjs    # the order of the fallback chain
 node tests/test_engine_fallback.mjs # Engine walking it, against a stand-in onnxruntime
 node tests/test_mode_banner.mjs    # the banner, the badge and the diagnostics line
 node tests/test_device_check.mjs   # the device verdict, its words, and error advice
+node tests/test_az_censor.mjs      # censor_az against its golden file
+node tests/test_cancel.mjs         # stopping a synthesis
+node tests/test_dialog.mjs         # what counts as a tap on the backdrop
+node tests/test_phone_copy.mjs     # phone texts: plain, short, pointing at a computer
+node tests/test_reveal.mjs         # when to scroll to the result
+node tests/test_text_check.mjs     # the 500-character limit and input checks
+node tests/test_theme.mjs          # which theme the page starts in
+node tests/test_waveform.mjs       # the bars and seeking
 ```
 
 The golden files under `tests/golden/` are generated from the Python side; the

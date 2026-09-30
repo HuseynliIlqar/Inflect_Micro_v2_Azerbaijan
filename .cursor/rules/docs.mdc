@@ -54,7 +54,7 @@ change all:
   carries the commercial-use answer in both READMEs: running is unrestricted,
   redistribution is the condition, and the way out is
   `accepts_prephonemized_input`.
-- 227 tests, about two seconds, and they never load a model. Update the count in
+- 443 tests, about three seconds, and they never load a model. Update the count in
   both READMEs and in `packaging/PUBLISHING.md` when it changes.
 - Samples: five Azerbaijani WAVs in `samples/`, three English ones in
   `samples/en/`, all through Git LFS.

@@ -44,8 +44,8 @@ over as `phonemes=`. Keep it that way.
 ## If the model needs to behave differently
 
 Wrap it. `aztts/engine.py` exists precisely for this: it loads the package,
-then adds Azerbaijani normalisation (`az_text.py`), chunking (`az_chunk.py`) and
-optional restressing (`az_prosody.py`) around it. Every gap between "what the
+then adds censoring (`az_profanity.py`), Azerbaijani normalisation (`az_text.py`),
+chunking (`az_chunk.py`) and optional restressing (`az_prosody.py`) around it. Every gap between "what the
 upstream package does" and "what Azerbaijani needs" is closed in `aztts/`.
 
 Two upstream facts worth knowing before you try to patch anything:

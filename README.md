@@ -166,28 +166,32 @@ anywhere. Once the page has loaded it works with the network switched off.
 - the Azerbaijani text layer ported to JavaScript
 - synthesis in a Web Worker, so the page never freezes, with a progress bar
 
-**If the playground feels slow, it is the browser, not the model.** Without
-WebGPU --- many phones, Firefox --- the model runs on the CPU, with an int8
-decoder that is about 1.5x faster and half the download; its change to the
-sound measured smaller than the model's own variation between two takes, and
-the page says when it is in use (`?precision=fp32` turns it off). On the
+**If the playground feels slow, it is the browser, not the model.** Phones
+always run it on the CPU --- their browsers' WebGPU computed wrong durations and
+was no faster --- and so does any browser without WebGPU, such as Firefox. The
+CPU path uses an int8 decoder that is about 1.5x faster and half the download;
+its change to the sound measured smaller than the model's own variation
+between two takes, and the page says when it is in use (`?precision=fp32` turns
+it off). On the
 [direct link](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/index.html)
 the page is cross-origin isolated and uses up to 4 threads, about twice as fast
 as one. Inside the Hugging Face page it cannot be isolated and gets a single
 thread, where a sentence can take up to a minute on a phone. The page says which
-case applies and keeps showing progress. The same model runs at 2--4x real time
-from the command line. The first visit downloads 37 MB; after that the graphs
+case applies and keeps showing progress. The text box takes up to 500
+characters. The same model runs at 2--4x real time from the command line. The
+first visit downloads 37 MB; after that the graphs
 stay on the device.
 
 The port is not trusted on faith: it is checked against the Python original
-over golden files generated from it --- 24,022 number-word comparisons, 550
-normalisation sentences, 550 chunkings --- and the ONNX path is checked against
+over golden files generated from it --- 24,022 number-word comparisons, 655
+normalisation cases, 655 chunkings --- and the ONNX path is checked against
 onnxruntime in Python (same sample count, same RMS to seven decimals).
 [web/README.md](web/README.md) has the details.
 
 ## The local interface
 
-The same thing without the Hub, and with every CLI flag exposed:
+The same thing without the Hub, and with every CLI flag exposed except
+`--allow-profanity`:
 
 ```bash
 pip install -r requirements-app.txt     # or: pip install -e ".[app]"
@@ -210,7 +214,7 @@ reports which frequencies it removed.
 | Model | this project's | [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2), unchanged |
 | Where | `model/` | `model-en/` |
 | Command | `python say.py "Salam."` | `python say.py --voice en "Hello."` |
-| Text layer | normalisation, chunking, stress | chunking only |
+| Text layer | censoring, normalisation, chunking, stress | censoring, chunking |
 
 Both ship with the repository, so a clone speaks both languages with nothing to
 download. The Azerbaijani text layers do not apply to English: `normalize_az`
@@ -266,7 +270,7 @@ spelled out letter by letter (`s i k`) still gets through.
 ## Working on the code
 
 ```bash
-python -m pytest        # 303 tests, three seconds, never loads the model
+python -m pytest        # 443 tests, three seconds, never loads the model
 ```
 
 <details>
@@ -274,16 +278,19 @@ python -m pytest        # 303 tests, three seconds, never loads the model
 
 | | |
 | --- | ---: |
-| Text normalisation, chunking, the stress layer | 116 |
+| Text normalisation, chunking, the stress layer | 192 |
+| The profanity censor | 122 |
 | Fast monotonic alignment (a training optimisation) | 25 |
-| Interface labels, settings, the resonance filter | 86 |
+| Interface labels, settings, the resonance filter | 85 |
+| The English voice, the onnxruntime-web fetch, the int8 decoder tool | 19 |
 
 The browser port has its own, run with Node:
 
 ```bash
+for f in web/tests/*.mjs; do node "$f" || break; done   # all 16 suites
 node web/tests/test_num_az.mjs      # 24,022 checks against num2words
-node web/tests/test_az_text.mjs     # 550 sentences against normalize_az
-node web/tests/test_az_chunk.mjs    # the same 550 against chunk_text
+node web/tests/test_az_text.mjs     # 655 cases against normalize_az
+node web/tests/test_az_chunk.mjs    # the same 655 against chunk_text
 node web/tests/test_progress.mjs    # the progress bar and the cached model download
 ```
 
@@ -314,11 +321,12 @@ webui/
 web/              The browser playground (a Hugging Face static Space)
 model/            Azerbaijani weights + runtime (37 MB) -- do not edit
 model-en/         English base-model weights (37 MB) -- do not edit
-tools/            seed_sweep, audio_postprocess -- quality tools
+tools/            seed_sweep, audio_postprocess -- quality tools;
+                  fetch_web_runtime, quantize_decoder -- the playground
 training/         How the model was made (the base model is downloaded)
 packaging/        Publishing to GitHub / Hugging Face / Kaggle
 samples/          Example audio
-tests/            303 tests
+tests/            443 tests
 out/              The WAV files you generate
 ```
 

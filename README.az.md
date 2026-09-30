@@ -165,9 +165,11 @@ göndərilmir. Səhifə yükləndikdən sonra internetsiz də işləyir.
 - JavaScript-ə portlanmış azərbaycanca mətn qatı
 - Sintez Web Worker-də gedir, ona görə səhifə donmur və irəliləyiş zolağı göstərilir
 
-**Playground yavaş görünürsə, səbəb modeldə yox, brauzerdədir.** WebGPU
-olmayanda (bir çox telefon, Firefox) model prosessorda, int8 decoder ilə işləyir:
-təxminən 1.5 dəfə sürətlidir və yarı həcmdə yüklənir. Onun səsə təsiri modelin
+**Playground yavaş görünürsə, səbəb modeldə yox, brauzerdədir.** Telefonda
+model həmişə prosessorda işləyir — telefon brauzerlərində WebGPU səhv uzunluqlar
+hesablayırdı və daha sürətli deyildi — WebGPU olmayan brauzerlərdə də (məsələn,
+Firefox) belədir. Prosessor yolu int8 decoder ilə işləyir: təxminən 1.5 dəfə
+sürətlidir və yarı həcmdə yüklənir. Onun səsə təsiri modelin
 iki oxunuşu arasındakı öz fərqindən kiçik ölçülüb; səhifə bu rejimin işlədiyini
 bildirir (`?precision=fp32` onu söndürür).
 [Birbaşa linkdə](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/index.html)
@@ -175,17 +177,19 @@ səhifə cross-origin izolyasiyalıdır və 4 axına qədər istifadə edir, bu 
 axından təxminən iki dəfə sürətlidir. Hugging Face səhifəsinin içində izolyasiya
 mümkün deyil və model bir axında işləyir; telefonda bir cümlə bir dəqiqəyə qədər
 çəkə bilər. Səhifə hansı halın olduğunu bildirir və gedişi göstərməyə davam edir.
+Mətn qutusu ən çox 500 simvol qəbul edir.
 Eyni model komanda sətrindən real vaxtdan 2–4 dəfə sürətli işləyir. İlk açılışda
 37 MB yüklənir, sonra model cihazda saxlanılır.
 
 Port sözə görə qəbul edilmir: Python orijinalından yaradılmış qızıl fayllarla
-yoxlanılır — 24 022 rəqəm müqayisəsi, 550 normallaşdırma cümləsi, 550 bölgü — və
+yoxlanılır — 24 022 rəqəm müqayisəsi, 655 normallaşdırma nümunəsi, 655 bölgü — və
 ONNX yolu Python-dakı onnxruntime ilə tutuşdurulur (eyni sample sayı, yeddi
 onluq dəqiqliklə eyni RMS). Təfərrüat: [web/README.md](web/README.md).
 
 ## Yerli interfeys
 
-Eyni şey, Hub olmadan, və CLI-nin bütün bayraqları ilə:
+Eyni şey, Hub olmadan, və `--allow-profanity` istisna olmaqla CLI-nin bütün
+bayraqları ilə:
 
 ```bash
 pip install -r requirements-app.txt     # və ya: pip install -e ".[app]"
@@ -207,7 +211,7 @@ hazır kliplə süzür, ffmpeg tələb etmir və hansı tezlikləri sildiyini bi
 | Model | bu layihənin | [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2), dəyişdirilməmiş |
 | Yeri | `model/` | `model-en/` |
 | Əmr | `python say.py "Salam."` | `python say.py --voice en "Hello."` |
-| Mətn qatı | normallaşdırma, bölgü, vurğu | yalnız bölgü |
+| Mətn qatı | senzura, normallaşdırma, bölgü, vurğu | senzura, bölgü |
 
 Hər ikisi repo ilə gəlir, ona görə klon heç nə yükləmədən hər iki dildə danışır.
 Azərbaycanca mətn qatları ingiliscəyə aid deyil: `normalize_az` rəqəmləri
@@ -263,7 +267,7 @@ filtrdir, zəmanət deyil: hərf-hərf ayrı yazılmış söz (`s i k`) keçir.
 ## Kod üzərində işləmək
 
 ```bash
-python -m pytest        # 303 test, üç saniyə, modeli heç vaxt yükləmir
+python -m pytest        # 443 test, üç saniyə, modeli heç vaxt yükləmir
 ```
 
 <details>
@@ -271,16 +275,19 @@ python -m pytest        # 303 test, üç saniyə, modeli heç vaxt yükləmir
 
 | | |
 | --- | ---: |
-| Mətn normallaşdırma, hissələrə bölmə, vurğu qatı | 116 |
+| Mətn normallaşdırma, hissələrə bölmə, vurğu qatı | 192 |
+| Söyüş senzurası | 122 |
 | Sürətli monotonic alignment (train optimizasiyası) | 25 |
-| İnterfeys etiketləri, parametrlər, rezonans filtri | 86 |
+| İnterfeys etiketləri, parametrlər, rezonans filtri | 85 |
+| İngilis səsi, onnxruntime-web yükləyicisi, int8 decoder aləti | 19 |
 
 Brauzer portunun öz testləri var, Node ilə işləyir:
 
 ```bash
+for f in web/tests/*.mjs; do node "$f" || break; done   # 16 dəstin hamısı
 node web/tests/test_num_az.mjs      # num2words ilə 24 022 yoxlama
-node web/tests/test_az_text.mjs     # normalize_az ilə 550 cümlə
-node web/tests/test_az_chunk.mjs    # chunk_text ilə eyni 550 cümlə
+node web/tests/test_az_text.mjs     # normalize_az ilə 655 nümunə
+node web/tests/test_az_chunk.mjs    # chunk_text ilə eyni 655 nümunə
 node web/tests/test_progress.mjs    # irəliləyiş zolağı və keşlənən model yükləməsi
 ```
 
@@ -311,11 +318,12 @@ webui/
 web/              Brauzer playground-u (Hugging Face static Space)
 model/            Azərbaycanca çəkilər + runtime (37 MB) — toxunmayın
 model-en/         İngilis baza modelin çəkiləri (37 MB) — toxunmayın
-tools/            seed_sweep, audio_postprocess — keyfiyyət alətləri
+tools/            seed_sweep, audio_postprocess — keyfiyyət alətləri;
+                  fetch_web_runtime, quantize_decoder — playground üçün
 training/         Modelin necə hazırlandığı (baza model yüklənir)
 packaging/        GitHub / Hugging Face / Kaggle yayımı
 samples/          Nümunə səslər
-tests/            303 test
+tests/            443 test
 out/              Yaratdığınız WAV faylları
 ```
 

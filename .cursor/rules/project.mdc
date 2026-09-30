@@ -25,7 +25,8 @@ it does; these rules describe how to change it without breaking it.
   layer. Laid out by role: `css/`, `js/{page,engine,text,ui}/`, `tests/`;
   `web/README.md` maps every file.
 - `tools/` — `seed_sweep.py` (pick a good seed), `audio_postprocess.py` (find
-  and filter vocoder buzz).
+  and filter vocoder buzz), `fetch_web_runtime.py` (onnxruntime-web for the
+  playground), `quantize_decoder.py` (the playground's int8 decoder).
 - `training/` — archive of how the model was made. The pod is gone; only
   `fast_monotonic_align.py` is live code.
 - `tests/`, `docs/`, `samples/`, `packaging/`, `out/` (generated).
@@ -60,11 +61,15 @@ it does; these rules describe how to change it without breaking it.
 9. **Do not add GPL dependencies.** `phonemizer` and eSpeak NG are already
    GPL-3.0-or-later and loaded in-process; that surface is documented and
    bounded in `THIRD_PARTY_NOTICES.md`. Our code stays Apache-2.0.
+10. **Censoring stays on for the public pages.** No switch in `web/` or the
+    Gradio UI; only `--allow-profanity` (`say.py`, `app.py`) or `censor=False`
+    in the library turn it off.
 
 ## Verify before claiming done
 
 ```bash
 python -m pytest                                  # ~3s, no model load
+for f in web/tests/*.mjs; do node "$f" || break; done   # every web suite
 python say.py "Salam."                            # end to end -> out/01.wav
 python say.py --voice en "Hello."                 # the English voice
 cd model && sha256sum -c checksums.sha256         # 24 files, all OK

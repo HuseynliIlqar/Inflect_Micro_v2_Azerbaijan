@@ -12,7 +12,7 @@ alwaysApply: false
 - Module-level tables are `MappingProxyType` or `frozenset` so they cannot be
   mutated by accident. Keep new tables that way.
 - Small, single-purpose files, under ~400 lines each (see `structure.mdc`).
-  The largest is `az_text.py` at ~250 lines; its rules are split into
+  The largest in `aztts/` is `az_text.py` at ~250 lines; its rules are split into
   `az_dates.py`, `az_amounts.py`, `az_tables.py` and `az_words.py`.
 - Interface logic belongs in `webui/`, never in `app.py`: that is what lets
   `tests/test_webui_runner.py` drive it with a stand-in engine instead of the
@@ -43,15 +43,19 @@ pins the interaction.
 
 Every CLI entry point calls `use_utf8()` from `aztts/console.py` before printing
 anything. Without it, printing `ə` on a Windows console raises
-`UnicodeEncodeError`. Current callers: `say.py`, `tools/seed_sweep.py`,
-`tools/audio_postprocess.py`, `training/scripts/compare_checkpoints.py`. Any new
+`UnicodeEncodeError`. Current callers: `say.py`, `app.py`,
+`tools/seed_sweep.py`, `tools/audio_postprocess.py`, `tools/fetch_web_runtime.py`,
+`tools/quantize_decoder.py`, `training/scripts/compare_checkpoints.py`. Any new
 entry point needs the same call.
 
 ## Azerbaijani strings in code are data
 
-`LETTER_NAMES`, `MONTHS`, `ABBREVIATIONS`, `UNITS`, `CURRENCIES`, `ACRONYMS`,
-`ORDINAL_SUFFIXES` (`az_tables.py`), `_CONJUNCTIONS` (`az_chunk.py`), `CLITICS`,
-`WEAK_HEADS`, `_WIDE_WEAK`, `_PARTICIPLE_WORDS` (`az_prosody.py`), the `DEMO`
+`LETTER_NAMES`, `MONTHS`, `ABBREVIATIONS`, `UNITS`, `CURRENCIES`,
+`CURRENCY_SUBUNITS`, `SYMBOLS`, `ACRONYMS`, `ROMAN_NOUNS`, `ORDINAL_SUFFIXES`
+(`az_tables.py`), `_CONJUNCTIONS` (`az_chunk.py`), `CLITICS`, `WEAK_HEADS`,
+`_WIDE_WEAK`, `_PARTICIPLE_WORDS` (`az_prosody.py`), `PROFANE_STEMS`,
+`CLEAN_PREFIXES`, `PROFANE_WORDS` (`az_profanity.py`), the `_AZ` table in
+`webui/i18n.py`, the `DEMO`
 sentences in `say.py`, and every phoneme string. Do not translate them, do not
 "clean them up". Comments about them stay English.
 

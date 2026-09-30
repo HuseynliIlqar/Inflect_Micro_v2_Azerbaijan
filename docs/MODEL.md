@@ -108,7 +108,8 @@ follows from that:
 The repository also ships `model-en/`: the English checkpoint this model was
 adapted from, `owensong/Inflect-Micro-v2`, redistributed unmodified under
 Apache-2.0 so that a clone speaks both languages. It is a different voice by
-another author, synthetic, and none of the Azerbaijani text layers apply to it.
+another author, synthetic, and none of the Azerbaijani text layers apply to it
+except the profanity bleep (`censor_az`).
 `python say.py --voice en "Hello."`, or the voice selector in the interface.
 Samples for it are in `samples/en/`; see `model-en/README.md` for provenance and
 `README.md` for what it means for commercial use.

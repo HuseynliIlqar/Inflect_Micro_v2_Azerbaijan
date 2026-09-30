@@ -21,7 +21,8 @@ A fully offline text-to-speech model that speaks Azerbaijani. 9.36M parameters,
 24 kHz mono, 2-4x faster than real time on a CPU. Type a sentence, adjust the
 parameters, listen.
 
-The panel on the right exposes every setting the command line has, and the page
+The panel on the right exposes every setting the command line has except
+`--allow-profanity` (obscenities are always bleeped here), and the page
 shows two things a demo usually hides: the normalised text that actually reaches
 the model (`25%` becomes `iyirmi beş faiz`), and the `say.py` command matching
 the settings you picked.
