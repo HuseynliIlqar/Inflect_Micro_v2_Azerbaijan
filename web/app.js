@@ -54,6 +54,7 @@ const els = {
   voiceLabel: $("voice-label"), voiceInfo: $("voice-info"),
   offlineNote: $("offline-note"), speedNote: $("speed-note"),
   footer: $("footer"), censorNote: $("censor-note"), aboutLabel: $("about-label"),
+  feedbackLink: $("feedback-link"),
   skipLink: document.querySelector(".skip-link"),
   wave: $("wave"), waveBox: document.querySelector(".wave"), waveEmpty: $("wave-empty"),
   progress: $("progress"), elapsed: $("elapsed"), slowNote: $("slow-note"),
@@ -68,6 +69,7 @@ const els = {
   dialogTitle: $("dialog-title"), dialogText: $("dialog-text"), dialogNote: $("dialog-note"),
   dialogDontShow: $("dialog-dont-show"), dialogDontShowLabel: $("dialog-dont-show-label"),
   dialogDirect: $("dialog-direct"), dialogOk: $("dialog-ok"),
+  dialogTech: $("dialog-tech"), dialogTechLabel: $("dialog-tech-label"), dialogTechList: $("dialog-tech-list"),
   toasts: $("toasts"), textError: $("text-error"),
 };
 
@@ -511,6 +513,7 @@ function applyLanguage(next) {
   els.waveEmpty.textContent = t("wave_empty");
   els.aboutLabel.textContent = t("about_label");
   els.footer.textContent = t("footer");
+  els.feedbackLink.textContent = t("feedback_link");
 
   for (const button of document.querySelectorAll("[data-language]")) {
     const active = button.dataset.language === language;

@@ -142,6 +142,18 @@ for (const lang of ["az", "en"]) {
   );
 }
 
+// -- the technical reason, one tap away in the phone dialog -------------------------
+
+for (const lang of ["az", "en"]) {
+  const t = (key, values) => label(lang, key, values);
+  const phone = deviceCopy(deviceVerdict({ gpu: true, phone: true, threads: 4 }), t);
+  expect(`[${lang}] the phone dialog lists the technical reasons`, phone.tech.length, 6);
+  expect(`[${lang}] every reason is written out`, phone.tech.every((line) => line && !line.startsWith("tech_")), true);
+  expect(`[${lang}] the threads reason names this device's count`, phone.tech.some((line) => line.includes("4")), true);
+  expect(`[${lang}] a desktop dialog has no such list`, deviceCopy(deviceVerdict({ gpu: false, threads: 4 }), t).tech, []);
+  expect(`[${lang}] the button label exists`, t("tech_label") !== "tech_label", true);
+}
+
 if (failures.length) {
   console.log(`FAIL ${failures.length} of ${checked}`);
   for (const f of failures) {

@@ -27,6 +27,10 @@ function writeDismissed(level) {
   }
 }
 
+// The technical reasons behind the phone verdict, in the order a curious
+// visitor would ask: why slower, why not the GPU, why it sounds different.
+const PHONE_TECH = ["tech_wasm", "tech_threads", "tech_gpu", "tech_int8", "tech_download", "tech_screen"];
+
 /** The title and text a verdict reads as, in the current language. */
 export function deviceCopy(verdict, t) {
   const text = {
@@ -43,7 +47,8 @@ export function deviceCopy(verdict, t) {
       : verdict.level === "threads" ? "device_title_threads" : "device_title_single");
   const note = verdict.forced ? t("device_note_forced")
     : verdict.level === "phone" ? t("device_note_phone") : "";
-  return { title, text, note };
+  const tech = verdict.level === "phone" ? PHONE_TECH.map((key) => t(key, { threads: verdict.threads })) : [];
+  return { title, text, note, tech };
 }
 
 export function createDeviceView(els, { directUrl }) {
@@ -66,8 +71,17 @@ export function createDeviceView(els, { directUrl }) {
   }
 
   function fillDialog() {
-    const { title, text, note } = deviceCopy(verdict, t);
+    const { title, text, note, tech } = deviceCopy(verdict, t);
     els.dialog.dataset.tone = verdict.tone;
+    // One tap away, closed each time the dialog opens.
+    els.dialogTech.hidden = tech.length === 0;
+    els.dialogTech.open = false;
+    els.dialogTechLabel.textContent = t("tech_label");
+    els.dialogTechList.replaceChildren(...tech.map((line) => {
+      const item = document.createElement("li");
+      item.textContent = line;
+      return item;
+    }));
     els.dialogMeter.dataset.bars = String(verdict.bars);
     els.dialogTitle.textContent = title;
     els.dialogText.textContent = text;

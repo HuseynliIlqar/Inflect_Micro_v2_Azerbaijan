@@ -27,6 +27,11 @@ for (const lang of Object.keys(LABELS)) {
     const text = label(lang, key);
     expect(`[${lang}] ${key} names what to do (a computer, Chrome or Edge)`, /Chrome/u.test(text) && /(kompüter|computer)/iu.test(text));
   }
+  // The cause is the browser, not the phone: an app on the same phone runs fine.
+  for (const key of ["device_text_phone", "phone_note"]) {
+    expect(`[${lang}] ${key} puts it on the browser`, /(brauzer|browser)/iu.test(label(lang, key)));
+  }
+  expect(`[${lang}] device_text_phone says an app runs normally`, /(tətbiq|app)/iu.test(label(lang, "device_text_phone")));
   // Where the audio will appear, for people who lose it on a phone.
   expect(`[${lang}] phone_note says where the result appears`, label(lang, "phone_note").includes(label(lang, "audio_label")));
 }

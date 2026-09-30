@@ -77,8 +77,12 @@ instance after each use. `?backend=webgpu` still tries the GPU on a phone, for
 testing; the device card says *Phone -- running on the processor* and the
 diagnostics line carries `phone=yes | gpu=skipped-on-phone`. A phone visitor is told
 this in plain words -- the device popup, a note under *Speak* and the mode
-banner say the speech is made on the phone, so it is slower and simplified,
-and that a computer with Chrome or Edge gives full speed and quality;
+banner say the speech is made in the phone's browser, which -- not the phone:
+the same model as an installed app runs at normal speed -- makes it slower and
+simplified, and that a computer with Chrome or Edge gives full speed and
+quality. The popup's *Show the technical reason* lists why: WebAssembly instead
+of native code, the threads the browser allows, WebGPU unreliable on phones,
+the int8 model, the first download, and the page pausing with the screen off;
 `web/tests/test_phone_copy.mjs` keeps those texts free of jargon. When a clip
 is ready the result gets a *Ready* chip and a pulse, and the page scrolls to it
 if it is off screen -- not while the visitor is typing or the device dialog is
