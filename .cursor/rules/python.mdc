@@ -11,7 +11,9 @@ alwaysApply: false
   Nothing is mutated in place, and no function reaches outside its arguments.
 - Module-level tables are `MappingProxyType` or `frozenset` so they cannot be
   mutated by accident. Keep new tables that way.
-- Small, single-purpose files. The largest is `az_text.py` at ~390 lines.
+- Small, single-purpose files, under ~400 lines each (see `structure.mdc`).
+  The largest is `az_text.py` at ~250 lines; its rules are split into
+  `az_dates.py`, `az_amounts.py`, `az_tables.py` and `az_words.py`.
 - Interface logic belongs in `webui/`, never in `app.py`: that is what lets
   `tests/test_webui_runner.py` drive it with a stand-in engine instead of the
   model. `Settings` is a frozen dataclass; build a new one, never mutate.
@@ -23,7 +25,7 @@ alwaysApply: false
 
 `I` lowercases to `ı` and `İ` lowercases to `i`. Python's `.lower()` and
 `.upper()` silently produce the wrong letter. Always use `az_lower()` and
-`az_capitalise()` from `aztts/az_text.py`.
+`az_capitalise()` from `aztts/az_words.py`.
 
 ## `normalize_az()` step order is load-bearing
 
@@ -48,7 +50,7 @@ entry point needs the same call.
 ## Azerbaijani strings in code are data
 
 `LETTER_NAMES`, `MONTHS`, `ABBREVIATIONS`, `UNITS`, `CURRENCIES`, `ACRONYMS`,
-`ORDINAL_SUFFIXES` (`az_text.py`), `_CONJUNCTIONS` (`az_chunk.py`), `CLITICS`,
+`ORDINAL_SUFFIXES` (`az_tables.py`), `_CONJUNCTIONS` (`az_chunk.py`), `CLITICS`,
 `WEAK_HEADS`, `_WIDE_WEAK`, `_PARTICIPLE_WORDS` (`az_prosody.py`), the `DEMO`
 sentences in `say.py`, and every phoneme string. Do not translate them, do not
 "clean them up". Comments about them stay English.

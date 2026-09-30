@@ -1,0 +1,50 @@
+---
+description: File size and folder layout -- no long scripts, no messy folders
+alwaysApply: true
+---
+
+# Long files and messy folders
+
+Do not write long scripts, and do not leave a folder flat and mixed. `web/`
+once had an 800-line `app.js` and two stylesheets of 640-800 lines loose at its
+top level; it was split and regrouped, and should stay that way. The full rule
+is in `CLAUDE.md` under "Long files and messy folders".
+
+## Files
+
+- **One job per file, under ~400 lines** -- Python, JavaScript, CSS, HTML.
+  200-300 is the norm. If a change would take a file past that, split it
+  first, as its own change, then make the change. Golden files, vendored code
+  and generated label tables are exempt.
+- **Split by responsibility.** Name the module for what it does
+  (`az_dates.py`, `worker-client.js`, `dialog.css`), never `utils2` or
+  `part-b`. Re-export moved public names from the old module so callers keep
+  working.
+- **Entry points are wiring only**: `say.py`, `app.py`, `web/js/app.js`,
+  `web/js/worker.js`. Logic lives in the modules they import.
+
+## Folders
+
+- Once a folder holds more than a handful of files, group them by role. No
+  loose scripts at the top level beside the entry point.
+- `web/` is the reference layout:
+
+  ```
+  web/index.html  README.md  package.json
+  web/css/tokens.css  css/page/  css/components/
+  web/js/app.js  js/worker.js  js/page/  js/engine/  js/text/  js/ui/
+  web/tests/
+  ```
+
+- `web/js/text/` mirrors `aztts/`'s text modules one to one
+  (`az-text.js` <-> `az_text.py`, `az-dates.js` <-> `az_dates.py`, ...).
+
+## Splitting safely
+
+- A split is a pure move: behaviour identical, tests green before and after
+  (`python -m pytest`, every `web/tests/*.mjs`), and for `web/` the page opened
+  and a sentence spoken.
+- CSS is cut into consecutive pieces and linked in `web/index.html` in the same
+  order, so the cascade cannot change.
+- Update every path that named the old file: imports, `index.html`,
+  `web/README.md`, `packaging/PUBLISHING.md`, `CLAUDE.md`, these rules.

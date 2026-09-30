@@ -21,6 +21,9 @@ it does; these rules describe how to change it without breaking it.
 - `model/` — **vendored upstream export. Never edit.**
 - `model-en/` — **vendored English weights. Never edit.** Tracked through Git
   LFS so a clone speaks both languages; `aztts/en_voice.py` drives it.
+- `web/` — the static browser playground, a JavaScript port of the text
+  layer. Laid out by role: `css/`, `js/{page,engine,text,ui}/`, `tests/`;
+  `web/README.md` maps every file.
 - `tools/` — `seed_sweep.py` (pick a good seed), `audio_postprocess.py` (find
   and filter vocoder buzz).
 - `training/` — archive of how the model was made. The pod is gone; only
@@ -44,14 +47,17 @@ it does; these rules describe how to change it without breaking it.
    `README.az.md` is the deliberate exception and mirrors `README.md`; the
    `_AZ` table in `webui/i18n.py` is interface label data, not prose.
 4. **Never call `.lower()` / `.upper()` on Azerbaijani text.** `I` → `ı` and
-   `İ` → `i`. Use `az_lower()` / `az_capitalise()` from `aztts/az_text.py`.
+   `İ` → `i`. Use `az_lower()` / `az_capitalise()` from `aztts/az_words.py`.
 5. **Tests must never load the model.** The suite runs in ~3 seconds.
 6. **The English voice is a guest, not a second product.** No `normalize_az`,
    no `restress` for it — Azerbaijani number words inside an English sentence
    is the failure mode. Its controls are disabled in the interface.
 7. **Gradio stays an optional dependency** (`[project.optional-dependencies]
    app`, `requirements-app.txt`). Only `app.py` may import it.
-8. **Do not add GPL dependencies.** `phonemizer` and eSpeak NG are already
+8. **No long files, no flat mixed folders.** A file does one job and stays
+   under ~400 lines; a folder with more than a handful of files is grouped by
+   role. Split before you grow. Details in `structure.mdc`.
+9. **Do not add GPL dependencies.** `phonemizer` and eSpeak NG are already
    GPL-3.0-or-later and loaded in-process; that surface is documented and
    bounded in `THIRD_PARTY_NOTICES.md`. Our code stays Apache-2.0.
 

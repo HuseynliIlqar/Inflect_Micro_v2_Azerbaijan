@@ -30,7 +30,7 @@ nothing to download for normal work.
 
 ```bash
 python -m pytest                     # ~3 seconds, never loads the model
-node web/tests/test_num_az.mjs && node web/tests/test_az_text.mjs && node web/tests/test_az_chunk.mjs && node web/tests/test_progress.mjs && node web/tests/test_theme.mjs && node web/tests/test_backend_plan.mjs && node web/tests/test_engine_fallback.mjs && node web/tests/test_mode_banner.mjs && node web/tests/test_device_check.mjs && node web/tests/test_az_censor.mjs && node web/tests/test_cancel.mjs && node web/tests/test_waveform.mjs && node web/tests/test_reveal.mjs && node web/tests/test_phone_copy.mjs && node web/tests/test_text_check.mjs
+for f in web/tests/*.mjs; do node "$f" || break; done   # every web suite; a failure stops
 python -m compileall -q say.py app.py aztts webui tools training
 cd model && sha256sum -c checksums.sha256       # 24 files, all must say OK
 cd model-en && sha256sum -c checksums.sha256    # 6 files, all must say OK
@@ -71,12 +71,12 @@ help, Markdown. Azerbaijani appears only as *language data*:
 
 - TTS example sentences (`say.py` `DEMO`, test inputs, doctests)
 - `LETTER_NAMES`, `MONTHS`, `ABBREVIATIONS`, `UNITS`, `CURRENCIES`,
-  `CURRENCY_SUBUNITS`, `ACRONYMS`, `ROMAN_NOUNS`, `ORDINAL_SUFFIXES` in
-  `az_text.py`
+  `CURRENCY_SUBUNITS`, `SYMBOLS`, `ACRONYMS`, `ROMAN_NOUNS`, `ORDINAL_SUFFIXES` in
+  `az_tables.py` (and `web/js/text/az-tables.js`)
 - `_CONJUNCTIONS` in `az_chunk.py`
 - `CLITICS`, `WEAK_HEADS`, `_WIDE_WEAK`, `_PARTICIPLE_WORDS` in `az_prosody.py`
 - `PROFANE_STEMS`, `CLEAN_PREFIXES`, `PROFANE_WORDS` in `az_profanity.py`
-  (and their copies in `web/js/az-censor.js`)
+  (and their copies in `web/js/text/az-censor.js`)
 - the `_AZ` table in `webui/i18n.py` -- the interface's own labels; the page has
   to speak Azerbaijani, and this is the only module where it does
 - phoneme strings anywhere
@@ -87,7 +87,7 @@ sync when README content changes.
 
 **Never call `.lower()` or `.upper()` on Azerbaijani text.** Azerbaijani has
 dotted and dotless i: `I` lowercases to `ı`, `İ` lowercases to `i`. Use
-`az_lower()` and `az_capitalise()` from `aztts/az_text.py`. Python's built-ins
+`az_lower()` and `az_capitalise()` from `aztts/az_words.py`. Python's built-ins
 silently produce the wrong letter.
 
 **`fast_monotonic_align.py` must stay bit-identical** to the reference
@@ -134,9 +134,12 @@ that into "free for commercial use".
   against a symbol (`AZN-dən`, `%-ə`) is re-harmonised onto the spoken word by
   `harmonise()`. `tests/test_az_text_edges.py` holds these cases.
 - Type hints everywhere, `from __future__ import annotations` at the top.
-- Files stay small and single-purpose. The largest is `az_text.py` at ~650
-  lines; the next rule it grows by should move dates, times and phone numbers
-  into their own module (and the same split in `web/js/`).
+- Files stay small and single-purpose. `normalize_az()` lives in `az_text.py`,
+  but its rules are split: dates, times and phones in `az_dates.py`,
+  money/percent/units/fractions/ranges in `az_amounts.py`, the word tables in
+  `az_tables.py`, shared primitives (casing, harmony, number words) in
+  `az_words.py`. `web/js/text/` mirrors the same split. See "Long files and
+  messy folders" below.
 - No new runtime dependencies without a reason stated in the PR.
 - **Censoring is on unless someone with a clone turns it off.** `censor_az`
   runs before normalisation, survives `--raw` and covers the English voice
@@ -156,8 +159,9 @@ that into "free for commercial use".
   layers apply to it: no `normalize_az`, no `restress`. Keep it that way --
   Azerbaijani number words in an English sentence is the failure mode. The one
   exception is `censor_az`, which writes nothing, only bleeps.
-- **`web/` is a port, and a port drifts.** The JavaScript in `web/js/` mirrors
-  `az_text.py`, `az_chunk.py` and `num2words`. When any of those change,
+- **`web/` is a port, and a port drifts.** The JavaScript in `web/js/text/` mirrors
+  `az_text.py` (with `az_dates.py`, `az_amounts.py`, `az_tables.py`,
+  `az_words.py`), `az_chunk.py` and `num2words`. When any of those change,
   regenerate the golden files and run `node web/tests/*.mjs`; the snippet that
   writes them is in `packaging/PUBLISHING.md`. A change to the text layer that
   does not reach `web/` makes the page and the CLI say different things.
@@ -165,24 +169,54 @@ that into "free for commercial use".
   `tests/test_webui_runner.py` able to run against a stand-in engine instead of
   loading the model.
 
+## Long files and messy folders
+
+Do not write long scripts, and do not leave a folder flat and mixed. Both have
+already cost this project: `web/` once had an 800-line `app.js` and two
+stylesheets of 640-800 lines loose at its top level, next to the page.
+
+- **A file does one job and stays under ~400 lines** -- Python, JavaScript,
+  CSS and HTML alike; 200-300 is the norm here. When a change would take a
+  file past that, split it first, in its own change, then make the change.
+  Golden files, vendored code and generated label tables are exempt.
+- **Split by responsibility, not by line count.** A module named for what it
+  does (`az_dates.py`, `worker-client.js`, `dialog.css`), never `utils2` or
+  `part-b`. Keep public names importable from where they were: re-export from
+  the old module rather than breaking callers.
+- **An entry point is wiring only.** `say.py`, `app.py`, `web/js/app.js` and
+  `web/js/worker.js` import and connect; logic goes in a module they import.
+- **Group a folder by role once it holds more than a handful of files.** No
+  loose scripts at a folder's top level beside its entry point. `web/` is the
+  model: `index.html`, `README.md` and `package.json` at the top, then `css/`,
+  `js/{page,engine,text,ui}/` and `tests/`.
+- **Stylesheets split in cascade order.** A CSS split cuts the file into
+  consecutive pieces and `web/index.html` links them in the same order, so the
+  cascade cannot change. A new stylesheet goes where its rules belong in that
+  order.
+- **A split is a pure move.** Behaviour must be identical: run the Python
+  suite and every `web/tests/*.mjs` before and after, and for `web/` open the
+  page and speak a sentence. Update every path that named the old file --
+  imports, `index.html`, `web/README.md`, `packaging/PUBLISHING.md`, this file,
+  `.cursor/rules/`.
+
 ## Where to change what
 
 | You want to | Go to |
 | --- | --- |
-| Fix how a number, date, unit or acronym is read | `aztts/az_text.py` |
+| Fix how a number, date, unit or acronym is read | `aztts/az_text.py` (pipeline), `az_dates.py`, `az_amounts.py`, `az_tables.py` |
 | Change where sentences are cut | `aztts/az_chunk.py` |
 | Change stress placement (`--prosody`) | `aztts/az_prosody.py` |
-| Change which words are bleeped | `aztts/az_profanity.py`, then `web/js/az-censor.js` |
+| Change which words are bleeped | `aztts/az_profanity.py`, then `web/js/text/az-censor.js` |
 | Change synthesis, chunk pauses, model loading | `aztts/engine.py` |
 | Add or change a CLI flag | `say.py` |
 | Change the browser interface, its labels or parameters | `app.py`, `webui/` |
-| Change the browser playground (the static Space) | `web/` |
+| Change the browser playground (the static Space) | `web/` (its layout is in `web/README.md`) |
 | Change how the English base model is spoken | `aztts/en_voice.py` |
 | Audio cleanup, seed selection | `tools/` |
 | Anything about how the model was trained | `training/` (archive; the pod is gone) |
 | Publish to GitHub / HF / Kaggle | `packaging/PUBLISHING.md` |
 
-`aztts/` is the library (about 1,100 lines with `en_voice.py`), `say.py` is the
+`aztts/` is the library (about 1,700 lines with `en_voice.py`), `say.py` is the
 CLI, and `app.py` plus `webui/` are the browser interface.
 
 ## Generated and ignored

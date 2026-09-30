@@ -123,8 +123,11 @@ one is static.
 ```bash
 git clone https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan hf-space
 cd hf-space
-cp ../web/index.html ../web/*.css ../web/app.js ../web/worker.js .
-cp -r ../web/js .
+# The page's files: index.html, css/ and js/. Drop what an older layout left
+# at the top (app.js, worker.js, *.css) and the old js/ so no stale file ships.
+git rm -rq --ignore-unmatch app.js worker.js styles.css components.css tokens.css css js
+cp ../web/index.html .
+cp -r ../web/css ../web/js .
 mkdir -p onnx && cp ../web/onnx/*.onnx onnx/
 # onnxruntime-web from the page's own origin -- WebKit (every iPhone browser)
 # refuses a CDN's modules in a worker. Without it the Space ships a page whose
@@ -143,7 +146,7 @@ repository already carries two checkpoints, and the Space is where the graphs
 belong. Copy them in from the training workspace when working on the page.
 
 `onnx/decode.int8.onnx` is the CPU step of the fallback chain. Rebuild it
-whenever `decode.onnx` changes, then bump `CACHE_NAME` in `web/js/fetch-model.js`:
+whenever `decode.onnx` changes, then bump `CACHE_NAME` in `web/js/engine/fetch-model.js`:
 
 ```bash
 pip install onnx                       # the tool's only extra need
@@ -157,7 +160,8 @@ activations and froze a 16 GB machine.
 #### Regenerating the golden files
 
 `web/` is a port of the Python text layer, so its tests compare against output
-generated from the Python side. After changing `az_text.py`, `az_chunk.py`,
+generated from the Python side. After changing `az_text.py` (or `az_dates.py`,
+`az_amounts.py`, `az_tables.py`, `az_words.py`), `az_chunk.py`,
 `az_profanity.py` or the number words, regenerate:
 
 ```bash
@@ -192,6 +196,7 @@ node web/tests/test_backend_plan.mjs
 node web/tests/test_engine_fallback.mjs
 node web/tests/test_mode_banner.mjs
 node web/tests/test_device_check.mjs
+node web/tests/test_dialog.mjs
 node web/tests/test_az_censor.mjs
 node web/tests/test_cancel.mjs
 node web/tests/test_waveform.mjs
@@ -298,7 +303,7 @@ things genuinely worth leading with are:
    bit-identically, proven by 25 tests. 20 days became 3.2 days, ~$213 became
    ~$34. That is an independent contribution and would be welcome upstream as a
    pull request.
-2. **`aztts/az_text.py` and `az_chunk.py`** -- the Azerbaijani text
-   normalisation does not depend on the model and is reusable by any Azerbaijani
-   TTS or NLP project. Splitting it out as its own PyPI package would probably
+2. **`aztts/az_text.py` (with its `az_*` rule modules) and `az_chunk.py`** --
+   the Azerbaijani text normalisation does not depend on the model and is
+   reusable by any Azerbaijani TTS or NLP project. Splitting it out as its own PyPI package would probably
    outlive the model.

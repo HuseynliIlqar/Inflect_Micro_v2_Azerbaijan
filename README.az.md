@@ -294,7 +294,11 @@ say.py            Komanda sətri — əsas giriş nöqtəsi
 app.py            Brauzer interfeysi (Gradio) — könüllü
 aztts/
   engine.py       AzTTS — model yüklənməsi, normallaşdırma, bölmə, sintez
-  az_text.py      Rəqəm / Roma rəqəmi / qısaltma → söz
+  az_text.py      normalize_az: Roma rəqəmi, qısaltma, abreviatura
+  az_dates.py     Tarix, saat, telefon nömrəsi → söz
+  az_amounts.py   Pul, faiz, ölçü vahidi, kəsr, aralıq → söz
+  az_words.py     Hərf registri, ahəng qanunu, rəqəm → söz
+  az_tables.py    Söz cədvəlləri (aylar, vahidlər, valyutalar, ...)
   az_chunk.py     Cümlələri modelin bacardığı uzunluğa bölür
   az_prosody.py   Vurğu qatı (könüllü, --prosody)
   az_profanity.py Söyüşlər -> bip (--allow-profanity olmadıqca açıq)

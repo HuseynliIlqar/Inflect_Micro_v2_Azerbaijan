@@ -20,7 +20,7 @@ The three rules worth repeating here, because breaking them is silent:
    behaviour. `README.az.md` is the one deliberate exception.
 3. **Never call `.lower()` / `.upper()` on Azerbaijani text.** `I` → `ı` and
    `İ` → `i`; Python's built-ins give the wrong letter. Use `az_lower()` and
-   `az_capitalise()` from `aztts/az_text.py`.
+   `az_capitalise()` from `aztts/az_words.py`.
 
 Verify before saying a change is done:
 

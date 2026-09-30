@@ -297,7 +297,11 @@ say.py            Command line -- the main entry point
 app.py            Browser interface (Gradio) -- optional
 aztts/
   engine.py       AzTTS -- model loading, normalisation, chunking, synthesis
-  az_text.py      Digits / Roman numerals / abbreviations -> words
+  az_text.py      normalize_az: Roman numerals, abbreviations, acronyms
+  az_dates.py     Dates, times, phone numbers -> words
+  az_amounts.py   Money, percentages, units, fractions, ranges -> words
+  az_words.py     Casing, vowel harmony, numbers as words
+  az_tables.py    The word tables (months, units, currencies, ...)
   az_chunk.py     Cuts sentences to a length the model handles
   az_prosody.py   Stress layer (optional, --prosody)
   az_profanity.py Obscenities -> a bleep (on unless --allow-profanity)
