@@ -31,7 +31,7 @@ from __future__ import annotations
 import re
 import unicodedata
 
-from .az_text import az_lower
+from .az_words import az_lower
 
 __all__ = ["BLEEP", "bleep_segments", "censor_az", "is_profane"]
 

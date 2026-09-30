@@ -1,7 +1,7 @@
 """Interface labels in Azerbaijani and English.
 
 This is the one module where Azerbaijani prose is allowed: the strings below are
-*language data*, the same category as `LETTER_NAMES` in `aztts/az_text.py`, not
+*language data*, the same category as `LETTER_NAMES` in `aztts/az_tables.py`, not
 documentation. Code, comments and docstrings stay English. See CLAUDE.md.
 
 Both tables must hold exactly the same keys -- `tests/test_i18n.py` enforces it,

@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import re
 
-from .az_text import az_lower
+from .az_words import az_lower
 
 __all__ = [
     "restress",
