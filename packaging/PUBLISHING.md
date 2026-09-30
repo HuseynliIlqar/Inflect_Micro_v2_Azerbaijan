@@ -14,7 +14,7 @@ before publishing there.
 
 ```bash
 git lfs install          # required: both model.pth files and the samples
-python -m pytest         # 227 tests, three seconds, no model load
+python -m pytest         # 303 tests, three seconds, no model load
 ```
 
 The repository carries two checkpoints -- `model/` (Azerbaijani, 37 MB) and
@@ -163,6 +163,7 @@ node web/tests/test_num_az.mjs
 node web/tests/test_az_text.mjs
 node web/tests/test_az_chunk.mjs
 node web/tests/test_progress.mjs
+node web/tests/test_theme.mjs
 ```
 
 ### The Gradio Space (needs Pro)

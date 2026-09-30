@@ -68,6 +68,9 @@ const UNITS_TABLE = {
   kvt: "kilovatt", vt: "vatt", hz: "herts",
   gb: "giqabayt", mb: "meqabayt", kb: "kilobayt", tb: "terabayt",
   "°c": "dərəcə selsi", "°f": "dərəcə farenheyt",
+  "km/saat": "kilometr saatda", "km/s": "kilometr saniyədə",
+  "m/s": "metr saniyədə",
+  mln: "milyon", mlrd: "milyard", trln: "trilyon",
 };
 
 const CURRENCIES = {
@@ -79,11 +82,19 @@ const CURRENCIES = {
   try: "Türkiyə lirəsi", "₺": "Türkiyə lirəsi",
 };
 
+// The coin an amount's two decimal places count: "19,99 AZN" is said
+// "on doqquz manat doxsan doqquz qəpik".
+const CURRENCY_SUBUNITS = {
+  manat: "qəpik", dollar: "sent", avro: "sent", rubl: "qəpik",
+  "funt sterlinq": "pens", "Türkiyə lirəsi": "quruş",
+};
+
 const SYMBOLS = {
   "&": " və ", "№": " nömrə ", "§": " paraqraf ",
   "×": " vurulsun ", "÷": " bölünsün ", "±": " artı mənfi ",
   "≈": " təxminən ", "≤": " kiçik və ya bərabər ",
   "≥": " böyük və ya bərabər ", "=": " bərabərdir ",
+  "°": " dərəcə ",
 };
 
 // Acronyms with a settled spoken form; anything else short and upper-case is
@@ -100,6 +111,13 @@ const ACRONYMS = {
   SIM: "sim",
 };
 
+// Nouns after which a lone I, V or X is a numeral: "V əsr", "X sinif". A lone
+// letter is otherwise left alone -- it is far more often just a letter.
+const ROMAN_NOUNS = [
+  "əsr", "sinif", "kurs", "hissə", "fəsil", "bölmə", "cild", "maddə",
+  "dərəcə", "qrup", "rüb", "yarımil", "mərtəbə",
+];
+
 const ORDINAL_SUFFIXES = new Set([
   "cı", "ci", "cu", "cü",
   "ncı", "nci", "ncu", "ncü",
@@ -107,6 +125,7 @@ const ORDINAL_SUFFIXES = new Set([
 ]);
 
 const ROMAN_VALUES = { I: 1, V: 5, X: 10, L: 50 };
+const LONE_ROMAN = { I: 1, V: 5, X: 10 };
 // Deliberately limited to I/V/X/L so ordinary upper-case words (DVD, MIX, CD)
 // are never mistaken for numerals.
 const ROMAN_RE = /^(?=[IVXL]{2,})(XL|L?X{0,4})(IX|IV|V?I{0,3})$/;
@@ -114,6 +133,28 @@ const ROMAN_MAX = 50;
 
 // Optional Azerbaijani suffix written after a dash: "2024-cü", "ATM-də".
 const SUFFIX = `(?:-(\\p{L}[${WORD}]*))?`;
+
+// A number, and a number or a range of them: "2,5", "10-15".
+const NUMBER = "\\d+(?:[.,]\\d+)?";
+const AMOUNT = `${NUMBER}(?:\\s?[-–]\\s?${NUMBER})?`;
+// A scale word written between an amount and its currency: "5 mln AZN".
+const SCALE = "(?:\\s?(?:mln|mlrd|trln|milyon|milyard|trilyon|min)\\.?)?";
+
+const VOWELS = "aıoueəiöü";
+const BACK_VOWELS = "aıou";
+// The four-way vowel (ı/i/u/ü) that follows each vowel.
+const FOUR_WAY = { a: "ı", ı: "ı", o: "u", u: "u", e: "i", ə: "i", i: "i", ö: "ü", ü: "ü" };
+
+/** `iyun` -> `[iİ]yun`, the same pattern the Python side builds. */
+function eitherCase(word) {
+  const head = word[0];
+  const upper = head === "i" ? "İ" : head.toUpperCase();
+  return `[${head}${upper}]${word.slice(1)}`;
+}
+
+const MONTH_RE = MONTHS.map(eitherCase).join("|");
+// "il" right after a date already names the year: "01.09.1939 ildə".
+const YEAR_WORD_RE = new RegExp(`^\\s+il(?:in|də|dən|i|ə)?${B_END}`, "u");
 
 function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -156,7 +197,40 @@ function attachSuffix(word, suffix) {
   return suffix ? `${word}${suffix}` : word;
 }
 
-/** `1,5` -> `bir tam beş onda`; falls back to digits when very long. */
+/**
+ * Re-attach a written suffix to a *different* spoken word: `10 AZN-dən` is
+ * said `manatdan`. Vowels follow the new word and the buffer consonant is
+ * added or dropped.
+ */
+export function harmonise(word, suffix) {
+  if (!suffix) return word;
+  const base = azLower(word);
+  let ending = azLower(suffix);
+  if (VOWELS.includes(base.at(-1)) && VOWELS.includes(ending[0])) {
+    ending = ("aə".includes(ending[0]) ? "y" : "n") + ending;
+  } else if (
+    !VOWELS.includes(base.at(-1)) &&
+    ending.length > 1 &&
+    "yn".includes(ending[0]) &&
+    VOWELS.includes(ending[1])
+  ) {
+    ending = ending.slice(1);
+  }
+  let last = [...base].reverse().find((c) => VOWELS.includes(c)) ?? "a";
+  let harmonised = "";
+  for (let character of ending) {
+    if ("aə".includes(character)) {
+      character = BACK_VOWELS.includes(last) ? "a" : "ə";
+    } else if ("ıiuü".includes(character)) {
+      character = FOUR_WAY[last];
+    }
+    if (VOWELS.includes(character)) last = character;
+    harmonised += character;
+  }
+  return word + harmonised;
+}
+
+/** `1,5` -> `bir tam onda beş`; falls back to digits when very long. */
 function decimalToWords(whole, fraction) {
   const places = { 1: "onda", 2: "yüzdə", 3: "mində" }[fraction.length];
   const head = numberToWords(BigInt(whole));
@@ -164,16 +238,41 @@ function decimalToWords(whole, fraction) {
     const digits = [...fraction].map((d) => numberToWords(BigInt(d))).join(" ");
     return `${head} tam ${digits}`;
   }
-  return `${head} tam ${numberToWords(BigInt(fraction))} ${places}`;
+  return `${head} tam ${places} ${numberToWords(BigInt(fraction))}`;
 }
 
-/** `1 000 000` and `1.000.000` become plain digit runs. */
+/** An integer, or a decimal written with `,` or `.`. */
+function speakNumber(raw) {
+  if (raw.includes(",") || raw.includes(".")) {
+    const [whole, fraction] = raw.split(/[.,]/u, 2);
+    return decimalToWords(whole, fraction);
+  }
+  return numberToWords(BigInt(raw));
+}
+
+/** `007` -> `sıfır sıfır yeddi`: leading zeros are read, not dropped. */
+function speakDigits(raw) {
+  const rest = raw.replace(/^0+/u, "");
+  const zeros = Array(raw.length - rest.length).fill("sıfır");
+  return [...zeros, ...(rest ? [numberToWords(BigInt(rest))] : [])].join(" ");
+}
+
+function atSentenceStart(text, index) {
+  const before = text.slice(0, index).trimEnd();
+  return !before || ".!?".includes(before.at(-1));
+}
+
+const isDigits = (text) => /^\d+$/u.test(text);
+
+/**
+ * `1 000 000`, `1.000.000` and `1,000,000` become plain digit runs. A leading
+ * `0` is never a thousands group, and a single `,000` stays a decimal comma.
+ */
 function stripGroupSeparators(text) {
-  text = text.replace(
-    new RegExp(`(?<=\\d)[  ](?=\\d{3}${B_END})`, "gu"),
-    "",
-  );
-  return text.replace(new RegExp(`(?<=\\d)\\.(?=\\d{3}${B_END})`, "gu"), "");
+  const join = (match) => match.replace(/[ .,]/gu, "");
+  text = text.replace(/(?<![\d.,])[1-9]\d{0,2}(?: \d{3})+(?!\d)/gu, join);
+  text = text.replace(/(?<![\d.,])[1-9]\d{0,2}(?:\.\d{3})+(?!\d|\.\d)/gu, join);
+  return text.replace(/(?<![\d.,])[1-9]\d{0,2}(?:,\d{3}){2,}(?!\d|,\d)/gu, join);
 }
 
 function replaceAbbreviations(text) {
@@ -187,29 +286,93 @@ function replaceAbbreviations(text) {
   return text;
 }
 
+/** Split an unbroken run the way numbers are dictated: `... 123 45 67`. */
+function phoneGroups(digits) {
+  if (digits.length <= 3) return digits ? [digits] : [];
+  if (digits.length === 4) return [digits.slice(0, 2), digits.slice(2)];
+  if (digits.length >= 7) {
+    return [
+      ...phoneGroups(digits.slice(0, -7)),
+      digits.slice(-7, -4), digits.slice(-4, -2), digits.slice(-2),
+    ];
+  }
+  return [...phoneGroups(digits.slice(0, -2)), digits.slice(-2)];
+}
+
+/** Read a phone number group by group, zeros included. */
 function replacePhoneNumbers(text) {
-  return text.replace(/\+\d[\d\s\-()]{7,}\d/gu, (match) =>
-    [...match.replace(/\D/gu, "")]
-      .map((digit) => numberToWords(BigInt(digit)))
-      .join(" "),
+  const speak = (match) =>
+    match
+      .match(/\d+/gu)
+      .flatMap(phoneGroups)
+      .map(speakDigits)
+      .join(" ");
+  text = text.replace(/\+\d[\d\s\-()]{7,}\d/gu, speak);
+  return text.replace(
+    /(?<![\d+])\(?0\d{2}\)?[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}(?!\d)/gu,
+    speak,
   );
 }
 
+/**
+ * `1, 9, 1939` -> `bir sentyabr min doqquz yüz otuz doqquzuncu il`: the day a
+ * cardinal, the year an ordinal followed by `il`.
+ */
+function speakDate(day, month, year, suffix, yearWordFollows) {
+  if (!(day >= 1 && day <= 31 && month >= 1 && month <= 12)) return null;
+  const head = `${numberToWords(day)} ${MONTHS[month - 1]}`;
+  if (year === null) return harmonise(head, suffix);
+  const spokenYear = ordinalToWords(year);
+  if (suffix && ORDINAL_SUFFIXES.has(azLower(suffix))) return `${head} ${spokenYear}`;
+  if (suffix) return `${head} ${spokenYear} ${harmonise("il", suffix)}`;
+  if (yearWordFollows) return `${head} ${spokenYear}`;
+  return `${head} ${spokenYear} il`;
+}
+
 function replaceDates(text) {
-  const pattern = new RegExp(
-    `${B_START}(\\d{1,2})[./](\\d{1,2})[./](\\d{4})${SUFFIX}${B_END}`,
-    "gu",
+  // `offset` and `whole` are the last two arguments String.replace passes.
+  const speak = (match, offset, whole, day, month, year, suffix) => {
+    const follows = YEAR_WORD_RE.test(whole.slice(offset + match.length));
+    const spoken = speakDate(day, month, year, suffix, follows);
+    return spoken === null ? match : spoken;
+  };
+
+  text = text.replace(
+    new RegExp(`(?<![\\d.,])(\\d{4})-(\\d{2})-(\\d{2})(?!\\d)${SUFFIX}${B_END}`, "gu"),
+    (match, y, m, d, suffix, offset, whole) =>
+      speak(match, offset, whole, Number(d), Number(m), Number(y), suffix),
   );
-  return text.replace(pattern, (match, d, m, y, suffix) => {
-    const day = Number(d);
-    const month = Number(m);
-    if (!(day >= 1 && day <= 31 && month >= 1 && month <= 12)) return match;
-    const year =
-      suffix && ORDINAL_SUFFIXES.has(azLower(suffix))
-        ? ordinalToWords(BigInt(y))
-        : attachSuffix(numberToWords(BigInt(y)), suffix);
-    return `${ordinalToWords(day)} ${MONTHS[month - 1]} ${year}`;
-  });
+  text = text.replace(
+    new RegExp(
+      `(?<![\\d.,/])(\\d{1,2})([./-])(\\d{1,2})\\2(\\d{4}|\\d{2})(?!\\d|[./]\\d)${SUFFIX}${B_END}`,
+      "gu",
+    ),
+    (match, d, separator, m, y, suffix, offset, whole) => {
+      if (separator === "-" && y.length !== 4) return match;
+      return speak(match, offset, whole, Number(d), Number(m), Number(y), suffix);
+    },
+  );
+  // "15/08": a zero-padded second part is a month, never a denominator.
+  text = text.replace(
+    new RegExp(`(?<![\\d.,/])(\\d{1,2})/(0[1-9])(?![\\d/])${SUFFIX}`, "gu"),
+    (match, d, m, suffix, offset, whole) =>
+      speak(match, offset, whole, Number(d), Number(m), null, suffix),
+  );
+  // "01 may": the zero is padding, not a digit to read.
+  return text.replace(
+    new RegExp(`(?<![\\d.,])0(\\d)(?=\\s+(?:${MONTH_RE}))`, "gu"),
+    "$1",
+  );
+}
+
+/** Versions and addresses, or a date that failed validation: `1.2.3`. */
+function replaceDottedChains(text) {
+  return text.replace(/(?<![\d.,])\d+(?:\.\d+){2,}(?!\d)/gu, (match) =>
+    match
+      .split(".")
+      .map((part) => numberToWords(BigInt(part)))
+      .join(" nöqtə "),
+  );
 }
 
 function replaceTimes(text) {
@@ -220,8 +383,10 @@ function replaceTimes(text) {
   return text.replace(pattern, (match, h, m, suffix) => {
     const hour = Number(h);
     const minute = Number(m);
-    if (hour > 23 || minute > 59) return match;
-    if (minute === 0) return attachSuffix(numberToWords(hour), suffix);
+    if (minute > 59 || hour > 24 || (hour === 24 && minute)) return match;
+    if (minute === 0) {
+      return attachSuffix(hour === 0 ? "sıfır sıfır" : numberToWords(hour), suffix);
+    }
     const tail = attachSuffix(numberToWords(minute), suffix);
     return minute < 10
       ? `${numberToWords(hour)} sıfır ${tail}`
@@ -229,45 +394,59 @@ function replaceTimes(text) {
   });
 }
 
-function speakAmount(raw) {
-  if (raw.includes(",") || raw.includes(".")) {
-    const [whole, fraction] = raw.split(/[.,]/u, 2);
-    return decimalToWords(whole, fraction);
-  }
-  return numberToWords(BigInt(raw));
+/** A score or ratio (`3:2`) is two numbers; `2x3` is a product. */
+function replaceOperators(text) {
+  text = text.replace(/(?<=\d):(?=\d)/gu, " ");
+  return text.replace(/(?<=\d)\s?[xх×]\s?(?=\d)/gu, " × ");
 }
 
+/** `19,99` manat -> `19 manat 99 qəpik`; digits stay digits for later steps. */
+function money(amount, currency, suffix) {
+  const coins = /^(\d+)[.,](\d{2})$/u.exec(amount);
+  if (!coins || !(currency in CURRENCY_SUBUNITS)) {
+    return `${amount} ${harmonise(currency, suffix)}`;
+  }
+  const whole = coins[1];
+  const cents = Number(coins[2]);
+  const coin = `${cents} ${harmonise(CURRENCY_SUBUNITS[currency], suffix)}`;
+  if (!cents) return `${whole} ${harmonise(currency, suffix)}`;
+  if (!Number(whole)) return coin;
+  return `${whole} ${currency} ${coin}`;
+}
+
+/** Put the currency after the amount as a word. */
 function replaceCurrency(text) {
-  const symbols = Object.keys(CURRENCIES)
-    .filter((key) => !/^\p{L}+$/u.test(key))
-    .join("");
+  const symbols = escapeRegExp(
+    Object.keys(CURRENCIES).filter((key) => !/^\p{L}+$/u.test(key)).join(""),
+  );
   const codes = Object.keys(CURRENCIES)
     .filter((key) => /^\p{L}+$/u.test(key))
     .join("|");
-  const amount = "\\d+(?:[.,]\\d+)?";
 
   text = text.replace(
-    new RegExp(`([${escapeRegExp(symbols)}])\\s?(${amount})`, "gu"),
-    (_match, symbol, value) => `${speakAmount(value)} ${CURRENCIES[symbol]}`,
+    new RegExp(`([${symbols}])\\s?(${AMOUNT}${SCALE})`, "gu"),
+    (_match, symbol, amount) => money(amount, CURRENCIES[symbol], undefined),
   );
-  return text.replace(
+  text = text.replace(
     new RegExp(
-      `${B_START}(${amount})\\s?(${codes}|[${escapeRegExp(symbols)}])${B_END}`,
+      `(?<![${WORD}.,])(${AMOUNT}${SCALE})\\s?(${codes}|[${symbols}])${SUFFIX}(?![${WORD}])`,
       "giu",
     ),
-    (_match, value, unit) =>
-      `${speakAmount(value)} ${CURRENCIES[azLower(unit)]}`,
+    (_match, amount, unit, suffix) =>
+      money(amount, CURRENCIES[azLower(unit)], suffix),
+  );
+  // A code on its own: "AZN ilə ödəniş".
+  return text.replace(
+    new RegExp(`${B_START}(AZN|USD|EUR|GBP|RUB)${SUFFIX}${B_END}`, "gu"),
+    (_match, code, suffix) => harmonise(CURRENCIES[azLower(code)], suffix),
   );
 }
 
 function replacePercent(text) {
-  text = text.replace(
-    /%\s?(\d+)/gu,
-    (_match, value) => `${numberToWords(BigInt(value))} faiz`,
-  );
+  text = text.replace(new RegExp(`%\\s?(${AMOUNT})`, "gu"), "$1 faiz");
   return text.replace(
-    /(\d+)\s?%/gu,
-    (_match, value) => `${numberToWords(BigInt(value))} faiz`,
+    new RegExp(`(${AMOUNT})\\s?%${SUFFIX}`, "gu"),
+    (_match, amount, suffix) => `${amount} ${harmonise("faiz", suffix)}`,
   );
 }
 
@@ -275,54 +454,108 @@ function replaceUnits(text) {
   const keys = Object.keys(UNITS_TABLE).sort((a, b) => b.length - a.length);
   const pattern = keys.map(escapeRegExp).join("|");
   return text.replace(
-    new RegExp(`(\\d)\\s?(${pattern})${B_END}`, "giu"),
-    (_match, digit, unit) => `${digit} ${UNITS_TABLE[azLower(unit)]}`,
+    new RegExp(`(\\d)\\s?(${pattern})${SUFFIX}(?![${WORD}])`, "giu"),
+    (_match, digit, unit, suffix) =>
+      `${digit} ${harmonise(UNITS_TABLE[azLower(unit)], suffix)}`,
   );
 }
 
+/** `II` -> `ikinci`, capitalised only where a sentence starts. */
 function replaceRoman(text) {
+  const wordAt = (whole, offset, value) => {
+    const word = ordinalToWords(value);
+    return atSentenceStart(whole, offset) ? azCapitalise(word) : word;
+  };
+  const value = (token) => romanToInt(token) ?? LONE_ROMAN[token] ?? null;
+  const ordinal = "(?:-(?:cı|ci|cu|cü))?";
+
+  text = text.replace(
+    new RegExp(`${B_START}([IVXL]+)\\s?[-–]\\s?([IVXL]+)${B_END}${ordinal}`, "gu"),
+    (match, a, b, offset, whole) => {
+      const first = value(a);
+      const second = value(b);
+      if (first === null || second === null) return match;
+      return `${wordAt(whole, offset, first)} ilə ${ordinalToWords(second)}`;
+    },
+  );
+  text = text.replace(
+    new RegExp(`${B_START}([IVXL]{2,})${B_END}${ordinal}`, "gu"),
+    (match, token, offset, whole) => {
+      const number = romanToInt(token);
+      return number === null ? match : wordAt(whole, offset, number);
+    },
+  );
   return text.replace(
-    /(?<![\p{L}\p{N}_])([IVXL]{2,})(?![\p{L}\p{N}_])(?:-(?:cı|ci|cu|cü))?/gu,
-    (match, token) => {
-      const value = romanToInt(token);
-      if (value === null) return match;
-      const word = ordinalToWords(value);
-      return match[0] === match[0].toUpperCase() && /\p{Lu}/u.test(match[0])
-        ? azCapitalise(word)
-        : word;
+    new RegExp(
+      `(?<![${WORD}.])([IVX])${B_END}(-(?:cı|ci|cu|cü))?(?=(?:\\s+(\\p{L}+))?)`,
+      "gu",
+    ),
+    (match, token, suffix, following, offset, whole) => {
+      const next = following ?? "";
+      const isNumeral =
+        Boolean(suffix) ||
+        ROMAN_NOUNS.some((noun) => azLower(next).startsWith(noun)) ||
+        (token === "I" && /^\p{Lu}/u.test(next));
+      return isNumeral ? wordAt(whole, offset, LONE_ROMAN[token]) : match;
     },
   );
 }
 
-function replaceSuffixedNumbers(text) {
+/** `3/4` -> `dörddə üç`; otherwise a division: `24/7` -> `... bölü yeddi`. */
+function replaceFractions(text) {
   return text.replace(
-    new RegExp(`${B_START}(\\d+)-(\\p{L}[${WORD}]*)`, "gu"),
-    (_match, value, suffix) =>
-      ORDINAL_SUFFIXES.has(azLower(suffix))
-        ? ordinalToWords(BigInt(value))
-        : `${numberToWords(BigInt(value))}${suffix}`,
+    new RegExp(`(?<![\\d/.,])(\\d+)/(\\d+)(?![\\d/]|[.,]\\d)${SUFFIX}`, "gu"),
+    (_match, a, b, suffix) => {
+      const top = BigInt(a);
+      const bottom = BigInt(b);
+      if (top > 0n && top < bottom) {
+        const head = harmonise(numberToWords(bottom), "da");
+        return `${head} ${attachSuffix(numberToWords(top), suffix)}`;
+      }
+      return `${numberToWords(top)} bölü ${attachSuffix(numberToWords(bottom), suffix)}`;
+    },
   );
 }
 
+/** `10-15` -> `on ilə on beş`; a suffix belongs to the second number. */
 function replaceRanges(text) {
   return text.replace(
-    new RegExp(`${B_START}(\\d+)\\s?[-–]\\s?(\\d+)${B_END}`, "gu"),
-    (_match, from, to) =>
-      `${numberToWords(BigInt(from))} ilə ${numberToWords(BigInt(to))}`,
+    new RegExp(`(?<![${WORD}.,])(${NUMBER})\\s?[-–]\\s?(${NUMBER})${SUFFIX}${B_END}`, "gu"),
+    (_match, first, second, suffix) => {
+      const tail =
+        suffix && ORDINAL_SUFFIXES.has(azLower(suffix)) && isDigits(second)
+          ? ordinalToWords(BigInt(second))
+          : attachSuffix(speakNumber(second), suffix);
+      return `${speakNumber(first)} ilə ${tail}`;
+    },
+  );
+}
+
+/** `5-ci` -> `beşinci`; `10-da` -> `onda` (the suffix already harmonises). */
+function replaceSuffixedNumbers(text) {
+  return text.replace(
+    new RegExp(`(?<![${WORD}.,])(${NUMBER})-(\\p{L}[${WORD}]*)`, "gu"),
+    (_match, value, suffix) =>
+      ORDINAL_SUFFIXES.has(azLower(suffix)) && isDigits(value)
+        ? ordinalToWords(BigInt(value))
+        : `${speakNumber(value)}${suffix}`,
   );
 }
 
 function replaceBareNumbers(text) {
-  return text.replace(/-?\d+(?:[.,]\d+)?/gu, (raw) => {
-    if (raw.includes(",") || raw.includes(".")) {
-      const negative = raw.startsWith("-");
-      const body = negative ? raw.slice(1) : raw;
-      const [whole, fraction] = body.split(/[.,]/u, 2);
-      const spoken = decimalToWords(whole, fraction);
-      return negative ? `mənfi ${spoken}` : spoken;
-    }
-    return numberToWords(BigInt(raw));
-  });
+  // "Su-27", "COVID-19": that dash joins a name to a number; it is no minus.
+  text = text.replace(/(?<=\p{L})-(?=\d)/gu, " ");
+  text = text.replace(new RegExp(`(?<![${WORD}+])\\+(?=\\d)`, "gu"), "üstəgəl ");
+  return text.replace(
+    new RegExp(`(?:(?<![${WORD}])(-))?(${NUMBER})`, "gu"),
+    (_match, sign, raw) => {
+      const spoken =
+        isDigits(raw) && raw.length > 1 && raw.startsWith("0")
+          ? speakDigits(raw)
+          : speakNumber(raw);
+      return sign ? `mənfi ${spoken}` : spoken;
+    },
+  );
 }
 
 function replaceAcronyms(text) {
@@ -344,7 +577,7 @@ function replaceSymbols(text) {
 function tidy(text) {
   const pairs = [
     ["‘", "'"], ["’", "'"], ["“", '"'], ["”", '"'],
-    ["–", "-"], ["—", "-"], ["…", "."], [" ", " "],
+    ["–", "-"], ["—", "-"], ["…", "."], [" ", " "],
   ];
   for (const [source, target] of pairs) {
     text = text.split(source).join(target);
@@ -359,13 +592,16 @@ const STEPS = [
   replacePhoneNumbers,
   stripGroupSeparators,
   replaceDates,
+  replaceDottedChains,
   replaceTimes,
+  replaceOperators,
   replaceCurrency,
   replacePercent,
   replaceUnits,
   replaceRoman,
-  replaceSuffixedNumbers,
+  replaceFractions,
   replaceRanges,
+  replaceSuffixedNumbers,
   replaceBareNumbers,
   replaceAcronyms,
   replaceSymbols,

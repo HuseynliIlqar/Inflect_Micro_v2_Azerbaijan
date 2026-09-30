@@ -228,9 +228,11 @@ faizlər, ölçü vahidləri və ixtisarlar oxunan sözlərə çevrilir:
 | Giriş | Modelə çatan |
 | --- | --- |
 | `II Dünya müharibəsi` | `İkinci Dünya müharibəsi` |
-| `01/09/1939` | `birinci sentyabr min doqquz yüz otuz doqquz` |
+| `01/09/1939` | `bir sentyabr min doqquz yüz otuz doqquzuncu il` |
 | `25%` | `iyirmi beş faiz` |
 | `5 kq` | `beş kiloqram` |
+| `19,99 AZN` | `on doqquz manat doxsan doqquz qəpik` |
+| `3,14` | `üç tam yüzdə on dörd` |
 
 **2. Hissələrə bölmə** (`aztts/az_chunk.py`) — cümlələr təxminən on beş sözlük
 hissələrə bölünür, çünki uzun cümlənin sonuna doğru bu modelin intonasiyası
@@ -242,7 +244,7 @@ pauza qoyulur ki, nəticə kəsik-kəsik səslənməsin.
 ## Kod üzərində işləmək
 
 ```bash
-python -m pytest        # 227 test, üç saniyə, modeli heç vaxt yükləmir
+python -m pytest        # 303 test, üç saniyə, modeli heç vaxt yükləmir
 ```
 
 <details>
@@ -289,7 +291,7 @@ tools/            seed_sweep, audio_postprocess — keyfiyyət alətləri
 training/         Modelin necə hazırlandığı (baza model yüklənir)
 packaging/        GitHub / Hugging Face / Kaggle yayımı
 samples/          Nümunə səslər
-tests/            227 test
+tests/            303 test
 out/              Yaratdığınız WAV faylları
 ```
 

@@ -30,7 +30,7 @@ nothing to download for normal work.
 
 ```bash
 python -m pytest                     # ~3 seconds, never loads the model
-node web/tests/test_num_az.mjs && node web/tests/test_az_text.mjs && node web/tests/test_az_chunk.mjs && node web/tests/test_progress.mjs
+node web/tests/test_num_az.mjs && node web/tests/test_az_text.mjs && node web/tests/test_az_chunk.mjs && node web/tests/test_progress.mjs && node web/tests/test_theme.mjs
 python -m compileall -q say.py app.py aztts webui tools training
 cd model && sha256sum -c checksums.sha256       # 24 files, all must say OK
 cd model-en && sha256sum -c checksums.sha256    # 6 files, all must say OK
@@ -70,8 +70,9 @@ Azerbaijani text.** A grep for Azerbaijani letters matches them. Do not
 help, Markdown. Azerbaijani appears only as *language data*:
 
 - TTS example sentences (`say.py` `DEMO`, test inputs, doctests)
-- `LETTER_NAMES`, `MONTHS`, `ABBREVIATIONS`, `UNITS`, `CURRENCIES`, `ACRONYMS`,
-  `ORDINAL_SUFFIXES` in `az_text.py`
+- `LETTER_NAMES`, `MONTHS`, `ABBREVIATIONS`, `UNITS`, `CURRENCIES`,
+  `CURRENCY_SUBUNITS`, `ACRONYMS`, `ROMAN_NOUNS`, `ORDINAL_SUFFIXES` in
+  `az_text.py`
 - `_CONJUNCTIONS` in `az_chunk.py`
 - `CLITICS`, `WEAK_HEADS`, `_WIDE_WEAK`, `_PARTICIPLE_WORDS` in `az_prosody.py`
 - the `_AZ` table in `webui/i18n.py` -- the interface's own labels; the page has
@@ -123,9 +124,17 @@ that into "free for commercial use".
   their full stops are not mistaken for sentence ends; acronyms run last so
   Roman numerals win the `II`-style ambiguity. Adding a step means choosing its
   position deliberately, with a test.
+- **Numbers are read the way a person reads them aloud.** A date's day is a
+  cardinal and its year an ordinal plus `il` (`01/09/1939` -> `bir sentyabr ...
+  otuz doqquzuncu il`, never `birinci sentyabr`); a decimal names the
+  denominator first (`onda beş`, not `beş onda`); two decimals on money are
+  coins (`19,99 AZN` -> `... manat doxsan doqquz qəpik`). A suffix written
+  against a symbol (`AZN-dən`, `%-ə`) is re-harmonised onto the spoken word by
+  `harmonise()`. `tests/test_az_text_edges.py` holds these cases.
 - Type hints everywhere, `from __future__ import annotations` at the top.
-- Files stay small and single-purpose. The largest is `az_text.py` at ~390
-  lines.
+- Files stay small and single-purpose. The largest is `az_text.py` at ~650
+  lines; the next rule it grows by should move dates, times and phone numbers
+  into their own module (and the same split in `web/js/`).
 - No new runtime dependencies without a reason stated in the PR.
 - **The interface's dependency stays optional.** Gradio is declared under
   `[project.optional-dependencies] app` and in `requirements-app.txt`, never in

@@ -6,6 +6,7 @@ import pytest
 
 from aztts.az_text import (
     az_lower,
+    harmonise,
     normalize_az,
     number_to_words,
     ordinal_to_words,
@@ -73,7 +74,11 @@ class TestRomanInText:
         assert normalize_az("II Dünya müharibəsi") == "İkinci Dünya müharibəsi"
 
     def test_lowercase_context_keeps_lowercase(self) -> None:
-        assert normalize_az("fəsil XI") == "fəsil On birinci"
+        assert normalize_az("fəsil XI") == "fəsil on birinci"
+
+    def test_capital_only_at_a_sentence_start(self) -> None:
+        assert normalize_az("bu XX əsrdə") == "bu iyirminci əsrdə"
+        assert normalize_az("Bitdi. XX əsr") == "Bitdi. İyirminci əsr"
 
     def test_roman_with_ordinal_suffix(self) -> None:
         assert normalize_az("XX-ci əsr") == "İyirminci əsr"
@@ -87,7 +92,8 @@ class TestNumbers:
         assert normalize_az("%25 artım") == "iyirmi beş faiz artım"
 
     def test_decimal_with_comma(self) -> None:
-        assert normalize_az("1,5 metr") == "bir tam beş onda metr"
+        # The denominator comes first: "onda beş", five tenths.
+        assert normalize_az("1,5 metr") == "bir tam onda beş metr"
 
     def test_group_separators_are_removed(self) -> None:
         assert normalize_az("1.000.000 nəfər") == "bir milyon nəfər"
@@ -138,10 +144,10 @@ class TestCurrency:
 
 class TestDatesAndTimes:
     def test_full_date(self) -> None:
-        assert normalize_az("15.03.2024") == "on beşinci mart iki min iyirmi dörd"
+        assert normalize_az("15.03.2024") == "on beş mart iki min iyirmi dördüncü il"
 
     def test_slash_date(self) -> None:
-        assert normalize_az("01/12/1999") == "birinci dekabr min doqquz yüz doxsan doqquz"
+        assert normalize_az("01/12/1999") == "bir dekabr min doqquz yüz doxsan doqquzuncu il"
 
     def test_impossible_date_is_left_as_digits(self) -> None:
         assert "mart" not in normalize_az("40.03.2024")
@@ -173,7 +179,7 @@ class TestDanglingSuffixes:
 
     def test_year_suffix_after_a_full_date(self) -> None:
         assert normalize_az("15.03.2024-cü ildə") == (
-            "on beşinci mart iki min iyirmi dördüncü ildə"
+            "on beş mart iki min iyirmi dördüncü ildə"
         )
 
     def test_case_suffix_after_a_time(self) -> None:
@@ -196,10 +202,14 @@ class TestDanglingSuffixes:
 
 
 class TestPhoneNumbers:
-    def test_spoken_digit_by_digit(self) -> None:
+    def test_read_group_by_group(self) -> None:
         result = normalize_az("+994 50 123 45 67")
-        assert result.startswith("doqquz doqquz dörd")
+        assert result == "doqquz yüz doxsan dörd əlli yüz iyirmi üç qırx beş altmış yeddi"
         assert "min" not in result
+
+    @pytest.mark.parametrize("source", ["050 123 45 67", "0501234567", "(050) 123-45-67"])
+    def test_local_number_keeps_its_zero(self, source: str) -> None:
+        assert normalize_az(source) == "sıfır əlli yüz iyirmi üç qırx beş altmış yeddi"
 
 
 class TestSymbols:

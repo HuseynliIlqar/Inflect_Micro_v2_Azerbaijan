@@ -231,9 +231,11 @@ percentages, units and abbreviations become spoken words:
 | Input | What reaches the model |
 | --- | --- |
 | `II Dünya müharibəsi` | `İkinci Dünya müharibəsi` |
-| `01/09/1939` | `birinci sentyabr min doqquz yüz otuz doqquz` |
+| `01/09/1939` | `bir sentyabr min doqquz yüz otuz doqquzuncu il` |
 | `25%` | `iyirmi beş faiz` |
 | `5 kq` | `beş kiloqram` |
+| `19,99 AZN` | `on doqquz manat doxsan doqquz qəpik` |
+| `3,14` | `üç tam yüzdə on dörd` |
 
 **2. Chunking** (`aztts/az_chunk.py`) --- sentences are cut into chunks of about
 fifteen words, because towards the end of a long sentence this model's
@@ -245,7 +247,7 @@ punctuation is inserted between chunks, so the result does not sound choppy.
 ## Working on the code
 
 ```bash
-python -m pytest        # 227 tests, three seconds, never loads the model
+python -m pytest        # 303 tests, three seconds, never loads the model
 ```
 
 <details>
@@ -292,7 +294,7 @@ tools/            seed_sweep, audio_postprocess -- quality tools
 training/         How the model was made (the base model is downloaded)
 packaging/        Publishing to GitHub / Hugging Face / Kaggle
 samples/          Example audio
-tests/            227 tests
+tests/            303 tests
 out/              The WAV files you generate
 ```
 
