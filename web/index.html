@@ -10,14 +10,14 @@
     />
     <meta
       name="theme-color"
-      content="#fbfbfa"
-      data-color="#fbfbfa"
+      content="#f4f6f7"
+      data-color="#f4f6f7"
       media="(prefers-color-scheme: light)"
     />
     <meta
       name="theme-color"
-      content="#121417"
-      data-color="#121417"
+      content="#0f1519"
+      data-color="#0f1519"
       media="(prefers-color-scheme: dark)"
     />
     <script>
@@ -37,70 +37,122 @@
       })();
     </script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Onest carries ə, ğ, ı and İ in its latin-ext subset; the system font
+         takes over if it never arrives, so the page still works offline. -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="./tokens.css" />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./components.css" />
     <link
       rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🗣️</text></svg>"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='4' fill='%230b6770'/><path d='M3 8h1M5.5 5v6M8 3v10M10.5 6v4M13 8h0' stroke='white' stroke-width='1.6' stroke-linecap='round'/></svg>"
     />
   </head>
   <body>
     <a class="skip-link" href="#text">Mətnə keç</a>
-    <header class="page-head">
-      <div>
-        <h1 id="title">Azərbaycan dilində mətn-nitq sintezi</h1>
-        <p id="subtitle" class="subtitle"></p>
-      </div>
-      <div class="head-controls">
-        <div class="language" role="group" aria-labelledby="language-label">
-          <span id="language-label" class="language-label"></span>
-          <div class="segmented">
-            <button type="button" class="segment is-active" data-language="az">
-              Azərbaycanca
-            </button>
-            <button type="button" class="segment" data-language="en">English</button>
+
+    <header class="topbar">
+      <p class="brand" translate="no">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M3 12h2M7.5 8v8M12 4v16M16.5 9v6M21 12h0" />
+        </svg>
+        <span class="brand-name">azerbaycan-tts</span>
+      </p>
+
+      <div class="topbar-controls">
+        <div class="switch" role="group" aria-labelledby="language-label">
+          <span id="language-label" class="visually-hidden"></span>
+          <div class="segmented segmented-small">
+            <button type="button" class="segment is-active" data-language="az" lang="az" aria-label="Azərbaycanca">AZ</button>
+            <button type="button" class="segment" data-language="en" lang="en" aria-label="English">EN</button>
           </div>
         </div>
-        <div class="language" role="group" aria-labelledby="theme-label">
-          <span id="theme-label" class="language-label">Görünüş</span>
-          <div class="segmented">
-            <button type="button" class="segment is-active" data-theme-choice="auto">
-              Avtomatik
+
+        <div class="switch" role="group" aria-labelledby="theme-label">
+          <span id="theme-label" class="visually-hidden">Görünüş</span>
+          <div class="segmented segmented-small">
+            <button type="button" class="segment is-active" data-theme-choice="auto" aria-label="Avtomatik" title="Avtomatik">
+              <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5" /><path class="fill" d="M10 3.5a6.5 6.5 0 0 1 0 13Z" /></svg>
             </button>
-            <button type="button" class="segment" data-theme-choice="light">Açıq</button>
-            <button type="button" class="segment" data-theme-choice="dark">Tünd</button>
+            <button type="button" class="segment" data-theme-choice="light" aria-label="Açıq" title="Açıq">
+              <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="3.5" /><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4" /></svg>
+            </button>
+            <button type="button" class="segment" data-theme-choice="dark" aria-label="Tünd" title="Tünd">
+              <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M15.5 12.5A6.5 6.5 0 0 1 7.5 4.5a6.5 6.5 0 1 0 8 8Z" /></svg>
+            </button>
           </div>
         </div>
+
+        <!-- Checked the moment the page opens; js/device-check.js decides. -->
+        <aside id="device-card" class="device-card" data-tone="pending" aria-labelledby="device-label">
+          <span class="meter" data-bars="0" aria-hidden="true"><i></i><i></i><i></i></span>
+          <div class="device-body" aria-live="polite">
+            <span id="device-label" class="device-label">Bu cihaz</span>
+            <strong id="device-title" class="device-title">Cihaz yoxlanılır…</strong>
+          </div>
+          <button id="device-details" type="button" class="ghost device-details" hidden></button>
+        </aside>
       </div>
     </header>
 
-    <main class="layout">
-      <section class="panel" aria-labelledby="input-heading">
-        <h2 id="input-heading" class="visually-hidden">Input</h2>
+    <dialog id="device-dialog" class="device-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-text">
+      <form method="dialog" class="dialog-inner">
+        <span class="meter meter-large" data-bars="0" aria-hidden="true"><i></i><i></i><i></i></span>
+        <h2 id="dialog-title" class="dialog-title"></h2>
+        <p id="dialog-text" class="dialog-text"></p>
+        <p id="dialog-note" class="dialog-note" hidden></p>
+        <label class="dialog-check">
+          <input id="dialog-dont-show" type="checkbox" name="dont-show" />
+          <span id="dialog-dont-show-label"></span>
+        </label>
+        <div class="dialog-actions">
+          <a id="dialog-direct" class="ghost" target="_blank" rel="noopener" hidden></a>
+          <button id="dialog-ok" class="primary dialog-ok" value="ok" autofocus></button>
+        </div>
+      </form>
+    </dialog>
 
-        <div class="field" role="group" aria-labelledby="voice-label">
+    <!-- Each toast carries its own role: status, or alert for errors. -->
+    <div id="toasts" class="toasts"></div>
+
+    <main class="stage">
+      <section class="composer" aria-labelledby="title">
+        <h1 id="title">Azərbaycan dilində mətn-nitq sintezi</h1>
+        <p id="subtitle" class="subtitle"></p>
+
+        <div class="voice-row" role="group" aria-labelledby="voice-label">
           <span class="field-label" id="voice-label">Səs</span>
-          <span class="field-info" id="voice-info"></span>
           <div class="segmented">
             <button type="button" class="segment is-active" data-voice="az">
               Azərbaycanca
             </button>
             <button type="button" class="segment" data-voice="en">English</button>
           </div>
+          <span class="field-info voice-info" id="voice-info"></span>
         </div>
 
-        <label class="field">
-          <span class="field-label" id="text-label">Mətn</span>
-          <textarea
-            id="text"
-            rows="4"
-            autocomplete="off"
-            name="text"
-            spellcheck="false"
-            enterkeyhint="go"
-          ></textarea>
-        </label>
+        <label id="text-label" class="visually-hidden" for="text">Mətn</label>
+        <textarea
+          id="text"
+          class="script-input"
+          rows="4"
+          autocomplete="off"
+          name="text"
+          spellcheck="false"
+          enterkeyhint="go"
+        ></textarea>
+        <p id="text-error" class="field-error" hidden></p>
 
-        <button id="speak" type="button" class="primary">Səsləndir</button>
+        <div class="actions">
+          <button id="speak" type="button" class="primary speak">Səsləndir</button>
+          <button id="cancel" type="button" class="ghost cancel" aria-keyshortcuts="Escape" hidden>Dayandır</button>
+          <span id="elapsed" class="elapsed" aria-hidden="true"></span>
+        </div>
 
         <div
           id="progress"
@@ -112,115 +164,139 @@
         >
           <div class="progress-fill"></div>
         </div>
-
-        <div class="status-row">
-          <p id="status" class="status" role="status" aria-live="polite"></p>
-          <span id="elapsed" class="elapsed" aria-hidden="true"></span>
-        </div>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
         <p id="slow-note" class="note slow-note" hidden></p>
 
         <div class="examples">
-          <span id="examples-label" class="field-label"></span>
+          <span id="examples-label" class="examples-label"></span>
           <div id="examples" class="example-list"></div>
         </div>
-
-        <div class="result">
-          <span id="audio-label" class="field-label"></span>
-          <audio id="audio" controls preload="none" aria-describedby="stats"></audio>
-          <div class="result-actions">
-            <a id="download" class="ghost" download="azerbaycan-tts.wav" hidden></a>
-          </div>
-          <p id="stats" class="stats"></p>
-        </div>
       </section>
 
-      <section class="panel" aria-labelledby="parameters-heading">
-        <h2 id="parameters-heading">Parametrlər</h2>
+      <section class="result" aria-labelledby="audio-label">
+        <h2 id="audio-label" class="section-title"></h2>
 
-        <label class="field">
-          <span class="field-label" id="speed-label">Sürət</span>
-          <span class="field-info" id="speed-info"></span>
-          <span class="slider-row">
-            <input id="speed" type="range" min="0.5" max="2" step="0.05" value="1" />
-            <output id="speed-value" for="speed">1.00</output>
-          </span>
-        </label>
+        <!-- Which step of the fallback chain is speaking; js/mode-banner.js decides. -->
+        <div id="mode-banner" class="mode-banner" role="note" aria-labelledby="mode-title" aria-live="polite" hidden>
+          <svg class="mode-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+            <path class="icon-fast" d="M11.5 1.5 4 11h5l-1.5 7.5L15 9h-5l1.5-7.5Z" />
+            <path class="icon-full" d="M10 1.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Zm-1.2 12.1L5 9.8l1.3-1.3 2.5 2.5 5-5 1.3 1.3-6.3 6.3Z" />
+            <path class="icon-warn" d="M10 1.5 .8 17.5h18.4L10 1.5Zm-.9 5.5h1.8v5.5H9.1V7Zm0 7h1.8v1.8H9.1V14Z" />
+          </svg>
+          <div class="mode-body">
+            <p id="mode-title" class="mode-title"></p>
+            <p id="mode-text" class="mode-text"></p>
+            <p id="mode-gpu" class="mode-text" hidden></p>
+            <button id="mode-action" type="button" class="ghost mode-action" hidden></button>
+          </div>
+        </div>
 
-        <label class="field">
-          <span class="field-label" id="variation-label">Dəyişkənlik</span>
-          <span class="field-info" id="variation-info"></span>
-          <span class="slider-row">
-            <input
-              id="variation"
-              type="range"
-              min="0"
-              max="1"
-              step="0.001"
-              value="0.667"
-            />
-            <output id="variation-value" for="variation">0.667</output>
-          </span>
-        </label>
+        <!-- A picture of the audio; the <audio> below is the real control. -->
+        <div class="wave" data-state="empty">
+          <canvas id="wave" class="wave-canvas" aria-hidden="true"></canvas>
+          <p id="wave-empty" class="wave-empty"></p>
+        </div>
 
-        <label class="field">
-          <span class="field-label" id="seed-label">Seed</span>
-          <span class="field-info" id="seed-info"></span>
-          <span class="slider-row">
-            <input
-              id="seed"
-              type="number"
-              name="seed"
-              inputmode="numeric"
-              autocomplete="off"
-              min="0"
-              step="1"
-              value="7"
-            />
-            <button id="shuffle" type="button" class="ghost"></button>
-          </span>
-        </label>
+        <audio id="audio" controls preload="none" aria-describedby="stats" hidden></audio>
+        <div class="result-actions">
+          <a id="download" class="ghost" download="azerbaycan-tts.wav" hidden></a>
+          <button id="copy-diagnostics" type="button" class="ghost" hidden></button>
+          <span id="mode-badge" class="mode-badge" translate="no" hidden></span>
+        </div>
+        <p id="stats" class="stats"></p>
+        <p id="copy-status" class="note" role="status" aria-live="polite"></p>
+        <pre id="diagnostics" class="diagnostics" translate="no" hidden></pre>
+      </section>
 
-        <label class="field checkbox">
-          <input id="normalise" type="checkbox" checked />
-          <span>
-            <span class="field-label" id="normalise-label"></span>
-            <span class="field-info" id="normalise-info"></span>
-          </span>
-        </label>
+      <div class="lower">
+        <section class="panel" aria-labelledby="parameters-heading">
+          <h2 id="parameters-heading" class="section-title">Parametrlər</h2>
 
-        <details class="advanced">
-          <summary id="advanced-label"></summary>
           <label class="field">
-            <span class="field-label" id="max-words-label"></span>
-            <span class="field-info" id="max-words-info"></span>
+            <span class="field-label" id="speed-label">Sürət</span>
+            <span class="field-info" id="speed-info"></span>
             <span class="slider-row">
-              <input id="max-words" type="range" min="0" max="40" step="1" value="15" />
-              <output id="max-words-value" for="max-words">15</output>
+              <input id="speed" type="range" min="0.5" max="2" step="0.05" value="1" />
+              <output id="speed-value" for="speed">1.00</output>
             </span>
           </label>
-        </details>
 
-        <div class="field">
-          <span class="field-label" id="chunks-label"></span>
-          <span class="field-info" id="chunks-info"></span>
+          <label class="field">
+            <span class="field-label" id="variation-label">Dəyişkənlik</span>
+            <span class="field-info" id="variation-info"></span>
+            <span class="slider-row">
+              <input
+                id="variation"
+                type="range"
+                min="0"
+                max="1"
+                step="0.001"
+                value="0.667"
+              />
+              <output id="variation-value" for="variation">0.667</output>
+            </span>
+          </label>
+
+          <label class="field">
+            <span class="field-label" id="seed-label">Seed</span>
+            <span class="field-info" id="seed-info"></span>
+            <span class="slider-row">
+              <input
+                id="seed"
+                type="number"
+                name="seed"
+                inputmode="numeric"
+                autocomplete="off"
+                min="0"
+                step="1"
+                value="7"
+              />
+              <button id="shuffle" type="button" class="ghost"></button>
+            </span>
+          </label>
+
+          <label class="field checkbox">
+            <input id="normalise" type="checkbox" checked />
+            <span>
+              <span class="field-label" id="normalise-label"></span>
+              <span class="field-info" id="normalise-info"></span>
+            </span>
+          </label>
+
+          <details class="advanced">
+            <summary id="advanced-label"></summary>
+            <label class="field">
+              <span class="field-label" id="max-words-label"></span>
+              <span class="field-info" id="max-words-info"></span>
+              <span class="slider-row">
+                <input id="max-words" type="range" min="0" max="40" step="1" value="15" />
+                <output id="max-words-value" for="max-words">15</output>
+              </span>
+            </label>
+          </details>
+        </section>
+
+        <section class="panel" aria-labelledby="chunks-label">
+          <h2 class="section-title" id="chunks-label"></h2>
+          <p class="field-info" id="chunks-info"></p>
           <pre id="chunks" class="chunks" aria-live="polite"></pre>
-        </div>
 
-        <p id="offline-note" class="note"></p>
-        <p id="speed-note" class="note"></p>
-      </section>
+          <details class="about">
+            <summary id="about-label"></summary>
+            <p id="offline-note" class="note"></p>
+            <p id="speed-note" class="note"></p>
+          </details>
+        </section>
+      </div>
     </main>
 
     <footer class="page-foot">
       <p id="footer"></p>
-      <p id="en-note" class="note"></p>
-      <p class="note">
-        <a href="https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan"
-          >GitHub</a
-        >
-        ·
+      <p id="censor-note" class="note"></p>
+      <p class="note links">
+        <a href="https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan">GitHub</a>
         <a href="https://huggingface.co/owensong/Inflect-Micro-v2">Inflect-Micro-v2</a>
-        · Apache-2.0
+        <span>Apache-2.0</span>
       </p>
     </footer>
 

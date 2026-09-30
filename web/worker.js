@@ -9,14 +9,21 @@
  * Protocol, one request at a time:
  *   in:  { id, voice, text, options }
  *   out: { id, type: "progress", stage, ...detail }
- *        { id, type: "result", waveform, chunks, backend, threads }  (waveform transferred)
+ *        { id, type: "result", waveform, chunks, backend, precision, fallbacks, threads }
+ *          (waveform transferred; precision is "fp32" or "int8"; fallbacks lists
+ *          every step that failed)
+ *   options.fullQuality skips the int8 step of the fallback chain.
  *        { id, type: "error", message }
+ *   in:  { type: "cancel", id } -- handled at once, not queued; the request
+ *        stops before its next chunk (or before it starts, if still queued)
+ *   out: { id, type: "cancelled" }
  */
 
 import * as ort from "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/ort.webgpu.min.mjs";
 import { phonemize, loadPhonemizer } from "./js/phonemize.js";
-import { Engine } from "./js/tts.js";
+import { CancelledError, Engine } from "./js/tts.js";
 import { fetchModels } from "./js/fetch-model.js";
+import { planOptionsFromQuery } from "./js/backend-plan.js";
 
 ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/dist/";
 // Threads need cross-origin isolation, which a static Space does not send;
@@ -26,18 +33,25 @@ ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.30.0/di
 const threads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1;
 ort.env.wasm.numThreads = threads;
 
-// `?backend=wasm` on the page forces the CPU path, to tell a GPU driver
-// problem apart from a model problem on a given phone.
-const preferWasm = new URL(self.location.href).searchParams.get("backend") === "wasm";
+// Tester switches on the page URL: `?backend=wasm` forces the CPU, to tell a
+// GPU driver problem apart from a model problem on a given phone, and
+// `?precision=fp32` starts with the full-quality decoder instead of int8.
+const { preferWasm, fullQuality } = planOptionsFromQuery(self.location.search);
 
 // Both lazy: a visitor who never picks English never downloads its 38 MB.
 const ENGINES = {
   az: new Engine(ort, {
     durationPath: "./onnx/duration.onnx",
     decodePath: "./onnx/decode.onnx",
+    // The CPU step of the fallback chain; see js/backend-plan.js.
+    int8DecodePath: "./onnx/decode.int8.onnx",
     phonemize: (text) => phonemize(text, "az"),
+    // On for both voices (the Engine default), and no request option can turn
+    // it off: the playground is public. Only a clone, with say.py, can.
+    censor: true,
     fetchModels,
     preferWasm,
+    fullQuality,
   }),
   en: new Engine(ort, {
     durationPath: "./onnx/en/duration.onnx",
@@ -45,27 +59,52 @@ const ENGINES = {
     phonemize: (text) => phonemize(text, "en-us"),
     fetchModels,
     preferWasm,
+    fullQuality,
   }),
 };
 
+// Ids the page has cancelled. Filled by the listener the moment a cancel
+// arrives, read by the request it names at its next checkpoint.
+const cancelled = new Set();
+
 async function handle({ id, voice, text, options }) {
   const post = (message, transfer) => self.postMessage({ id, ...message }, transfer ?? []);
+  const isCancelled = () => cancelled.has(id);
+  const checkpoint = () => {
+    if (isCancelled()) throw new CancelledError();
+  };
+  checkpoint();
   const engine = ENGINES[voice] ?? ENGINES.az;
+  // The page's "full quality" choice, per request; the engine reloads only if
+  // that changes what runs.
+  await engine.setFullQuality(Boolean(options?.fullQuality) || fullQuality);
+  const state = () => ({
+    backend: engine.backend,
+    precision: engine.precision,
+    fallbacks: engine.failures,
+    threads,
+  });
 
   post({ type: "progress", stage: "phonemes" });
   await loadPhonemizer();
+  checkpoint();
 
   if (!engine.decode) {
     await engine.load((stage, detail) => post({ type: "progress", stage, ...detail }));
   }
-  post({ type: "progress", stage: "backend", backend: engine.backend, threads });
+  post({ type: "progress", stage: "backend", ...state() });
+  checkpoint();
 
   const { waveform, chunks } = await engine.speak(text, {
     ...options,
+    isCancelled,
     onChunk: (done, total) => post({ type: "progress", stage: "chunk", done, total }),
-    onBackend: (backend) => post({ type: "progress", stage: "backend", backend, threads }),
+    onBackend: () => post({ type: "progress", stage: "backend", ...state() }),
   });
-  post({ type: "result", waveform, chunks, backend: engine.backend, threads }, [waveform.buffer]);
+  post(
+    { type: "result", waveform, chunks, ...state() },
+    [waveform.buffer],
+  );
 }
 
 // One request at a time: two overlapping requests would load the same engine
@@ -73,16 +112,27 @@ async function handle({ id, voice, text, options }) {
 let queue = Promise.resolve();
 
 self.addEventListener("message", (event) => {
+  if (event.data?.type === "cancel") {
+    cancelled.add(event.data.id);
+    return;
+  }
+  const id = event.data?.id;
   queue = queue.then(async () => {
     try {
       await handle(event.data);
     } catch (error) {
+      if (error instanceof CancelledError) {
+        self.postMessage({ id, type: "cancelled" });
+        return;
+      }
       console.error("[aztts worker]", error);
       self.postMessage({
-        id: event.data?.id,
+        id,
         type: "error",
         message: error?.message ?? String(error),
       });
+    } finally {
+      cancelled.delete(id);
     }
   });
 });

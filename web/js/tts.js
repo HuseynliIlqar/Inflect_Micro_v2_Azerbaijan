@@ -16,6 +16,8 @@
 import { SYMBOLS } from "./symbols.js";
 import { chunkText, DEFAULT_MAX_WORDS } from "./az-chunk.js";
 import { normalizeAz } from "./az-text.js";
+import { BLEEP, bleepSegments, censorAz } from "./az-censor.js";
+import { fallbackPlan, sameStep, stepsAfter } from "./backend-plan.js";
 
 export const SAMPLE_RATE = 24000;
 
@@ -29,6 +31,11 @@ const PAUSES = {
 };
 const DEFAULT_PAUSE = 0.08;
 const EDGE_FADE_MS = 5;
+
+// The tone that stands in for an obscenity -- the same as aztts/engine.py.
+const BLEEP_HZ = 1000;
+const BLEEP_SECONDS = 0.35;
+const BLEEP_LEVEL = 0.25;
 
 /** A deterministic normal generator, so a seed reproduces a reading. */
 function makeNoise(seed) {
@@ -86,6 +93,40 @@ export function edgeFade(waveform, sampleRate = SAMPLE_RATE) {
 }
 
 /**
+ * The visitor pressed Cancel. Thrown between chunks, never inside
+ * `runWithFallback`, where it would count as the backend failing.
+ */
+export class CancelledError extends Error {
+  constructor() {
+    super("cancelled");
+    this.name = "CancelledError";
+  }
+}
+
+function throwIfCancelled(isCancelled) {
+  if (isCancelled?.()) throw new CancelledError();
+}
+
+/** The tone played in place of a censored word. */
+export function bleep(sampleRate = SAMPLE_RATE) {
+  const tone = new Float32Array(Math.round(sampleRate * BLEEP_SECONDS));
+  for (let index = 0; index < tone.length; index += 1) {
+    tone[index] = BLEEP_LEVEL * Math.sin((2 * Math.PI * BLEEP_HZ * index) / sampleRate);
+  }
+  return edgeFade(tone, sampleRate);
+}
+
+function concatenate(pieces) {
+  const joined = new Float32Array(pieces.reduce((sum, piece) => sum + piece.length, 0));
+  let offset = 0;
+  for (const piece of pieces) {
+    joined.set(piece, offset);
+    offset += piece.length;
+  }
+  return joined;
+}
+
+/**
  * Loads the two graphs once and keeps them resident.
  *
  * `onnxruntime-web` is passed in rather than imported, so this module stays
@@ -104,50 +145,114 @@ export async function hasWebGpu() {
   }
 }
 
+const messageOf = (error) => String(error?.message ?? error);
+const stepName = ({ backend, precision }) => `${backend}/${precision}`;
+
 export class Engine {
   /**
    * `fetchModels(urls, onProgress)` is optional: given, the graphs are
    * downloaded as bytes (with progress, and cached); omitted, onnxruntime
    * fetches the paths itself, which is what a Node test wants.
+   *
+   * `int8DecodePath` is the quantised decoder for the CPU; without it the
+   * chain skips that step. `fullQuality` skips it too, on request.
    */
-  constructor(ort, { durationPath, decodePath, phonemize, fetchModels, preferWasm = false }) {
+  constructor(ort, {
+    durationPath, decodePath, int8DecodePath = null, phonemize, fetchModels,
+    preferWasm = false, fullQuality = false, censor = true,
+  }) {
     this.ort = ort;
     this.durationPath = durationPath;
     this.decodePath = decodePath;
+    this.int8DecodePath = int8DecodePath;
     this.phonemize = phonemize;
     this.fetchModels = fetchModels;
     this.preferWasm = preferWasm;
+    this.fullQuality = fullQuality;
+    // On unless a caller builds the engine without it; `speak()` takes no
+    // option that could lift it.
+    this.censor = censor;
     this.duration = null;
     this.decode = null;
     this.backend = null;
+    this.precision = null;
+    this.plan = [];
+    // Every step that failed, in order: { backend, precision, stage, message }.
+    this.failures = [];
   }
 
-  /** `onProgress(stage, detail)`: "download" with {loaded, total}, then "compile". */
-  async load(onProgress) {
-    if (this.duration && this.decode) return;
-    // WebGPU where the browser has it: the decoder is a convolutional vocoder
-    // and runs several times faster there than in single-threaded wasm, which
-    // is all a page without cross-origin isolation can use.
-    const gpu = !this.preferWasm && (await hasWebGpu());
-    if (gpu) {
-      try {
-        await this.createSessions("webgpu", onProgress);
-        return;
-      } catch (error) {
-        // Many phone drivers expose an adapter and then fail here.
-        console.warn("[aztts] WebGPU failed, using WebAssembly", error);
-      }
-    }
-    await this.createSessions("wasm", onProgress);
+  /** What runs now and what failed on the way, for the page and for bug reports. */
+  describe() {
+    return { backend: this.backend, precision: this.precision, failures: this.failures };
   }
 
   /**
-   * Both sessions on exactly one backend, so `this.backend` names what really
-   * runs -- onnxruntime's own fallback would switch silently. Committed only
-   * when both exist, so a failure halfway leaves nothing behind.
+   * Walk the fallback chain (js/backend-plan.js) until a step loads.
+   * `onProgress(stage, detail)`: "download" with {loaded, total}, then "compile".
    */
-  async createSessions(backend, onProgress) {
-    const paths = [this.durationPath, this.decodePath];
+  async load(onProgress) {
+    if (this.duration && this.decode) return;
+    const plan = fallbackPlan({
+      gpu: !this.preferWasm && (await hasWebGpu()),
+      preferWasm: this.preferWasm,
+      hasInt8: Boolean(this.int8DecodePath),
+      fullQuality: this.fullQuality,
+    });
+    // A step that already failed in this page is not tried again -- except
+    // the last, which is all that is left.
+    this.plan = plan.filter((step, index) => index === plan.length - 1 || !this.hasFailed(step));
+    await this.loadFirstWorking(this.plan, onProgress);
+  }
+
+  hasFailed(step) {
+    return this.failures.some((failure) => sameStep(failure, step));
+  }
+
+  async loadFirstWorking(steps, onProgress) {
+    const attempt = [];
+    for (const step of steps) {
+      try {
+        await this.createSessions(step, onProgress);
+        return;
+      } catch (error) {
+        // Many phone drivers expose a WebGPU adapter and then fail here.
+        console.warn(`[aztts] ${stepName(step)} failed to load, trying the next step`, error);
+        const failure = { ...step, stage: "load", message: messageOf(error) };
+        attempt.push(failure);
+        this.failures = [...this.failures, failure];
+      }
+    }
+    throw new Error(
+      `no backend could load the model (${attempt.map((f) => `${stepName(f)}: ${f.message}`).join("; ")})`,
+    );
+  }
+
+  /**
+   * The "full quality" choice. Reloads only when it changes what would run:
+   * leaving int8, or returning to it from a CPU fp32 that int8 could replace.
+   * WebGPU is already full quality, and a voice without an int8 decoder has
+   * nothing to switch.
+   */
+  async setFullQuality(value) {
+    if (value === this.fullQuality) return;
+    this.fullQuality = value;
+    if (!this.int8DecodePath || !this.decode) return;
+    const int8Failed = this.hasFailed({ backend: "wasm", precision: "int8" });
+    const reload = value
+      ? this.precision === "int8"
+      : this.backend === "wasm" && this.precision === "fp32" && !int8Failed;
+    if (reload) await this.release();
+  }
+
+  /**
+   * Both sessions on exactly one backend and precision, so `this.backend`
+   * names what really runs -- onnxruntime's own fallback would switch
+   * silently. Committed only when both exist, so a failure halfway leaves
+   * nothing behind.
+   */
+  async createSessions({ backend, precision }, onProgress) {
+    const decodePath = precision === "int8" ? this.int8DecodePath : this.decodePath;
+    const paths = [this.durationPath, decodePath];
     const [durationModel, decodeModel] = this.fetchModels
       ? await this.fetchModels(paths, (loaded, total) =>
           onProgress?.("download", { loaded, total }),
@@ -174,6 +279,7 @@ export class Engine {
     this.duration = duration;
     this.decode = decode;
     this.backend = backend;
+    this.precision = precision;
   }
 
   async release() {
@@ -181,6 +287,42 @@ export class Engine {
     this.duration = null;
     this.decode = null;
     this.backend = null;
+    this.precision = null;
+  }
+
+  /**
+   * Run `run`; if the current step fails twice at run time -- a GPU can load
+   * the graphs and still fail to execute them -- move down the chain and
+   * retry. One failure is retried on the same step first, so a hiccup does not
+   * cost a slower backend for the rest of the page's life.
+   */
+  async runWithFallback(run, onBackend) {
+    let retried = false;
+    for (;;) {
+      try {
+        return await run();
+      } catch (error) {
+        if (!retried) {
+          retried = true;
+          continue;
+        }
+        retried = false;
+        const current = { backend: this.backend, precision: this.precision };
+        const rest = stepsAfter(this.plan, current);
+        this.failures = [...this.failures, { ...current, stage: "run", message: messageOf(error) }];
+        if (!rest.length || rest === this.plan) throw error;
+        console.warn(`[aztts] ${stepName(current)} failed while running, trying the next step`, error);
+        try {
+          await this.loadFirstWorking(rest);
+        } catch {
+          // Nothing below loads: drop the broken sessions so the next request
+          // starts over, and report the error that started this.
+          await this.release();
+          throw error;
+        }
+        onBackend?.(this.describe());
+      }
+    }
   }
 
   /**
@@ -221,6 +363,25 @@ export class Engine {
     return edgeFade(decodeOutputs.waveform.data);
   }
 
+  /** One chunk -> waveform, with a bleep wherever the censor left one. */
+  async speakChunk(chunk, settings, onBackend, isCancelled) {
+    const segments = chunk.includes(BLEEP) ? bleepSegments(chunk) : [chunk];
+    const pieces = [];
+    for (const segment of segments) {
+      if (segment === BLEEP) {
+        pieces.push(bleep());
+        continue;
+      }
+      throwIfCancelled(isCancelled);
+      const phonemes = await this.phonemize(segment);
+      pieces.push(await this.runWithFallback(
+        () => this.speakPhonemes(phonemes, settings),
+        onBackend,
+      ));
+    }
+    return pieces.length === 1 ? pieces[0] : concatenate(pieces);
+  }
+
   /**
    * Text -> waveform, through the same steps as the command line: normalise,
    * chunk, phonemise, synthesise, and rest between chunks.
@@ -234,12 +395,22 @@ export class Engine {
       maxWords = DEFAULT_MAX_WORDS,
       onChunk,
       onBackend,
+      // Polled between chunks; true stops the synthesis with a CancelledError.
+      isCancelled,
     } = options;
 
-    const prepared = normalize ? normalizeAz(text) : text.split(/\s+/u).filter(Boolean).join(" ");
+    const source = this.censor ? censorAz(text) : text;
+    const prepared = normalize ? normalizeAz(source) : source.split(/\s+/u).filter(Boolean).join(" ");
     if (!prepared) throw new Error("empty");
     const chunks = maxWords > 0 ? chunkText(prepared, maxWords) : [prepared];
     if (!chunks.length) throw new Error("empty");
+    // A failure of the step now running is stale once a new request starts:
+    // the steps before it, which explain why it runs, stay on record.
+    this.failures = this.failures.filter(
+      (failure) => !sameStep(failure, { backend: this.backend, precision: this.precision }),
+    );
+    if (!this.decode) await this.load();
+    throwIfCancelled(isCancelled);
 
     const pieces = [];
     let total = 0;
@@ -252,19 +423,8 @@ export class Engine {
         total += silence.length;
       }
       onChunk?.(index, chunks.length);
-      const phonemes = await this.phonemize(chunks[index]);
       const settings = { speed, variation, seed: seed + index };
-      let piece;
-      try {
-        piece = await this.speakPhonemes(phonemes, settings);
-      } catch (error) {
-        // A GPU that loads the graphs can still fail to run them.
-        if (this.backend !== "webgpu") throw error;
-        console.warn("[aztts] WebGPU run failed, retrying on WebAssembly", error);
-        await this.createSessions("wasm");
-        onBackend?.(this.backend);
-        piece = await this.speakPhonemes(phonemes, settings);
-      }
+      const piece = await this.speakChunk(chunks[index], settings, onBackend, isCancelled);
       pieces.push(piece);
       total += piece.length;
     }

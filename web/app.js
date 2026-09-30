@@ -8,9 +8,15 @@
  */
 
 import { DEFAULT_LANGUAGE, label, chunkCount, LABELS } from "./js/i18n.js";
-import { toWav, SAMPLE_RATE } from "./js/tts.js";
+import { toWav, SAMPLE_RATE, hasWebGpu, CancelledError } from "./js/tts.js";
 import { downloadFraction, chunkFraction, megabytes } from "./js/progress.js";
 import { applyTheme, initialTheme, readStoredTheme } from "./js/theme.js";
+import { planOptionsFromQuery } from "./js/backend-plan.js";
+import { bannerState, badgeParts, diagnosticsLine } from "./js/mode-banner.js";
+import { deviceVerdict, errorKind } from "./js/device-check.js";
+import { createDeviceView } from "./js/device-view.js";
+import { toast } from "./js/notify.js";
+import { barCount, drawWave, peaks, seekFraction } from "./js/waveform.js";
 
 const EXAMPLES = {
   az: [
@@ -30,7 +36,8 @@ const $ = (id) => document.getElementById(id);
 const els = {
   title: $("title"), subtitle: $("subtitle"), languageLabel: $("language-label"),
   themeLabel: $("theme-label"),
-  text: $("text"), textLabel: $("text-label"), speak: $("speak"), status: $("status"),
+  text: $("text"), textLabel: $("text-label"), speak: $("speak"), cancel: $("cancel"),
+  status: $("status"),
   examplesLabel: $("examples-label"), examples: $("examples"),
   audio: $("audio"), audioLabel: $("audio-label"), download: $("download"), stats: $("stats"),
   parameters: $("parameters-heading"),
@@ -45,8 +52,20 @@ const els = {
   chunks: $("chunks"), chunksLabel: $("chunks-label"), chunksInfo: $("chunks-info"),
   voiceLabel: $("voice-label"), voiceInfo: $("voice-info"),
   offlineNote: $("offline-note"), speedNote: $("speed-note"),
-  footer: $("footer"), enNote: $("en-note"),
+  footer: $("footer"), censorNote: $("censor-note"), aboutLabel: $("about-label"),
+  skipLink: document.querySelector(".skip-link"),
+  wave: $("wave"), waveBox: document.querySelector(".wave"), waveEmpty: $("wave-empty"),
   progress: $("progress"), elapsed: $("elapsed"), slowNote: $("slow-note"),
+  modeBanner: $("mode-banner"), modeTitle: $("mode-title"), modeText: $("mode-text"),
+  modeGpu: $("mode-gpu"), modeAction: $("mode-action"), modeBadge: $("mode-badge"),
+  copyDiagnostics: $("copy-diagnostics"), copyStatus: $("copy-status"), diagnostics: $("diagnostics"),
+  deviceCard: $("device-card"), deviceMeter: document.querySelector("#device-card .meter"),
+  deviceLabel: $("device-label"), deviceTitle: $("device-title"), deviceDetails: $("device-details"),
+  dialog: $("device-dialog"), dialogMeter: document.querySelector("#device-dialog .meter"),
+  dialogTitle: $("dialog-title"), dialogText: $("dialog-text"), dialogNote: $("dialog-note"),
+  dialogDontShow: $("dialog-dont-show"), dialogDontShowLabel: $("dialog-dont-show-label"),
+  dialogDirect: $("dialog-direct"), dialogOk: $("dialog-ok"),
+  toasts: $("toasts"), textError: $("text-error"),
 };
 
 // The Azerbaijani model is this project's; the English one is
@@ -60,11 +79,61 @@ let lastResult = null;
 let busy = false;
 let backend = null;
 let threads = 1;
+// The fallback chain's state as the worker last reported it (js/backend-plan.js).
+let precision = null;
+let fallbacks = [];
+let modeVoice = voice;
+// "Full quality" skips the int8 step; `?precision=fp32` starts with it on.
+let fullQuality = planOptionsFromQuery(location.search).fullQuality;
 
 // The page shipped on the Space's direct host; inside the huggingface.co
 // iframe it cannot be cross-origin isolated, so it gets no wasm threads.
 const DIRECT_URL = "https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/index.html";
 const IN_FRAME = window.top !== window.self;
+
+// -- the device check ------------------------------------------------------------
+
+const device = createDeviceView(els, { directUrl: DIRECT_URL });
+const { preferWasm } = planOptionsFromQuery(location.search);
+// The same thread count the worker will use (worker.js).
+const expectedThreads = self.crossOriginIsolated ? Math.min(4, navigator.hardwareConcurrency || 1) : 1;
+
+/** On page load, before any model is fetched: what will this device do? */
+async function checkDevice() {
+  const gpu = await hasWebGpu();
+  device.announce(deviceVerdict({ gpu, preferWasm, threads: expectedThreads, framed: IN_FRAME }));
+}
+
+/** WebGPU was expected and the worker fell back: say so, once. */
+function reviseDevice() {
+  if (device.verdict?.level !== "gpu" || backend !== "wasm") return;
+  const reason = fallbacks.find((f) => f.backend === "webgpu")?.message ?? "";
+  device.revise(deviceVerdict({ gpu: true, gpuFailed: true, threads, framed: IN_FRAME }), reason);
+}
+
+/** Empty text: said next to the field, not in a popup. */
+function showTextError(show, { focus = true } = {}) {
+  els.textError.hidden = !show;
+  if (show) {
+    els.textError.textContent = `${label(language, "error_empty")} ${label(language, "error_empty_hint")}`;
+    els.text.setAttribute("aria-invalid", "true");
+    els.text.setAttribute("aria-describedby", "text-error");
+    if (focus) els.text.focus();
+  } else {
+    els.text.removeAttribute("aria-invalid");
+    els.text.removeAttribute("aria-describedby");
+  }
+}
+
+/** An error as a toast that names the next step, not just the problem. */
+function showError(message) {
+  toast(els.toasts, {
+    tone: "bad",
+    title: label(language, "error_title"),
+    text: label(language, `error_next_${errorKind(message)}`),
+    closeLabel: label(language, "toast_close"),
+  });
+}
 
 // -- the worker ----------------------------------------------------------------
 
@@ -103,6 +172,12 @@ function startWorker() {
     url.search = location.search; // passes ?backend=wasm through
     const created = new Worker(url, { type: "module" });
     created.addEventListener("message", ({ data }) => {
+      // The cancelled request has stopped (or finished first): the worker is
+      // free, so it need not be terminated.
+      if (data.id === cancelling?.id && data.type !== "progress") {
+        settleCancel();
+        return;
+      }
       if (!pending || data.id !== pending.id) return;
       armWatchdog();
       if (data.type === "progress") pending.onProgress(data);
@@ -125,8 +200,38 @@ function startWorker() {
   }
 }
 
+// After Cancel the worker stops at its next chunk and confirms. One chunk on a
+// slow phone's CPU can run for a minute, so a worker that has not confirmed
+// within this long is terminated; the next request starts a fresh one, with
+// the model from the browser's cache.
+const CANCEL_GRACE_MS = 2000;
+let cancelling = null; // { id, timer } until the worker confirms
+
+function settleCancel() {
+  clearTimeout(cancelling?.timer);
+  cancelling = null;
+}
+
+function dropUnresponsiveWorker() {
+  settleCancel();
+  worker?.terminate();
+  worker = null;
+}
+
+/** Stop the running request. The page is free at once; the worker follows. */
+function cancelSynthesis() {
+  if (!pending) return;
+  const { id } = pending;
+  worker?.postMessage({ type: "cancel", id });
+  settleCancel();
+  cancelling = { id, timer: setTimeout(dropUnresponsiveWorker, CANCEL_GRACE_MS) };
+  failPending(new CancelledError());
+}
+
 /** One request to the worker; progress arrives through `onProgress`. */
 function synthesise(request, onProgress) {
+  // Still inside a cancelled chunk: a new request would queue behind it.
+  if (cancelling) dropUnresponsiveWorker();
   worker ??= startWorker();
   if (!worker) return Promise.reject(new Error(label(language, "error_worker")));
   return new Promise((resolve, reject) => {
@@ -185,6 +290,69 @@ function renderSlowNote() {
   }
 }
 
+/** The banner above the player: which step of the fallback chain is speaking. */
+function renderModeBanner() {
+  const t = (key, values) => label(language, key, values);
+  const state = bannerState({ voice: modeVoice, backend, precision, fallbacks, fullQuality });
+  els.modeBanner.hidden = state.kind === "none";
+  if (els.modeBanner.hidden) return;
+
+  els.modeBanner.dataset.kind = state.kind;
+  const key = { fast: "fast", full: "full", "int8-failed": "int8_failed", "gpu-failed": "gpu_failed" }[state.kind];
+  els.modeTitle.textContent = t(`mode_${key}_title`);
+  els.modeText.textContent = state.kind === "gpu-failed" ? "" : t(`mode_${key}_text`);
+  els.modeText.hidden = state.kind === "gpu-failed";
+  els.modeGpu.hidden = !state.gpuFailure;
+  if (state.gpuFailure) els.modeGpu.textContent = t("mode_gpu_failed", { reason: state.gpuFailure });
+  els.modeAction.hidden = !state.action;
+  if (state.action) {
+    els.modeAction.textContent = t(`action_${state.action}`);
+    els.modeAction.dataset.action = state.action;
+  }
+}
+
+/** "CPU · int8 · 4 threads" beside the download button. */
+function renderBadge(result) {
+  const parts = result ? badgeParts(result) : [];
+  els.modeBadge.hidden = parts.length === 0;
+  els.modeBadge.dataset.precision = result?.precision ?? "";
+  els.modeBadge.textContent = parts
+    .map((part) => (typeof part === "string" ? part : label(language, "badge_threads", part)))
+    .join(" · ");
+}
+
+function diagnostics() {
+  return diagnosticsLine({
+    voice: lastResult?.voice ?? modeVoice,
+    backend,
+    precision,
+    threads,
+    isolated: self.crossOriginIsolated,
+    framed: IN_FRAME,
+    fullQuality,
+    fallbacks,
+    seconds: lastResult?.seconds,
+    elapsed: lastResult?.elapsed,
+    chunks: lastResult?.chunks,
+    userAgent: navigator.userAgent,
+  });
+}
+
+/** Copy the diagnostics line; where the clipboard is refused, show it to select. */
+async function copyDiagnostics() {
+  const line = diagnostics();
+  els.diagnostics.hidden = true;
+  try {
+    await navigator.clipboard.writeText(line);
+    els.copyStatus.textContent = label(language, "copied");
+  } catch (error) {
+    console.warn("[aztts] clipboard refused", error);
+    els.copyStatus.textContent = label(language, "copy_failed");
+    els.diagnostics.textContent = line;
+    els.diagnostics.hidden = false;
+  }
+}
+
 function backendName(name, threads = 1) {
   if (!name) return "";
   if (name === "wasm" && threads > 1) return label(language, "backend_wasm_threads", { threads });
@@ -228,7 +396,12 @@ function showProgress(message, requestedVoice) {
     case "backend":
       backend = message.backend;
       threads = message.threads ?? 1;
+      precision = message.precision ?? null;
+      fallbacks = message.fallbacks ?? [];
+      modeVoice = requestedVoice;
       renderSlowNote();
+      renderModeBanner();
+      reviseDevice();
       break;
     case "chunk":
       els.status.textContent =
@@ -258,8 +431,13 @@ function startClock(began) {
 // -- labels -----------------------------------------------------------------
 
 function applyLanguage(next) {
+  // A status line that still holds a fixed message (the loading line, or
+  // "cancelled") follows the switch instead of staying in the old language.
+  const statusKey = ["loading", "status_cancelled"].find((key) =>
+    Object.keys(LABELS).some((code) => els.status.textContent === label(code, key)));
   language = LABELS[next] ? next : DEFAULT_LANGUAGE;
   const t = (key) => label(language, key);
+  if (statusKey) els.status.textContent = t(statusKey);
 
   document.documentElement.lang = language;
   document.title = t("title");
@@ -267,12 +445,16 @@ function applyLanguage(next) {
   els.subtitle.textContent = t("subtitle");
   els.languageLabel.textContent = t("language_label");
   els.themeLabel.textContent = t("theme_label");
+  // The theme buttons are icons: the word is their accessible name and tooltip.
   for (const button of document.querySelectorAll("[data-theme-choice]")) {
-    button.textContent = t(`theme_${button.dataset.themeChoice}`);
+    const name = t(`theme_${button.dataset.themeChoice}`);
+    button.setAttribute("aria-label", name);
+    button.title = name;
   }
   els.textLabel.textContent = t("text_label");
   els.text.placeholder = t("text_placeholder");
   els.speak.textContent = t("speak");
+  els.cancel.textContent = t("cancel");
   els.examplesLabel.textContent = t("examples_label");
   els.audioLabel.textContent = t("audio_label");
   els.download.textContent = t("download");
@@ -300,7 +482,16 @@ function applyLanguage(next) {
   els.speedNote.textContent = t("speed_note");
   renderSlowNote();
   els.progress.setAttribute("aria-label", t("progress_label"));
-  els.enNote.textContent = t("en_note");
+  els.copyDiagnostics.textContent = t("copy_diagnostics");
+  els.copyStatus.textContent = "";
+  renderModeBanner();
+  if (lastResult) renderBadge(lastResult);
+  device.setLanguage((key, values) => label(language, key, values));
+  if (!els.textError.hidden) showTextError(true, { focus: false });
+  els.censorNote.textContent = t("censor_note");
+  els.skipLink.textContent = t("skip_to_text");
+  els.waveEmpty.textContent = t("wave_empty");
+  els.aboutLabel.textContent = t("about_label");
   els.footer.textContent = t("footer");
 
   for (const button of document.querySelectorAll("[data-language]")) {
@@ -356,18 +547,85 @@ function showStats(result) {
   }) + (result.backend ? ` · ${backendName(result.backend, result.threads)}` : "");
 }
 
+// -- the waveform --------------------------------------------------------------
+
+// The last clip's samples, kept so the bars can be recomputed when the canvas
+// changes width.
+let waveSamples = null;
+let waveHeights = new Float32Array(0);
+let waveFrame = 0;
+
+function waveColours() {
+  const style = getComputedStyle(document.documentElement);
+  return {
+    rest: style.getPropertyValue("--wave-rest").trim(),
+    heard: style.getPropertyValue("--accent").trim(),
+  };
+}
+
+function renderWave() {
+  if (!waveSamples) return;
+  const { duration, currentTime } = els.audio;
+  const played = duration > 0 ? currentTime / duration : 0;
+  drawWave(els.wave, waveHeights, { played, ...waveColours() });
+}
+
+function measureWave() {
+  if (!waveSamples) return;
+  waveHeights = peaks(waveSamples, barCount(els.wave.clientWidth));
+  renderWave();
+}
+
+function showWave(samples) {
+  waveSamples = samples;
+  els.waveBox.dataset.state = "ready";
+  measureWave();
+}
+
+// While playing, follow the playhead every frame; otherwise redraw on events.
+function followPlayback() {
+  cancelAnimationFrame(waveFrame);
+  const step = () => {
+    renderWave();
+    if (!els.audio.paused && !els.audio.ended) waveFrame = requestAnimationFrame(step);
+  };
+  step();
+}
+
+for (const event of ["play", "pause", "seeked", "ended", "loadedmetadata"]) {
+  els.audio.addEventListener(event, followPlayback);
+}
+
+// A pointer shortcut for seeking; the <audio> controls remain the keyboard way.
+els.wave.addEventListener("click", (event) => {
+  const { duration } = els.audio;
+  if (!waveSamples || !(duration > 0)) return;
+  els.audio.currentTime = seekFraction(event.clientX, els.wave.getBoundingClientRect()) * duration;
+  renderWave();
+});
+
+new ResizeObserver(measureWave).observe(els.wave);
+// The colours are theme tokens: redraw when the theme or the device scheme flips.
+new MutationObserver(renderWave).observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ["data-theme"],
+});
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderWave);
+
 // -- synthesis ---------------------------------------------------------------
 
 async function speak() {
   if (busy) return;
   const text = els.text.value.trim();
   if (!text) {
-    els.status.textContent = label(language, "error_empty");
+    showTextError(true);
     return;
   }
+  showTextError(false);
 
   busy = true;
   els.speak.disabled = true;
+  els.cancel.hidden = false;
   els.stats.textContent = "";
   const requestedVoice = voice;
   const began = performance.now();
@@ -375,7 +633,7 @@ async function speak() {
   // The statistics time synthesis alone, not the one-off download and setup.
   let synthesisBegan = null;
   try {
-    const { waveform, chunks, backend: used, threads } = await synthesise(
+    const result = await synthesise(
       {
         voice: requestedVoice,
         text,
@@ -385,6 +643,7 @@ async function speak() {
           seed: Number(els.seed.value) || 0,
           normalize: requestedVoice === "az" && els.normalise.checked,
           maxWords: Number(els.maxWords.value),
+          fullQuality,
         },
       },
       (message) => {
@@ -392,13 +651,21 @@ async function speak() {
         showProgress(message, requestedVoice);
       },
     );
+    const { waveform, chunks } = result;
     const elapsed = (performance.now() - (synthesisBegan ?? began)) / 1000;
     setProgress(1);
+    backend = result.backend;
+    threads = result.threads ?? 1;
+    precision = result.precision ?? null;
+    fallbacks = result.fallbacks ?? [];
+    modeVoice = requestedVoice;
 
     const blob = toWav(waveform);
     if (els.audio.src) URL.revokeObjectURL(els.audio.src);
     const url = URL.createObjectURL(blob);
     els.audio.src = url;
+    els.audio.hidden = false;
+    showWave(waveform);
     els.download.href = url;
     els.download.hidden = false;
 
@@ -412,20 +679,38 @@ async function speak() {
       elapsed,
       realtime: elapsed > 0 ? seconds / elapsed : 0,
       chunks: chunks.length,
-      backend: used,
+      backend,
+      precision,
       threads,
+      voice: requestedVoice,
     };
     showStats(lastResult);
+    renderModeBanner();
+    renderBadge(lastResult);
+    els.copyDiagnostics.hidden = false;
+    els.copyStatus.textContent = "";
     els.status.textContent = "";
   } catch (error) {
-    console.error("[aztts] synthesis failed", error);
-    els.status.textContent =
-      error?.message === "empty" ? label(language, "error_empty") : String(error?.message ?? error);
+    if (error instanceof CancelledError) {
+      els.status.textContent = label(language, "status_cancelled");
+    } else if (error?.message === "empty") {
+      console.error("[aztts] synthesis failed", error);
+      showTextError(true);
+      els.status.textContent = "";
+    } else {
+      console.error("[aztts] synthesis failed", error);
+      els.status.textContent = String(error?.message ?? error);
+      showError(error?.message);
+    }
   } finally {
     stopClock();
     setProgress(undefined);
     busy = false;
     els.speak.disabled = false;
+    // A hidden button cannot hold focus; hand it to the one that replaces it.
+    const hadFocus = document.activeElement === els.cancel;
+    els.cancel.hidden = true;
+    if (hadFocus) els.speak.focus();
   }
 }
 
@@ -456,6 +741,20 @@ els.shuffle.addEventListener("click", () => {
   els.seed.value = String(Math.floor(Math.random() * 2 ** 31));
 });
 els.speak.addEventListener("click", speak);
+els.cancel.addEventListener("click", cancelSynthesis);
+document.addEventListener("keydown", (event) => {
+  // Escape belongs to the device dialog while it is open.
+  if (event.key !== "Escape" || !busy || document.getElementById("device-dialog")?.open) return;
+  cancelSynthesis();
+});
+els.modeAction.addEventListener("click", () => {
+  fullQuality = els.modeAction.dataset.action === "full";
+  speak();
+});
+els.copyDiagnostics.addEventListener("click", copyDiagnostics);
+els.text.addEventListener("input", () => {
+  if (!els.textError.hidden && els.text.value.trim()) showTextError(false);
+});
 els.text.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) speak();
 });
@@ -463,3 +762,4 @@ els.text.addEventListener("keydown", (event) => {
 applyTheme(initialTheme(readStoredTheme(), location.search), { remember: false });
 applyLanguage(DEFAULT_LANGUAGE);
 els.status.textContent = label(language, "loading");
+checkDevice();

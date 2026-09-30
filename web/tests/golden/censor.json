@@ -1,0 +1,935 @@
+{
+"": [
+"",
+[]
+],
+"   ": [
+"   ",
+[]
+],
+" b ": [
+" b ",
+[
+"b"
+]
+],
+" bax.": [
+" bax.",
+[
+"bax."
+]
+],
+" get, ": [
+" get, ",
+[
+"get,"
+]
+],
+" get.": [
+" get.",
+[
+"get."
+]
+],
+" gəldi": [
+" gəldi",
+[
+"gəldi"
+]
+],
+" iyirmi beş faiz artım etdi.": [
+" iyirmi beş faiz artım etdi.",
+[
+"iyirmi beş faiz artım etdi."
+]
+],
+"!": [
+"!",
+[]
+],
+"$1k qazandı": [
+"$1k qazandı",
+[
+"$1k qazandı"
+]
+],
+"$ikdir": [
+"█",
+[
+"█"
+]
+],
+", bildin?": [
+", bildin?",
+[
+"bildin?"
+]
+],
+"1.5k": [
+"1.5k",
+[
+"1.5k"
+]
+],
+"100$ və 4 am": [
+"100$ və 4 am",
+[
+"100$ və 4 am"
+]
+],
+"10k qaçış": [
+"10k qaçış",
+[
+"10k qaçış"
+]
+],
+"Amerika": [
+"Amerika",
+[
+"Amerika"
+]
+],
+"Amina gəldi": [
+"Amina gəldi",
+[
+"Amina gəldi"
+]
+],
+"Amini dedi": [
+"Amini dedi",
+[
+"Amini dedi"
+]
+],
+"Aminə və Amina": [
+"Aminə və Amina",
+[
+"Aminə və Amina"
+]
+],
+"Bakı-Gəncə yolu": [
+"Bakı-Gəncə yolu",
+[
+"Bakı-Gəncə yolu"
+]
+],
+"Bu ": [
+"Bu ",
+[
+"Bu"
+]
+],
+"Bu göt'ə bax.": [
+"Bu █ bax.",
+[
+"Bu",
+"█",
+"bax."
+]
+],
+"Got it": [
+"Got it",
+[
+"Got it"
+]
+],
+"Göteborq": [
+"Göteborq",
+[
+"Göteborq"
+]
+],
+"PIC mikrokontroller": [
+"PIC mikrokontroller",
+[
+"PIC mikrokontroller"
+]
+],
+"PIC-in göt'ə": [
+"PIC-in █",
+[
+"PIC-in",
+"█"
+]
+],
+"Qəhbə": [
+"█",
+[
+"█"
+]
+],
+"Qəhbə 25% artım etdi.": [
+"█ 25% artım etdi.",
+[
+"█",
+"25% artım etdi."
+]
+],
+"Salam": [
+"Salam",
+[
+"Salam"
+]
+],
+"Salam.": [
+"Salam.",
+[
+"Salam."
+]
+],
+"Sikandar": [
+"Sikandar",
+[
+"Sikandar"
+]
+],
+"Sikorski": [
+"Sikorski",
+[
+"Sikorski"
+]
+],
+"Siktir get, qəhbə, dalbayob!": [
+"█ get, █!",
+[
+"█",
+"get,",
+"█"
+]
+],
+"SİKDİR": [
+"█",
+[
+"█"
+]
+],
+"SİKDİR!": [
+"█!",
+[
+"█"
+]
+],
+"Sən": [
+"Sən",
+[
+"Sən"
+]
+],
+"Sən ": [
+"Sən ",
+[
+"Sən"
+]
+],
+"Sən qəhbəsən, bildin?": [
+"Sən █, bildin?",
+[
+"Sən",
+"█",
+"bildin?"
+]
+],
+"a": [
+"a",
+[
+"a"
+]
+],
+"a ": [
+"a ",
+[
+"a"
+]
+],
+"a █ b █": [
+"a █ b █",
+[
+"a",
+"█",
+"b",
+"█"
+]
+],
+"amal": [
+"amal",
+[
+"amal"
+]
+],
+"ambar": [
+"ambar",
+[
+"ambar"
+]
+],
+"amciq": [
+"█",
+[
+"█"
+]
+],
+"amcıq": [
+"█",
+[
+"█"
+]
+],
+"amcığı": [
+"█",
+[
+"█"
+]
+],
+"amil": [
+"amil",
+[
+"amil"
+]
+],
+"amin": [
+"amin",
+[
+"amin"
+]
+],
+"amk": [
+"█",
+[
+"█"
+]
+],
+"amma": [
+"amma",
+[
+"amma"
+]
+],
+"amına": [
+"█",
+[
+"█"
+]
+],
+"amını": [
+"█",
+[
+"█"
+]
+],
+"b": [
+"b",
+[
+"b"
+]
+],
+"bildin?": [
+"bildin?",
+[
+"bildin?"
+]
+],
+"blyat": [
+"█",
+[
+"█"
+]
+],
+"chunk": [
+"chunk",
+[
+"chunk"
+]
+],
+"dalbayob": [
+"█",
+[
+"█"
+]
+],
+"dolbayob": [
+"█",
+[
+"█"
+]
+],
+"dəyyus": [
+"█",
+[
+"█"
+]
+],
+"expected": [
+"expected",
+[
+"expected"
+]
+],
+"float32": [
+"float32",
+[
+"float32"
+]
+],
+"get.": [
+"get.",
+[
+"get."
+]
+],
+"gicdıllaq": [
+"█",
+[
+"█"
+]
+],
+"gijdıllaq": [
+"█",
+[
+"█"
+]
+],
+"gotune": [
+"█",
+[
+"█"
+]
+],
+"göt": [
+"█",
+[
+"█"
+]
+],
+"götünə": [
+"█",
+[
+"█"
+]
+],
+"göt": [
+"█",
+[
+"█"
+]
+],
+"götdən": [
+"█",
+[
+"█"
+]
+],
+"götverən": [
+"█",
+[
+"█"
+]
+],
+"götü": [
+"█",
+[
+"█"
+]
+],
+"götünə": [
+"█",
+[
+"█"
+]
+],
+"götür": [
+"götür",
+[
+"götür"
+]
+],
+"götürdü": [
+"götürdü",
+[
+"götürdü"
+]
+],
+"götürmək": [
+"götürmək",
+[
+"götürmək"
+]
+],
+"götürülüb": [
+"götürülüb",
+[
+"götürülüb"
+]
+],
+"huy": [
+"huy",
+[
+"huy"
+]
+],
+"huyu": [
+"huyu",
+[
+"huyu"
+]
+],
+"itoğlu": [
+"█",
+[
+"█"
+]
+],
+"işləyir": [
+"işləyir",
+[
+"işləyir"
+]
+],
+"kitabı": [
+"kitabı",
+[
+"kitabı"
+]
+],
+"köpəkoğlu": [
+"█",
+[
+"█"
+]
+],
+"küçələri": [
+"küçələri",
+[
+"küçələri"
+]
+],
+"maraqlı": [
+"maraqlı",
+[
+"maraqlı"
+]
+],
+"maşında": [
+"maşında",
+[
+"maşında"
+]
+],
+"mudak": [
+"█",
+[
+"█"
+]
+],
+"müdafiə": [
+"müdafiə",
+[
+"müdafiə"
+]
+],
+"müdir": [
+"müdir",
+[
+"müdir"
+]
+],
+"nahuy": [
+"█",
+[
+"█"
+]
+],
+"naxuy": [
+"█",
+[
+"█"
+]
+],
+"orospu": [
+"█",
+[
+"█"
+]
+],
+"peysər": [
+"█",
+[
+"█"
+]
+],
+"pezəvəng": [
+"█",
+[
+"█"
+]
+],
+"piç": [
+"█",
+[
+"█"
+]
+],
+"piçlər": [
+"█",
+[
+"█"
+]
+],
+"pidaras": [
+"█",
+[
+"█"
+]
+],
+"pidor": [
+"█",
+[
+"█"
+]
+],
+"pizdec": [
+"█",
+[
+"█"
+]
+],
+"piç": [
+"█",
+[
+"█"
+]
+],
+"piçlər": [
+"█",
+[
+"█"
+]
+],
+"pişik": [
+"pişik",
+[
+"pişik"
+]
+],
+"qan": [
+"qan",
+[
+"qan"
+]
+],
+"qancıq": [
+"█",
+[
+"█"
+]
+],
+"qanun": [
+"qanun",
+[
+"qanun"
+]
+],
+"qehbe": [
+"█",
+[
+"█"
+]
+],
+"qəhbə": [
+"█",
+[
+"█"
+]
+],
+"qəhbə-lər gəldi": [
+"█ gəldi",
+[
+"█",
+"gəldi"
+]
+],
+"qəhbələr": [
+"█",
+[
+"█"
+]
+],
+"qəhbəsən": [
+"█",
+[
+"█"
+]
+],
+"qəhbəxana": [
+"█",
+[
+"█"
+]
+],
+"q‍əhbə": [
+"█",
+[
+"█"
+]
+],
+"s1k qazandı $1k": [
+"█ qazandı $1k",
+[
+"█",
+"qazandı $1k"
+]
+],
+"s1kdir": [
+"█",
+[
+"█"
+]
+],
+"s1kdir $ikdir siiiikdir": [
+"█",
+[
+"█"
+]
+],
+"siiiikdir": [
+"█",
+[
+"█"
+]
+],
+"sik": [
+"█",
+[
+"█"
+]
+],
+"sikayet": [
+"sikayet",
+[
+"sikayet"
+]
+],
+"sikdir": [
+"█",
+[
+"█"
+]
+],
+"sikib": [
+"█",
+[
+"█"
+]
+],
+"sikim": [
+"█",
+[
+"█"
+]
+],
+"sikim qəhbə yarraq": [
+"█",
+[
+"█"
+]
+],
+"sikiş": [
+"█",
+[
+"█"
+]
+],
+"sikkə": [
+"sikkə",
+[
+"sikkə"
+]
+],
+"sikkələr": [
+"sikkələr",
+[
+"sikkələr"
+]
+],
+"sikl": [
+"sikl",
+[
+"sikl"
+]
+],
+"siklon": [
+"siklon",
+[
+"siklon"
+]
+],
+"siktir": [
+"█",
+[
+"█"
+]
+],
+"sikərəm": [
+"█",
+[
+"█"
+]
+],
+"si​k": [
+"█",
+[
+"█"
+]
+],
+"suka": [
+"█",
+[
+"█"
+]
+],
+"sukan": [
+"sukan",
+[
+"sukan"
+]
+],
+"s­ik": [
+"█",
+[
+"█"
+]
+],
+"sürtük": [
+"█",
+[
+"█"
+]
+],
+"text": [
+"text",
+[
+"text"
+]
+],
+"word": [
+"word",
+[
+"word"
+]
+],
+"yaraq": [
+"yaraq",
+[
+"yaraq"
+]
+],
+"yarpaq": [
+"yarpaq",
+[
+"yarpaq"
+]
+],
+"yarraq": [
+"█",
+[
+"█"
+]
+],
+"yarrağı": [
+"█",
+[
+"█"
+]
+],
+"yavşaq": [
+"█",
+[
+"█"
+]
+],
+"Şikayətinizi götürdük, sikkəni isə Amerikaya göndərdik.": [
+"Şikayətinizi götürdük, sikkəni isə Amerikaya göndərdik.",
+[
+"Şikayətinizi götürdük, sikkəni isə Amerikaya göndərdik."
+]
+],
+"ŞİKAYƏT": [
+"ŞİKAYƏT",
+[
+"ŞİKAYƏT"
+]
+],
+"şik": [
+"şik",
+[
+"şik"
+]
+],
+"şikar": [
+"şikar",
+[
+"şikar"
+]
+],
+"şikayət": [
+"şikayət",
+[
+"şikayət"
+]
+],
+"şikəst": [
+"şikəst",
+[
+"şikəst"
+]
+],
+"блять": [
+"█",
+[
+"█"
+]
+],
+"блять, это сука": [
+"█, это █",
+[
+"█",
+"это",
+"█"
+]
+],
+"мудак": [
+"█",
+[
+"█"
+]
+],
+"пиздец": [
+"█",
+[
+"█"
+]
+],
+"сука": [
+"█",
+[
+"█"
+]
+],
+"хуй": [
+"█",
+[
+"█"
+]
+],
+"█!": [
+"█!",
+[
+"█"
+]
+],
+"﻿sikdir": [
+"█",
+[
+"█"
+]
+]
+}

@@ -1,0 +1,410 @@
+/* The fallback chain's mode banner, and the device check: card, meter, dialog,
+   toasts. Loaded after styles.css, whose tokens and base controls these build on. */
+
+/* -- the mode banner: which step of the fallback chain is speaking -------------- */
+
+.mode-banner {
+  display: flex;
+  gap: 0.7rem;
+  align-items: flex-start;
+  margin: 0.5rem 0;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--warn-line);
+  border-inline-start-width: 4px;
+  border-radius: var(--radius);
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+}
+
+/* Full quality was chosen: information, not a warning. */
+.mode-banner[data-kind="full"] {
+  border-color: var(--accent);
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.mode-icon {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.1rem;
+  fill: currentColor;
+}
+
+.mode-icon path {
+  display: none;
+}
+
+.mode-banner[data-kind="fast"] .icon-fast,
+.mode-banner[data-kind="full"] .icon-full,
+.mode-banner[data-kind="int8-failed"] .icon-warn,
+.mode-banner[data-kind="gpu-failed"] .icon-warn {
+  display: inline;
+}
+
+.mode-body {
+  min-width: 0;
+}
+
+.mode-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.mode-text {
+  margin: 0.2rem 0 0;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.mode-action {
+  margin-top: 0.6rem;
+  min-height: 44px;
+  border-color: currentColor;
+  font-weight: 600;
+}
+
+.mode-badge {
+  display: inline-flex;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font: 0.8rem/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--ink-soft);
+}
+
+.mode-badge[data-precision="int8"] {
+  border-color: var(--warn-line);
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+}
+
+.diagnostics {
+  margin: 0.4rem 0 0;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font: 0.78rem/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: all;
+}
+
+
+/* -- the device check: card, meter, dialog, toasts ------------------------------ */
+
+/* One tone per verdict; every surface below reads these three. */
+[data-tone="good"] {
+  --tone-bg: var(--good-bg);
+  --tone-line: var(--good-line);
+  --tone-ink: var(--good-ink);
+}
+
+[data-tone="warn"] {
+  --tone-bg: var(--warn-bg);
+  --tone-line: var(--warn-line);
+  --tone-ink: var(--warn-ink);
+}
+
+[data-tone="bad"] {
+  --tone-bg: var(--bad-bg);
+  --tone-line: var(--bad-line);
+  --tone-ink: var(--bad-ink);
+}
+
+[data-tone="pending"] {
+  --tone-bg: var(--panel);
+  --tone-line: var(--line);
+  --tone-ink: var(--ink-soft);
+}
+
+/* The speed meter: three rising bars, as many lit as the device is fast. */
+.meter {
+  display: inline-flex;
+  flex: none;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+  color: var(--tone-line);
+}
+
+.meter i {
+  width: 5px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.22;
+  transition: opacity 0.25s ease-out;
+}
+
+.meter i:nth-child(1) {
+  height: 40%;
+}
+
+.meter i:nth-child(2) {
+  height: 70%;
+  transition-delay: 0.12s;
+}
+
+.meter i:nth-child(3) {
+  height: 100%;
+  transition-delay: 0.24s;
+}
+
+.meter[data-bars="1"] i:nth-child(-n + 1),
+.meter[data-bars="2"] i:nth-child(-n + 2),
+.meter[data-bars="3"] i {
+  opacity: 1;
+}
+
+.meter-large {
+  height: 34px;
+  gap: 5px;
+}
+
+.meter-large i {
+  width: 9px;
+  border-radius: 3px;
+}
+
+.device-card {
+  display: flex;
+  flex-basis: 100%;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid var(--tone-line);
+  border-inline-start-width: 4px;
+  border-radius: var(--radius);
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+}
+
+.device-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.device-label {
+  font-size: 0.78rem;
+  opacity: 0.85;
+}
+
+.device-title {
+  font-size: 0.95rem;
+  overflow-wrap: anywhere;
+}
+
+.device-details {
+  flex: none;
+  border-color: currentColor;
+  color: inherit;
+}
+
+.device-dialog {
+  width: min(30rem, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid var(--tone-line);
+  border-top-width: 6px;
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.device-dialog::backdrop {
+  background: rgb(0 0 0 / 0.5);
+}
+
+.dialog-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 1.25rem;
+}
+
+.dialog-inner .meter {
+  color: var(--tone-line);
+}
+
+.dialog-title {
+  margin: 0;
+  font-size: 1.2rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.dialog-text,
+.dialog-note {
+  margin: 0;
+}
+
+.dialog-note {
+  font-size: 0.88rem;
+  color: var(--ink-soft);
+}
+
+.dialog-check {
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+  min-height: 44px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.dialog-check input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--accent);
+}
+
+.dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.dialog-actions .ghost,
+.dialog-ok {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.dialog-ok {
+  width: auto;
+  min-width: 8rem;
+}
+
+.toasts {
+  position: fixed;
+  z-index: 20;
+  inset-inline: 16px;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+}
+
+@media (min-width: 720px) {
+  .toasts {
+    inset-inline: auto 24px;
+    width: 24rem;
+  }
+}
+
+.toast {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.75rem 0.6rem 0.75rem 0.85rem;
+  border: 1px solid var(--tone-line);
+  border-inline-start-width: 4px;
+  border-radius: var(--radius);
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+  pointer-events: auto;
+  animation: toast-in 0.2s ease-out;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+.toast-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.toast-text {
+  margin: 0.15rem 0 0;
+  font-size: 0.9rem;
+  overflow-wrap: anywhere;
+}
+
+.toast-close {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.toast-close:hover {
+  background: rgb(127 127 127 / 0.18);
+}
+
+@media (pointer: coarse) {
+  .toast-close {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.field-error {
+  margin: -0.6rem 0 1rem;
+  padding: 0.45rem 0.65rem;
+  border-inline-start: 3px solid var(--bad-line);
+  border-radius: 6px;
+  background: var(--bad-bg);
+  color: var(--bad-ink);
+  font-size: 0.88rem;
+}
+
+textarea[aria-invalid="true"] {
+  border-color: var(--bad-line);
+}
+
+
+/* -- the device card in the top bar ---------------------------------------------- */
+
+/* Compact beside the switches; it takes a row of its own on a phone. */
+.topbar .device-card {
+  flex-basis: auto;
+  padding: 0.3rem 0.35rem 0.3rem 0.6rem;
+  gap: 0.55rem;
+}
+
+.topbar .device-label {
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.topbar .device-title {
+  font-size: 0.86rem;
+  line-height: 1.25;
+}
+
+.topbar .device-details {
+  padding: 0.25rem 0.6rem;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 640px) {
+  .topbar .device-card {
+    flex-basis: 100%;
+    order: 3;
+  }
+}

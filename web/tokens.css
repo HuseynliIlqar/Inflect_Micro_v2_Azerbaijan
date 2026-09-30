@@ -1,0 +1,94 @@
+/* Design tokens: one light set, then the dark set twice -- once for a device
+   in dark mode, once for a visitor who picked dark. Keep the three in sync. */
+
+:root {
+  color-scheme: light dark;
+
+  --ink: #15202a;
+  --ink-soft: #56636f;
+  --paper: #f4f6f7;
+  --panel: #ffffff;
+  --line: #d9e0e4;
+  --accent: #0b6770;
+  --accent-ink: #ffffff;
+  --accent-soft: #e1eff0;
+  --focus: #0b6770;
+  --wave-rest: #8a979f;
+  /* Form fields need a 3:1 boundary (WCAG 1.4.11); --line is for dividers. */
+  --field-line: #7f8c95;
+  /* The mode banner: fast mode and fallbacks are warnings, not errors. */
+  --warn-bg: #fff5e0;
+  --warn-line: #e0a23c;
+  --warn-ink: #5a3a00;
+  /* The device check: green when WebGPU runs, red when one thread must do. */
+  --good-bg: #e8f6ec;
+  --good-line: #2f9e55;
+  --good-ink: #0f4d25;
+  --bad-bg: #fdecec;
+  --bad-line: #d24b4b;
+  --bad-ink: #6e1414;
+
+  --radius: 10px;
+  --radius-lg: 16px;
+  --gap: 1rem;
+  --gutter: max(16px, env(safe-area-inset-left));
+  --stage: 1040px;
+  --measure: 68ch;
+  --font: "Onest", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* Dark follows the device unless the visitor picked light; `data-theme` is set
+   by js/theme.js (and the inline script in index.html, before first paint). */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #e4ebee;
+    --ink-soft: #93a2ad;
+    --paper: #0f1519;
+    --panel: #151d22;
+    --line: #243038;
+    --accent: #56c2c8;
+    --accent-ink: #052326;
+    --accent-soft: #11302f;
+    --focus: #7fd3d8;
+    --wave-rest: #5f707b;
+    --field-line: #5f707b;
+    --warn-bg: #2a2111;
+    --warn-line: #9a6f22;
+    --warn-ink: #f2d8a2;
+    --good-bg: #10261a;
+    --good-line: #2f8f52;
+    --good-ink: #b6e8c6;
+    --bad-bg: #2c1414;
+    --bad-line: #b14545;
+    --bad-ink: #f4c2c2;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #e4ebee;
+  --ink-soft: #93a2ad;
+  --paper: #0f1519;
+  --panel: #151d22;
+  --line: #243038;
+  --accent: #56c2c8;
+  --accent-ink: #052326;
+  --accent-soft: #11302f;
+  --focus: #7fd3d8;
+  --wave-rest: #5f707b;
+  --field-line: #5f707b;
+  --warn-bg: #2a2111;
+  --warn-line: #9a6f22;
+  --warn-ink: #f2d8a2;
+  --good-bg: #10261a;
+  --good-line: #2f8f52;
+  --good-ink: #b6e8c6;
+  --bad-bg: #2c1414;
+  --bad-line: #b14545;
+  --bad-ink: #f4c2c2;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}

@@ -11,7 +11,7 @@ export const THEMES = ["auto", "light", "dark"];
 export const STORAGE_KEY = "theme";
 
 // The browser chrome colour for each explicit theme; mirrors `--paper`.
-const THEME_COLORS = { light: "#fbfbfa", dark: "#121417" };
+const THEME_COLORS = { light: "#f4f6f7", dark: "#0f1519" };
 
 /**
  * The theme to start with: a saved choice wins, then Hugging Face's
