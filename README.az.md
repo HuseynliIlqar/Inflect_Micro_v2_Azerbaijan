@@ -162,6 +162,17 @@ göndərilmir. Səhifə yükləndikdən sonra internetsiz də işləyir.
 - ONNX Runtime Web, WebGPU üzərində — noutbukda təxminən 8x real vaxt
 - Fonemləşdirmə üçün WebAssembly-yə kompilyasiya edilmiş eSpeak NG
 - JavaScript-ə portlanmış azərbaycanca mətn qatı
+- Sintez Web Worker-də gedir, ona görə səhifə donmur və irəliləyiş zolağı göstərilir
+
+**Playground yavaş görünürsə, səbəb modeldə yox, brauzerdədir.** WebGPU
+olmayanda (bir çox telefon, Firefox) model prosessorda işləyir.
+[Birbaşa linkdə](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/index.html)
+səhifə cross-origin izolyasiyalıdır və 4 axına qədər istifadə edir, bu da bir
+axından təxminən iki dəfə sürətlidir. Hugging Face səhifəsinin içində izolyasiya
+mümkün deyil və model bir axında işləyir; telefonda bir cümlə bir dəqiqəyə qədər
+çəkə bilər. Səhifə hansı halın olduğunu bildirir və gedişi göstərməyə davam edir.
+Eyni model komanda sətrindən real vaxtdan 2–4 dəfə sürətli işləyir. İlk açılışda
+37 MB yüklənir, sonra model cihazda saxlanılır.
 
 Port sözə görə qəbul edilmir: Python orijinalından yaradılmış qızıl fayllarla
 yoxlanılır — 24 022 rəqəm müqayisəsi, 550 normallaşdırma cümləsi, 550 bölgü — və
@@ -249,6 +260,7 @@ Brauzer portunun öz testləri var, Node ilə işləyir:
 node web/tests/test_num_az.mjs      # num2words ilə 24 022 yoxlama
 node web/tests/test_az_text.mjs     # normalize_az ilə 550 cümlə
 node web/tests/test_az_chunk.mjs    # chunk_text ilə eyni 550 cümlə
+node web/tests/test_progress.mjs    # irəliləyiş zolağı və keşlənən model yükləməsi
 ```
 
 </details>

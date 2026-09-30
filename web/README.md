@@ -15,12 +15,55 @@ nothing and never sleeps.
 | `js/num-az.js` | Azerbaijani number words, standing in for `num2words` |
 | `js/az-chunk.js` | `chunk_text` ported from `aztts/az_chunk.py` |
 | `js/tts.js` | The ONNX graphs, the pauses between chunks and WAV encoding |
+| `worker.js` | Runs the phonemiser and the graphs off the page's main thread |
+| `js/fetch-model.js` | Downloads the graphs with byte progress and keeps them in Cache Storage |
+| `js/progress.js` | The progress bar's arithmetic |
 | `js/i18n.js` | Interface labels, generated from `webui/i18n.py` |
 
 Synthesis runs through ONNX Runtime Web on WebGPU where the browser has it
 (about 8x faster than real time on a laptop), falling back to WebAssembly
 otherwise. The WASM path is single-threaded on a static host -- no
 cross-origin isolation -- and is several times slower.
+
+## Why it can be slow, and why the page no longer freezes
+
+onnxruntime-web runs a graph synchronously on the thread that calls it. When
+that was the page's own thread, a phone without WebGPU froze solid for the
+whole synthesis -- 57 seconds for a four-second sentence in a phone-class CPU
+emulation -- and Android offered to kill the tab. Everything now runs in
+`worker.js`; the page only draws the status, the elapsed seconds and the bar.
+
+The WASM path is slower than WebGPU, and how much depends on threads. Threads
+need cross-origin isolation, so the Space's README sets it:
+
+```yaml
+custom_headers:
+  cross-origin-embedder-policy: require-corp
+  cross-origin-opener-policy: same-origin
+  cross-origin-resource-policy: cross-origin
+```
+
+On the direct `*.static.hf.space` link the worker then runs on up to 4 threads:
+1.8-2.3 s for a 5.25 s sentence on a desktop CPU, against 3.9 s on one thread.
+Inside the huggingface.co page the Space is an iframe without the
+`cross-origin-isolated` permission, so it stays on one thread; there the note
+under the button links to the direct URL. Everything cross-origin the page
+loads -- jsdelivr (CORP `cross-origin`) and the Hub CDN (CORS `*`) -- passes
+`require-corp`; anything new must too, or it will be blocked. The statistics
+name the backend and the thread count. The CLI runs the same model at 2-4x
+real time.
+
+`?backend=wasm` on the page URL forces the CPU path. It is for telling a GPU
+driver problem on a particular phone apart from a model problem: if the audio
+is wrong with WebGPU and right with `?backend=wasm`, the driver is at fault.
+
+## Caching the graphs
+
+The Space answers `onnx/decode.onnx` with a `no-store` redirect to a freshly
+signed CDN URL, so the browser's HTTP cache never hits and every visit
+downloaded 37 MB again. `js/fetch-model.js` keeps the bytes in Cache Storage
+under the page's own path instead. **When the graphs on the Space change, bump
+`CACHE_NAME`** in that file; older caches are deleted on the next visit.
 
 ## The two voices
 
@@ -45,6 +88,7 @@ original rather than against expectations:
 node tests/test_num_az.mjs      # 24,022 checks against num2words
 node tests/test_az_text.mjs     # 550 sentences against normalize_az
 node tests/test_az_chunk.mjs    # the same 550 against chunk_text
+node tests/test_progress.mjs    # the progress bar and the cached download
 ```
 
 The golden files under `tests/golden/` are generated from the Python side; the

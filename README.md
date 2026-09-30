@@ -163,6 +163,17 @@ anywhere. Once the page has loaded it works with the network switched off.
 - ONNX Runtime Web on WebGPU --- roughly 8x real time on a laptop
 - eSpeak NG compiled to WebAssembly for phonemisation
 - the Azerbaijani text layer ported to JavaScript
+- synthesis in a Web Worker, so the page never freezes, with a progress bar
+
+**If the playground feels slow, it is the browser, not the model.** Without
+WebGPU --- many phones, Firefox --- the model runs on the CPU. On the
+[direct link](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/index.html)
+the page is cross-origin isolated and uses up to 4 threads, about twice as fast
+as one. Inside the Hugging Face page it cannot be isolated and gets a single
+thread, where a sentence can take up to a minute on a phone. The page says which
+case applies and keeps showing progress. The same model runs at 2--4x real time
+from the command line. The first visit downloads 37 MB; after that the graphs
+stay on the device.
 
 The port is not trusted on faith: it is checked against the Python original
 over golden files generated from it --- 24,022 number-word comparisons, 550
@@ -252,6 +263,7 @@ The browser port has its own, run with Node:
 node web/tests/test_num_az.mjs      # 24,022 checks against num2words
 node web/tests/test_az_text.mjs     # 550 sentences against normalize_az
 node web/tests/test_az_chunk.mjs    # the same 550 against chunk_text
+node web/tests/test_progress.mjs    # the progress bar and the cached model download
 ```
 
 </details>

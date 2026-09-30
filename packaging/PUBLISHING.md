@@ -123,10 +123,11 @@ one is static.
 ```bash
 git clone https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan hf-space
 cd hf-space
-cp ../web/index.html ../web/styles.css ../web/app.js .
+cp ../web/index.html ../web/styles.css ../web/app.js ../web/worker.js .
 cp -r ../web/js .
 mkdir -p onnx && cp ../web/onnx/*.onnx onnx/
-# README.md needs `sdk: static` and `app_file: index.html` in its YAML header.
+# README.md needs `sdk: static`, `app_file: index.html` and the `custom_headers`
+# block from web/README.md in its YAML header (the headers give wasm threads).
 git add -A && git commit -m "Update the playground" && git push
 ```
 
@@ -161,6 +162,7 @@ PY
 node web/tests/test_num_az.mjs
 node web/tests/test_az_text.mjs
 node web/tests/test_az_chunk.mjs
+node web/tests/test_progress.mjs
 ```
 
 ### The Gradio Space (needs Pro)
