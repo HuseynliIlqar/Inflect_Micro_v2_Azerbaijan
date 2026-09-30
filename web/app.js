@@ -12,11 +12,12 @@ import { toWav, SAMPLE_RATE, hasWebGpu, CancelledError } from "./js/tts.js";
 import { downloadFraction, chunkFraction, megabytes } from "./js/progress.js";
 import { applyTheme, initialTheme, readStoredTheme } from "./js/theme.js";
 import { planOptionsFromQuery, thisIsPhone } from "./js/backend-plan.js";
-import { bannerState, badgeParts, diagnosticsLine } from "./js/mode-banner.js";
+import { bannerState, badgeParts, diagnosticsLine, bannerCopyKeys } from "./js/mode-banner.js";
 import { deviceVerdict, errorKind, adviceKey, isAppleMobile } from "./js/device-check.js";
 import { createDeviceView } from "./js/device-view.js";
 import { toast } from "./js/notify.js";
-import { barCount, drawWave, peaks, seekFraction } from "./js/waveform.js";
+import { createWaveView } from "./js/wave-view.js";
+import { needsReveal } from "./js/reveal.js";
 
 const EXAMPLES = {
   az: [
@@ -56,6 +57,8 @@ const els = {
   skipLink: document.querySelector(".skip-link"),
   wave: $("wave"), waveBox: document.querySelector(".wave"), waveEmpty: $("wave-empty"),
   progress: $("progress"), elapsed: $("elapsed"), slowNote: $("slow-note"),
+  phoneNote: $("phone-note"), phoneNoteText: $("phone-note-text"), phoneWhy: $("phone-why"),
+  result: $("result"), resultReady: $("result-ready"), resultReadyText: $("result-ready-text"),
   modeBanner: $("mode-banner"), modeTitle: $("mode-title"), modeText: $("mode-text"),
   modeGpu: $("mode-gpu"), modeAction: $("mode-action"), modeBadge: $("mode-badge"),
   copyDiagnostics: $("copy-diagnostics"), copyStatus: $("copy-status"), diagnostics: $("diagnostics"),
@@ -280,7 +283,8 @@ function setProgress(fraction, text = els.status.textContent) {
 
 /** The CPU-path note: how slow to expect, and the faster link when framed. */
 function renderSlowNote() {
-  els.slowNote.hidden = backend !== "wasm";
+  // On a phone the phone note already says this, in plainer words.
+  els.slowNote.hidden = backend !== "wasm" || PHONE;
   if (els.slowNote.hidden) return;
   const t = (key, values) => label(language, key, values);
   if (threads > 1) {
@@ -306,10 +310,10 @@ function renderModeBanner() {
   if (els.modeBanner.hidden) return;
 
   els.modeBanner.dataset.kind = state.kind;
-  const key = { fast: "fast", full: "full", "int8-failed": "int8_failed", "gpu-failed": "gpu_failed" }[state.kind];
-  els.modeTitle.textContent = t(`mode_${key}_title`);
-  els.modeText.textContent = state.kind === "gpu-failed" ? "" : t(`mode_${key}_text`);
-  els.modeText.hidden = state.kind === "gpu-failed";
+  const copy = bannerCopyKeys(state, { phone: PHONE && !forceGpu });
+  els.modeTitle.textContent = t(copy.title);
+  els.modeText.textContent = copy.text ? t(copy.text) : "";
+  els.modeText.hidden = !copy.text;
   els.modeGpu.hidden = !state.gpuFailure;
   if (state.gpuFailure) els.modeGpu.textContent = t("mode_gpu_failed", { reason: state.gpuFailure });
   els.modeAction.hidden = !state.action;
@@ -443,7 +447,7 @@ function startClock(began) {
 function applyLanguage(next) {
   // A status line that still holds a fixed message (the loading line, or
   // "cancelled") follows the switch instead of staying in the old language.
-  const statusKey = ["loading", "status_cancelled"].find((key) =>
+  const statusKey = ["loading", "status_cancelled", "result_ready"].find((key) =>
     Object.keys(LABELS).some((code) => els.status.textContent === label(code, key)));
   language = LABELS[next] ? next : DEFAULT_LANGUAGE;
   const t = (key) => label(language, key);
@@ -499,6 +503,10 @@ function applyLanguage(next) {
   device.setLanguage((key, values) => label(language, key, values));
   if (!els.textError.hidden) showTextError(true, { focus: false });
   els.censorNote.textContent = t("censor_note");
+  els.phoneNote.hidden = !(PHONE && !forceGpu);
+  els.phoneNoteText.textContent = t("phone_note");
+  els.phoneWhy.textContent = t("phone_why");
+  els.resultReadyText.textContent = t("result_ready_badge");
   els.skipLink.textContent = t("skip_to_text");
   els.waveEmpty.textContent = t("wave_empty");
   els.aboutLabel.textContent = t("about_label");
@@ -557,70 +565,34 @@ function showStats(result) {
   }) + (result.backend ? ` · ${backendName(result.backend, result.threads)}` : "");
 }
 
-// -- the waveform --------------------------------------------------------------
+// -- the waveform: js/wave-view.js ---------------------------------------------
 
-// The last clip's samples, kept so the bars can be recomputed when the canvas
-// changes width.
-let waveSamples = null;
-let waveHeights = new Float32Array(0);
-let waveFrame = 0;
+const wave = createWaveView({ canvas: els.wave, box: els.waveBox, audio: els.audio });
 
-function waveColours() {
-  const style = getComputedStyle(document.documentElement);
-  return {
-    rest: style.getPropertyValue("--wave-rest").trim(),
-    heard: style.getPropertyValue("--accent").trim(),
-  };
-}
+// -- the finished clip: show where it is ------------------------------------------
 
-function renderWave() {
-  if (!waveSamples) return;
-  const { duration, currentTime } = els.audio;
-  const played = duration > 0 ? currentTime / duration : 0;
-  drawWave(els.wave, waveHeights, { played, ...waveColours() });
-}
-
-function measureWave() {
-  if (!waveSamples) return;
-  waveHeights = peaks(waveSamples, barCount(els.wave.clientWidth));
-  renderWave();
-}
-
-function showWave(samples) {
-  waveSamples = samples;
-  els.waveBox.dataset.state = "ready";
-  measureWave();
-}
-
-// While playing, follow the playhead every frame; otherwise redraw on events.
-function followPlayback() {
-  cancelAnimationFrame(waveFrame);
-  const step = () => {
-    renderWave();
-    if (!els.audio.paused && !els.audio.ended) waveFrame = requestAnimationFrame(step);
-  };
-  step();
-}
-
-for (const event of ["play", "pause", "seeked", "ended", "loadedmetadata"]) {
-  els.audio.addEventListener(event, followPlayback);
-}
-
-// A pointer shortcut for seeking; the <audio> controls remain the keyboard way.
-els.wave.addEventListener("click", (event) => {
-  const { duration } = els.audio;
-  if (!waveSamples || !(duration > 0)) return;
-  els.audio.currentTime = seekFraction(event.clientX, els.wave.getBoundingClientRect()) * duration;
-  renderWave();
+// On a phone the result sits a screen or two below Speak, and people did not
+// find it. When a clip is ready: a "Ready" chip, a pulse round the waveform,
+// and a scroll to the result if it is off screen -- unless the visitor has
+// started typing again, or the device dialog is open.
+let typedSinceSpeak = false;
+els.text.addEventListener("input", () => {
+  if (busy) typedSinceSpeak = true;
 });
 
-new ResizeObserver(measureWave).observe(els.wave);
-// The colours are theme tokens: redraw when the theme or the device scheme flips.
-new MutationObserver(renderWave).observe(document.documentElement, {
-  attributes: true,
-  attributeFilter: ["data-theme"],
-});
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderWave);
+function revealResult() {
+  els.resultReady.hidden = false;
+  els.waveBox.classList.remove("is-new");
+  void els.waveBox.offsetWidth; // restarts the pulse for a second clip
+  els.waveBox.classList.add("is-new");
+  if (typedSinceSpeak || els.dialog.open) return;
+  if (!needsReveal(els.result.getBoundingClientRect(), window.innerHeight)) return;
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  els.result.scrollIntoView({ behavior: still ? "auto" : "smooth", block: "start" });
+}
+
+els.waveBox.addEventListener("animationend", () => els.waveBox.classList.remove("is-new"));
+els.phoneWhy.addEventListener("click", () => els.deviceDetails.click());
 
 // -- synthesis ---------------------------------------------------------------
 
@@ -637,11 +609,14 @@ async function speak() {
   els.speak.disabled = true;
   els.cancel.hidden = false;
   els.stats.textContent = "";
+  els.resultReady.hidden = true;
+  typedSinceSpeak = false;
   const requestedVoice = voice;
   const began = performance.now();
   const stopClock = startClock(began);
   // The statistics time synthesis alone, not the one-off download and setup.
   let synthesisBegan = null;
+  let ready = false;
   try {
     const result = await synthesise(
       {
@@ -675,7 +650,7 @@ async function speak() {
     const url = URL.createObjectURL(blob);
     els.audio.src = url;
     els.audio.hidden = false;
-    showWave(waveform);
+    wave.show(waveform);
     els.download.href = url;
     els.download.hidden = false;
 
@@ -699,7 +674,12 @@ async function speak() {
     renderBadge(lastResult);
     els.copyDiagnostics.hidden = false;
     els.copyStatus.textContent = "";
-    els.status.textContent = "";
+    // Said in the live status line, not by moving focus: a screen-reader user
+    // stays by Speak and Cancel.
+    els.status.textContent = label(language, "result_ready");
+    // After the finally block: hiding Cancel and the bar there moves the page,
+    // which would leave a scroll started now short of the result.
+    ready = true;
   } catch (error) {
     if (error instanceof CancelledError) {
       els.status.textContent = label(language, "status_cancelled");
@@ -721,6 +701,7 @@ async function speak() {
     const hadFocus = document.activeElement === els.cancel;
     els.cancel.hidden = true;
     if (hadFocus) els.speak.focus();
+    if (ready) revealResult();
   }
 }
 

@@ -167,14 +167,33 @@
         <p id="status" class="status" role="status" aria-live="polite"></p>
         <p id="slow-note" class="note slow-note" hidden></p>
 
+        <!-- Phones only: why it is slower, where the result will appear, and
+             what gives full speed and quality. js/backend-plan.js decides. -->
+        <div id="phone-note" class="phone-note" role="note" hidden>
+          <svg class="phone-note-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+            <rect x="5" y="1.5" width="10" height="17" rx="2.2" />
+            <path d="M8.5 15.5h3" />
+          </svg>
+          <p>
+            <span id="phone-note-text"></span>
+            <button id="phone-why" type="button" class="link-button"></button>
+          </p>
+        </div>
+
         <div class="examples">
           <span id="examples-label" class="examples-label"></span>
           <div id="examples" class="example-list"></div>
         </div>
       </section>
 
-      <section class="result" aria-labelledby="audio-label">
-        <h2 id="audio-label" class="section-title"></h2>
+      <section id="result" class="result" aria-labelledby="audio-label">
+        <div class="result-head">
+          <h2 id="audio-label" class="section-title"></h2>
+          <span id="result-ready" class="ready-chip" hidden>
+            <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10.5l3.5 3.5 7.5-8" /></svg>
+            <span id="result-ready-text"></span>
+          </span>
+        </div>
 
         <!-- Which step of the fallback chain is speaking; js/mode-banner.js decides. -->
         <div id="mode-banner" class="mode-banner" role="note" aria-labelledby="mode-title" aria-live="polite" hidden>

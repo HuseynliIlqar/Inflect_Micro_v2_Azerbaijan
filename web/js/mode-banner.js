@@ -31,6 +31,21 @@ export function bannerState({ voice, backend, precision, fallbacks = [], fullQua
   return gpuFailure ? { kind: "gpu-failed", action: null, gpuFailure } : none;
 }
 
+/**
+ * The label keys for a banner's title and text. A phone gets its own plain
+ * words for the two modes it lives in; everything else reads the same.
+ *
+ * @param {{ kind: string }} state  from bannerState
+ * @returns {{ title: string, text: string|null }}
+ */
+export function bannerCopyKeys({ kind }, { phone = false } = {}) {
+  const key = { fast: "fast", full: "full", "int8-failed": "int8_failed", "gpu-failed": "gpu_failed" }[kind];
+  if (kind === "gpu-failed") return { title: `mode_${key}_title`, text: null };
+  if (phone && kind === "fast") return { title: "mode_fast_title_phone", text: "mode_fast_text_phone" };
+  if (phone && kind === "full") return { title: "mode_full_title", text: "mode_full_text_phone" };
+  return { title: `mode_${key}_title`, text: `mode_${key}_text` };
+}
+
 /** The badge's parts: ["GPU", "fp32"] or ["CPU", "int8", { threads: 4 }]. */
 export function badgeParts({ backend, precision, threads = 1 }) {
   if (!backend || !precision) return [];

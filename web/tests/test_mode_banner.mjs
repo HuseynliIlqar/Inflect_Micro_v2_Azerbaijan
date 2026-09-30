@@ -1,5 +1,5 @@
 // Which mode banner the page shows, and the diagnostics line a tester copies.
-import { bannerState, badgeParts, diagnosticsLine } from "../js/mode-banner.js";
+import { bannerState, badgeParts, diagnosticsLine, bannerCopyKeys } from "../js/mode-banner.js";
 
 const failures = [];
 let checked = 0;
@@ -116,6 +116,15 @@ expect(
   true,
 );
 expect("a desktop", diagnosticsLine({ voice: "az", backend: "webgpu", precision: "fp32" }).includes("phone=no | gpu=default"), true);
+
+// -- the words on a phone -----------------------------------------------------------
+
+expect("fast mode on a desktop", bannerCopyKeys({ kind: "fast" }), { title: "mode_fast_title", text: "mode_fast_text" });
+expect("fast mode on a phone reads plainly", bannerCopyKeys({ kind: "fast" }, { phone: true }), { title: "mode_fast_title_phone", text: "mode_fast_text_phone" });
+expect("full quality on a phone", bannerCopyKeys({ kind: "full" }, { phone: true }), { title: "mode_full_title", text: "mode_full_text_phone" });
+expect("full quality on a desktop", bannerCopyKeys({ kind: "full" }), { title: "mode_full_title", text: "mode_full_text" });
+expect("int8 failed", bannerCopyKeys({ kind: "int8-failed" }, { phone: true }), { title: "mode_int8_failed_title", text: "mode_int8_failed_text" });
+expect("a GPU failure has a title and no fixed text", bannerCopyKeys({ kind: "gpu-failed" }), { title: "mode_gpu_failed_title", text: null });
 
 if (failures.length) {
   console.log(`FAIL ${failures.length} of ${checked}`);

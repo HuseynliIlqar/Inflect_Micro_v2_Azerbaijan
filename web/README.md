@@ -17,6 +17,8 @@ nothing and never sleeps.
 | `js/tts.js` | The ONNX graphs, the pauses between chunks, the bleep and WAV encoding |
 | `js/az-censor.js` | `censor_az` ported from `aztts/az_profanity.py`; always on here |
 | `js/waveform.js` | The result's waveform: bar heights, drawing, click-to-seek |
+| `js/wave-view.js` | That waveform wired to the page: redraws on play, resize and theme |
+| `js/reveal.js` | When a finished clip is off screen, scroll to it (phones lost the result) |
 | `js/backend-plan.js` | The fallback chain: which backend and precision to try, in what order |
 | `js/mode-banner.js` | What the page says about it: the mode banner, the badge, the diagnostics line |
 | `js/device-check.js` | The device verdict on page load, and which next step fits an error |
@@ -73,7 +75,14 @@ computed wrong durations -- the same sentence and seed came out 4.03 s and
 4.12 s long where the CPU gives 3.79 s every time -- and lost the WebGPU
 instance after each use. `?backend=webgpu` still tries the GPU on a phone, for
 testing; the device card says *Phone -- running on the processor* and the
-diagnostics line carries `phone=yes | gpu=skipped-on-phone`. An iPad in its
+diagnostics line carries `phone=yes | gpu=skipped-on-phone`. A phone visitor is told
+this in plain words -- the device popup, a note under *Speak* and the mode
+banner say the speech is made on the phone, so it is slower and simplified,
+and that a computer with Chrome or Edge gives full speed and quality;
+`web/tests/test_phone_copy.mjs` keeps those texts free of jargon. When a clip
+is ready the result gets a *Ready* chip and a pulse, and the page scrolls to it
+if it is off screen -- not while the visitor is typing or the device dialog is
+open, and without smooth scrolling under reduced motion. An iPad in its
 default desktop mode reports a Mac and keeps WebGPU.
 
 ## The fallback chain

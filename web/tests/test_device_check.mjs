@@ -112,7 +112,7 @@ for (const lang of ["az", "en"]) {
   const t = (key, values) => label(lang, key, values);
   const copy = deviceCopy(deviceVerdict({ gpu: true, phone: true, threads: 4 }), t);
   expect(`[${lang}] the phone card has its own title`, copy.title, t("device_title_phone"));
-  expect(`[${lang}] the phone text names the threads`, copy.text.includes("4"), true);
+  expect(`[${lang}] the phone text is the plain one`, copy.text, t("device_text_phone"));
   expect(`[${lang}] the phone note says why WebGPU is off`, copy.note, t("device_note_phone"));
 }
 
