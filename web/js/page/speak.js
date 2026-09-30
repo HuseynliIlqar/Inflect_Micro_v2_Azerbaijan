@@ -9,15 +9,10 @@ import { createWaveView } from "../ui/wave-view.js";
 import { needsReveal } from "../ui/reveal.js";
 import { els } from "./dom.js";
 import { APPLE_MOBILE, state, t } from "./context.js";
-import { createWorkerClient } from "./worker-client.js";
+import { client } from "./client.js";
 import { renderTextCheck } from "./text-view.js";
 import { setProgress, showProgress, startClock } from "./progress-view.js";
 import { renderBadge, renderModeBanner, showStats } from "./mode-view.js";
-
-const client = createWorkerClient({
-  url: new URL("../worker.js", import.meta.url),
-  workerError: () => new Error(t("error_worker")),
-});
 
 const wave = createWaveView({ canvas: els.wave, box: els.waveBox, audio: els.audio });
 
@@ -61,6 +56,8 @@ function readOptions(requestedVoice) {
     normalize: requestedVoice === "az" && els.normalise.checked,
     maxWords: Number(els.maxWords.value),
     fullQuality: state.fullQuality,
+    // The device check's order of backends; the worker guesses without it.
+    plan: state.calibration?.plan ?? null,
   };
 }
 
@@ -119,7 +116,7 @@ function showFailure(error) {
 }
 
 export async function speak() {
-  if (state.busy) return;
+  if (state.busy || state.checking) return;
   const check = renderTextCheck({ insist: true });
   if (check.error) {
     els.text.focus();

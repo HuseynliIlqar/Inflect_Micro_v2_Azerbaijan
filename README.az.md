@@ -165,10 +165,19 @@ göndərilmir. Səhifə yükləndikdən sonra internetsiz də işləyir.
 - JavaScript-ə portlanmış azərbaycanca mətn qatı
 - Sintez Web Worker-də gedir, ona görə səhifə donmur və irəliləyiş zolağı göstərilir
 
-**Playground yavaş görünürsə, səbəb modeldə yox, brauzerdədir.** Telefonda
-model həmişə prosessorda işləyir — telefon brauzerlərində WebGPU səhv uzunluqlar
-hesablayırdı və daha sürətli deyildi — WebGPU olmayan brauzerlərdə də (məsələn,
-Firefox) belədir. Prosessor yolu int8 decoder ilə işləyir: təxminən 1.5 dəfə
+**İlk açılışda səhifə cihazı ölçür.** Səhifədən istifadə etməzdən əvvəl
+brauzerin WebGPU verib-vermədiyi yoxlanılır, sonra qısa bir sınaq cümləsi
+prosessorda və, varsa, qrafik prosessorda səsləndirilir: hər qaçış ölçülür və
+səs modelin kompüterdə verdiyi nəticə ilə müqayisə olunur. Səsi fərqli çıxan
+GPU istifadə olunmur — Redmi Note 10 Pro-da WebGPU cümlələri 0.09–0.33 s uzun
+edirdi. Yoxlamadan keçənlərin ən sürətlisi seçilir və səhifə sadə sözlərlə
+deyir: burada rahat, yoxsa yavaş işləyəcək, bir cümlə neçə saniyə çəkəcək və
+niyə. Nəticə brauzerdə saxlanılır; brauzer, onun GPU-su və ya model dəyişəndə
+yenidən ölçülür.
+
+**Playground yavaş görünürsə, səbəb modeldə yox, brauzerdədir.** WebGPU olmayan
+brauzerlərdə (məsələn, Firefox) model prosessorda işləyir; yoxlamanın rədd
+etdiyi GPU-da da belədir. Prosessor yolu int8 decoder ilə işləyir: təxminən 1.5 dəfə
 sürətlidir və yarı həcmdə yüklənir. Onun səsə təsiri modelin
 iki oxunuşu arasındakı öz fərqindən kiçik ölçülüb; səhifə bu rejimin işlədiyini
 bildirir (`?precision=fp32` onu söndürür).

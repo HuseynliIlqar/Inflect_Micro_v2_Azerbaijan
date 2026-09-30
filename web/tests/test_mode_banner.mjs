@@ -126,6 +126,18 @@ expect("full quality on a desktop", bannerCopyKeys({ kind: "full" }), { title: "
 expect("int8 failed", bannerCopyKeys({ kind: "int8-failed" }, { phone: true }), { title: "mode_int8_failed_title", text: "mode_int8_failed_text" });
 expect("a GPU failure has a title and no fixed text", bannerCopyKeys({ kind: "gpu-failed" }), { title: "mode_gpu_failed_title", text: null });
 
+// The device check's line: what was measured, and the GPU policy it replaces.
+{
+  const measured = diagnosticsLine({
+    voice: "az", backend: "wasm", precision: "int8", phone: true,
+    check: "check=wasm/int8@0.80 gpu:wrong-output [wasm/int8:ok@0.80,webgpu/fp32:length@0.60]",
+  });
+  expect("a measured device says so", measured.includes("gpu=measured"), true);
+  expect("the check is in the line", measured.includes("check=wasm/int8@0.80 gpu:wrong-output"), true);
+  const unmeasured = diagnosticsLine({ voice: "az", backend: "wasm", precision: "int8", phone: true, check: "check=none" });
+  expect("no check: the phone policy stands", unmeasured.includes("gpu=skipped-on-phone"), true);
+}
+
 if (failures.length) {
   console.log(`FAIL ${failures.length} of ${checked}`);
   for (const f of failures) {

@@ -77,6 +77,8 @@ help, Markdown. Azerbaijani appears only as *language data*:
 - `CLITICS`, `WEAK_HEADS`, `_WIDE_WEAK`, `_PARTICIPLE_WORDS` in `az_prosody.py`
 - `PROFANE_STEMS`, `CLEAN_PREFIXES`, `PROFANE_WORDS` in `az_profanity.py`
   (and their copies in `web/js/text/az-censor.js`)
+- `CALIBRATION_LABELS` in `web/js/ui/i18n-calibration.js` (the device check's
+  words) and `TEXT` in `tools/calibration_reference.py` (its test sentence)
 - the `_AZ` table in `webui/i18n.py` -- the interface's own labels; the page has
   to speak Azerbaijani, and this is the only module where it does
 - phoneme strings anywhere
@@ -122,7 +124,8 @@ that into "free for commercial use".
   Without it, printing `ə` on a Windows console raises `UnicodeEncodeError`.
   Currently: `say.py`, `app.py`, `tools/seed_sweep.py`,
   `tools/audio_postprocess.py`, `tools/fetch_web_runtime.py`,
-  `tools/quantize_decoder.py`, `training/scripts/compare_checkpoints.py`.
+  `tools/quantize_decoder.py`, `tools/calibration_reference.py`,
+  `training/scripts/compare_checkpoints.py`.
 - **Step order in `normalize_az()` is load-bearing.** Abbreviations run first so
   their full stops are not mistaken for sentence ends; acronyms run last so
   Roman numerals win the `II`-style ambiguity. Adding a step means choosing its
@@ -216,6 +219,8 @@ stylesheets of 640-800 lines loose at its top level, next to the page.
 | Change how the English base model is spoken | `aztts/en_voice.py` |
 | Audio cleanup, seed selection | `tools/` |
 | Rebuild the int8 decoder the playground runs on the CPU | `tools/quantize_decoder.py` |
+| Change the playground's first-visit device check | `web/js/engine/{gpu-probe,calibrate,fingerprint,calibration-verdict}.js`, `web/js/page/calibration*.js` |
+| Regenerate the device check's reference after `web/onnx/` changes | `tools/calibration_reference.py` |
 | Change the self-hosted onnxruntime-web version | `tools/fetch_web_runtime.py` (`VERSION` + integrity) |
 | Anything about how the model was trained | `training/` (archive; the pod is gone) |
 | Publish to GitHub / HF / Kaggle | `packaging/PUBLISHING.md` |

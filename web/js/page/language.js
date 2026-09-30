@@ -2,9 +2,9 @@
 
 import { DEFAULT_LANGUAGE, label, LABELS } from "../ui/i18n.js";
 import { els } from "./dom.js";
-import { PHONE, QUERY, VOICES, state, t } from "./context.js";
+import { VOICES, state, t } from "./context.js";
 import { device } from "./device.js";
-import { renderBadge, renderModeBanner, renderSlowNote, showStats } from "./mode-view.js";
+import { renderBadge, renderModeBanner, renderPhoneNote, renderSlowNote, showStats } from "./mode-view.js";
 import { renderTextCheck } from "./text-view.js";
 
 const EXAMPLES = {
@@ -110,7 +110,7 @@ export function applyLanguage(next) {
   if (state.lastResult) renderBadge(state.lastResult);
   device.setLanguage(t);
   renderTextCheck();
-  els.phoneNote.hidden = !(PHONE && !QUERY.forceGpu);
+  renderPhoneNote();
 
   markPressed("[data-language]", "language", state.language);
   applyVoice(state.voice);

@@ -33,6 +33,7 @@ const PHONE_TECH = ["tech_wasm", "tech_threads", "tech_gpu", "tech_int8", "tech_
 
 /** The title and text a verdict reads as, in the current language. */
 export function deviceCopy(verdict, t) {
+  if (verdict.level === "measured") return measuredCopy(verdict.copy, t);
   const text = {
     gpu: () => t("device_text_gpu"),
     phone: () => t("device_text_phone", { threads: verdict.threads }),
@@ -49,6 +50,17 @@ export function deviceCopy(verdict, t) {
     : verdict.level === "phone" ? t("device_note_phone") : "";
   const tech = verdict.level === "phone" ? PHONE_TECH.map((key) => t(key, { threads: verdict.threads })) : [];
   return { title, text, note, tech };
+}
+
+// A measured verdict (js/ui/calibration-copy.js): the reasons are its "why".
+function measuredCopy(copy, t) {
+  const say = ({ key, values }) => t(key, values);
+  return {
+    title: t(copy.title),
+    text: say(copy.summary),
+    note: copy.runsOn ? say(copy.runsOn) : "",
+    tech: copy.reasons.map(say),
+  };
 }
 
 // A little longer than the closing animation in css/components/dialog.css.
@@ -89,7 +101,7 @@ export function createDeviceView(els, { directUrl }) {
     const { title, text, note, tech } = deviceCopy(verdict, t);
     els.dialog.dataset.tone = verdict.tone;
     els.dialogTechOpen.hidden = tech.length === 0;
-    els.dialogTechOpen.textContent = t("tech_label");
+    els.dialogTechOpen.textContent = t(verdict.level === "measured" ? "cal_why" : "tech_label");
     els.dialogTechBack.textContent = t("tech_back");
     els.dialogTechList.replaceChildren(...tech.map((line) => {
       const item = document.createElement("li");
@@ -97,7 +109,8 @@ export function createDeviceView(els, { directUrl }) {
       return item;
     }));
     els.dialogMeter.dataset.bars = String(verdict.bars);
-    els.dialogTitle.textContent = showingTech ? t("tech_title") : title;
+    const techTitle = t(verdict.level === "measured" ? "cal_why" : "tech_title");
+    els.dialogTitle.textContent = showingTech ? techTitle : title;
     els.dialogText.textContent = text;
     els.dialogNote.textContent = note;
     els.dialogNote.hidden = !note;
@@ -106,6 +119,8 @@ export function createDeviceView(els, { directUrl }) {
     els.dialogDirect.hidden = verdict.action !== "open-direct";
     els.dialogDirect.href = directUrl;
     els.dialogDirect.textContent = t("dialog_open_direct");
+    els.dialogRemeasure.hidden = verdict.level !== "measured";
+    els.dialogRemeasure.textContent = t("cal_remeasure");
   }
 
   // The technical reasons replace the plain words rather than stacking under
@@ -208,6 +223,11 @@ export function createDeviceView(els, { directUrl }) {
       renderCard();
       if (verdict.dialog && readDismissed() !== verdict.level) openDialog();
       else announceAsToast();
+    },
+    /** A verdict the visitor has just been shown elsewhere: the card only. */
+    show(next) {
+      verdict = next;
+      renderCard();
     },
     /** A revised verdict mid-session (WebGPU failed): card and a toast. */
     revise(next, reason) {

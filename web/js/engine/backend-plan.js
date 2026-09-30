@@ -41,6 +41,32 @@ export function fallbackPlan({
   ];
 }
 
+/**
+ * The device check's plan (js/engine/calibration-verdict.js) for one voice:
+ * without the int8 step when the voice has no int8 decoder or full quality is
+ * on, and with the CPU fp32 step last, always.
+ *
+ * @param {{ backend: string, precision: string }[]} plan
+ * @param {{ hasInt8?: boolean, fullQuality?: boolean }} voice
+ */
+export function voicePlan(plan, { hasInt8 = false, fullQuality = false } = {}) {
+  const kept = plan.filter((step) =>
+    !sameStep(step, CPU_FP32) && (step.precision !== "int8" || (hasInt8 && !fullQuality)));
+  return [...kept, CPU_FP32];
+}
+
+/**
+ * Only the three known steps, in the order given -- a plan that arrives from
+ * the page (and so from storage) is not trusted as it is. `null` when none.
+ */
+export function knownSteps(plan) {
+  if (!Array.isArray(plan)) return null;
+  const known = plan
+    .map((step) => [GPU_FP32, CPU_INT8, CPU_FP32].find((candidate) => sameStep(candidate, step)))
+    .filter((step, index, all) => step && all.indexOf(step) === index);
+  return known.length ? known : null;
+}
+
 /** @returns {boolean} */
 export function sameStep(a, b) {
   return a?.backend === b?.backend && a?.precision === b?.precision;

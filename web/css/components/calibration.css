@@ -1,0 +1,138 @@
+/* -- the device check: the screen on the first visit ----------------------------
+   It is a .device-dialog too, so the border, backdrop, animation and the
+   compact rules for small phones come from dialog.css and dialog-compact.css. */
+
+.calibration {
+  width: min(32rem, calc(100vw - 32px));
+}
+
+/* The dialog takes focus only so a screen reader starts at its title while no
+   button exists yet; it is not a control, so it draws no ring. */
+.calibration:focus {
+  outline: none;
+}
+
+.calibration-measuring,
+.calibration-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.calibration-progress {
+  height: 8px;
+  margin-top: 0.3rem;
+}
+
+.calibration-stage {
+  min-height: 2.8em; /* two lines, so the steps below do not jump */
+  margin: 0;
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+/* One row per step: a dot, the step, and its outcome on the right. */
+.calibration-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+
+.calibration-steps li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.4rem 0;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+
+.calibration-steps li[data-status="active"],
+.calibration-steps li[data-status="done"],
+.calibration-steps li[data-status="failed"] {
+  color: var(--ink);
+}
+
+.calibration-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border: 2px solid var(--field-line);
+  border-radius: 50%;
+  transform: translateY(0.05rem);
+}
+
+[data-status="active"] .calibration-dot {
+  border-color: var(--accent);
+  background: var(--accent);
+  animation: calibration-pulse 1s ease-in-out infinite alternate;
+}
+
+[data-status="done"] .calibration-dot {
+  border-color: var(--good-line);
+  background: var(--good-line);
+}
+
+[data-status="failed"] .calibration-dot {
+  border-color: var(--bad-line);
+  background: var(--bad-line);
+}
+
+[data-status="skipped"] .calibration-dot {
+  border-style: dashed;
+}
+
+@keyframes calibration-pulse {
+  to {
+    opacity: 0.35;
+  }
+}
+
+.calibration-detail {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+
+[data-status="failed"] .calibration-detail {
+  color: var(--bad-ink);
+}
+
+.calibration-why {
+  margin: 0.3rem 0 0;
+  font-size: 0.95rem;
+  color: var(--ink);
+}
+
+.calibration-reasons {
+  margin: 0;
+  padding-inline-start: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.calibration-reasons li + li {
+  margin-top: 0.35rem;
+}
+
+.calibration .field-error {
+  margin: 0;
+}
+
+/* The narrowest phones: the outcome goes under its step instead of beside it. */
+@media (max-width: 340px) {
+  .calibration-steps li {
+    grid-template-columns: auto 1fr;
+  }
+
+  .calibration-detail {
+    grid-column: 2;
+    text-align: start;
+  }
+}

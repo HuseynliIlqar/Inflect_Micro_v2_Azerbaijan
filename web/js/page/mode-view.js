@@ -7,12 +7,14 @@ import { chunkCount } from "../ui/i18n.js";
 import { SAMPLE_RATE } from "../engine/audio.js";
 import { bannerState, badgeParts, diagnosticsLine, bannerCopyKeys } from "../ui/mode-banner.js";
 import { els } from "./dom.js";
-import { DIRECT_URL, IN_FRAME, PHONE, QUERY, state, t } from "./context.js";
+import { calibrationLine } from "../ui/calibration-copy.js";
+import { DIRECT_URL, IN_FRAME, PHONE, QUERY, phoneOnCpu, state, t } from "./context.js";
 
 /** The CPU-path note: how slow to expect, and the faster link when framed. */
 export function renderSlowNote() {
-  // On a phone the phone note already says this, in plainer words.
-  els.slowNote.hidden = state.backend !== "wasm" || PHONE;
+  // On a phone the phone note already says this, in plainer words; after the
+  // device check, its verdict says it with a measured number instead.
+  els.slowNote.hidden = state.backend !== "wasm" || PHONE || Boolean(state.calibration);
   if (els.slowNote.hidden) return;
   if (state.threads > 1) {
     els.slowNote.textContent = t("slow_note_threads", { threads: state.threads });
@@ -37,7 +39,7 @@ export function renderModeBanner() {
   if (els.modeBanner.hidden) return;
 
   els.modeBanner.dataset.kind = banner.kind;
-  const copy = bannerCopyKeys(banner, { phone: PHONE && !QUERY.forceGpu });
+  const copy = bannerCopyKeys(banner, { phone: phoneOnCpu() });
   els.modeTitle.textContent = t(copy.title);
   els.modeText.textContent = copy.text ? t(copy.text) : "";
   els.modeText.hidden = !copy.text;
@@ -48,6 +50,14 @@ export function renderModeBanner() {
     els.modeAction.textContent = t(`action_${banner.action}`);
     els.modeAction.dataset.action = banner.action;
   }
+}
+
+/**
+ * The phone note under Speak ("a sentence takes 10-20 seconds"): a guess, so
+ * only while there is no measured verdict to say it better.
+ */
+export function renderPhoneNote() {
+  els.phoneNote.hidden = !(PHONE && !QUERY.forceGpu) || Boolean(state.calibration);
 }
 
 /** "CPU · int8 · 4 threads" beside the download button. */
@@ -93,6 +103,7 @@ function diagnostics() {
     elapsed: lastResult?.elapsed,
     chunks: lastResult?.chunks,
     userAgent: navigator.userAgent,
+    check: calibrationLine(state.calibration),
   });
 }
 

@@ -59,10 +59,12 @@ const oneLine = (text) => String(text ?? "").replace(/\s+/gu, " ").trim();
 export function diagnosticsLine({
   voice, backend, precision, threads = 1, isolated = false, framed = false, fullQuality = false,
   phone = false, forceGpu = false, fallbacks = [], seconds, elapsed, chunks, userAgent = "",
+  check = "",
 }) {
   // A phone skips WebGPU by policy (js/engine/backend-plan.js); say so, so a report
-  // from a phone is not read as a GPU that failed.
-  const gpuPolicy = forceGpu ? "forced" : phone ? "skipped-on-phone" : "default";
+  // from a phone is not read as a GPU that failed. A device check decides instead.
+  const measured = check && check !== "check=none";
+  const gpuPolicy = measured ? "measured" : forceGpu ? "forced" : phone ? "skipped-on-phone" : "default";
   const failed = fallbacks.length
     ? fallbacks.map((f) => `${f.backend}/${f.precision}:${f.stage}(${oneLine(f.message)})`).join(", ")
     : "none";
@@ -83,6 +85,7 @@ export function diagnosticsLine({
     `fallbacks=${failed}`,
     speed,
     `chunks=${chunks ?? "-"}`,
+    ...(check ? [check] : []),
     oneLine(userAgent),
   ].join(" | ");
 }

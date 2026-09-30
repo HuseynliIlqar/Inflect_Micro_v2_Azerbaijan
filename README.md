@@ -166,10 +166,19 @@ anywhere. Once the page has loaded it works with the network switched off.
 - the Azerbaijani text layer ported to JavaScript
 - synthesis in a Web Worker, so the page never freezes, with a progress bar
 
-**If the playground feels slow, it is the browser, not the model.** Phones
-always run it on the CPU --- their browsers' WebGPU computed wrong durations and
-was no faster --- and so does any browser without WebGPU, such as Firefox. The
-CPU path uses an int8 decoder that is about 1.5x faster and half the download;
+**The first visit measures the device.** Before the page can be used, it
+checks whether the browser offers WebGPU, then speaks one short test sentence on
+the processor and, if there is one, on the GPU, timing each run and comparing
+the audio with what the model gives on a PC. A GPU whose audio differs is not
+used --- on a Redmi Note 10 Pro, WebGPU made sentences 0.09--0.33 s too long. The
+fastest backend that passed is chosen, and the page says in plain words whether
+it will run comfortably or slowly here, how many seconds a sentence will take,
+and why. The result is kept in the browser and measured again when the browser,
+its GPU or the model changes.
+
+**If the playground feels slow, it is the browser, not the model.** A browser
+without WebGPU, such as Firefox, runs it on the CPU, and so does any GPU the
+check rejected. The CPU path uses an int8 decoder that is about 1.5x faster and half the download;
 its change to the sound measured smaller than the model's own variation
 between two takes, and the page says when it is in use (`?precision=fp32` turns
 it off). On the

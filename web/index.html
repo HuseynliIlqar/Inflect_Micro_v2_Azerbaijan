@@ -63,6 +63,7 @@
     <link rel="stylesheet" href="./css/components/device-card.css" />
     <link rel="stylesheet" href="./css/components/phone-result.css" />
     <link rel="stylesheet" href="./css/components/dialog-compact.css" />
+    <link rel="stylesheet" href="./css/components/calibration.css" />
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='4' fill='%230b6770'/><path d='M3 8h1M5.5 5v6M8 3v10M10.5 6v4M13 8h0' stroke='white' stroke-width='1.6' stroke-linecap='round'/></svg>"
@@ -138,9 +139,43 @@
         <div class="dialog-actions">
           <button id="dialog-tech-back" type="button" class="ghost dialog-tech-back" hidden></button>
           <a id="dialog-direct" class="ghost" target="_blank" rel="noopener" hidden></a>
+          <button id="dialog-remeasure" type="button" class="ghost" hidden></button>
           <button id="dialog-ok" class="primary dialog-ok" value="ok" autofocus></button>
         </div>
       </form>
+    </dialog>
+
+    <!-- The device check on the first visit: it blocks the page until this
+         device has been measured. js/page/calibration-view.js draws it. -->
+    <dialog id="calibration" class="device-dialog calibration" data-tone="pending" tabindex="-1" aria-labelledby="cal-heading" aria-describedby="cal-intro">
+      <div class="dialog-inner">
+        <div id="cal-measuring" class="calibration-measuring">
+          <h2 id="cal-heading" class="dialog-title"></h2>
+          <p id="cal-intro" class="dialog-note"></p>
+          <div id="cal-progress" class="progress calibration-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-fill"></div>
+          </div>
+          <p id="cal-stage" class="calibration-stage" role="status" aria-live="polite"></p>
+          <ol id="cal-steps" class="calibration-steps"></ol>
+        </div>
+        <div id="cal-result" class="calibration-result" hidden>
+          <div class="dialog-head">
+            <span class="meter meter-large" data-bars="0" aria-hidden="true"><i></i><i></i><i></i></span>
+            <h2 id="cal-result-title" class="dialog-title"></h2>
+          </div>
+          <p id="cal-summary" class="dialog-text"></p>
+          <p id="cal-runs-on" class="dialog-note"></p>
+          <h3 id="cal-why" class="calibration-why"></h3>
+          <ul id="cal-reasons" class="calibration-reasons" aria-labelledby="cal-why"></ul>
+          <p id="cal-note-once" class="dialog-note"></p>
+        </div>
+        <p id="cal-error" class="field-error" role="alert" hidden></p>
+        <div class="dialog-actions">
+          <button id="cal-skip" type="button" class="ghost" hidden></button>
+          <button id="cal-retry" type="button" class="ghost" hidden></button>
+          <button id="cal-continue" type="button" class="primary dialog-ok" hidden></button>
+        </div>
+      </div>
     </dialog>
 
     <!-- Each toast carries its own role: status, or alert for errors. -->

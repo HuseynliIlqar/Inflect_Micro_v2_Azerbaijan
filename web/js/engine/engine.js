@@ -16,9 +16,13 @@
 import { chunkText, DEFAULT_MAX_WORDS } from "../text/az-chunk.js";
 import { normalizeAz } from "../text/az-text.js";
 import { BLEEP, bleepSegments, censorAz } from "../text/az-censor.js";
-import { fallbackPlan, sameStep, stepsAfter } from "./backend-plan.js";
+import { fallbackPlan, sameStep, stepsAfter, voicePlan } from "./backend-plan.js";
 import { SAMPLE_RATE, bleep, concatenate, edgeFade, pauseAfter } from "./audio.js";
 import { makeNoise, tokenise } from "./inputs.js";
+import { hasWebGpu } from "./gpu-probe.js";
+
+// Kept importable from here, where it used to live.
+export { hasWebGpu };
 
 /**
  * The visitor pressed Cancel. Thrown between chunks, never inside
@@ -33,19 +37,6 @@ export class CancelledError extends Error {
 
 function throwIfCancelled(isCancelled) {
   if (isCancelled?.()) throw new CancelledError();
-}
-
-/**
- * True when WebGPU can actually be used. `navigator.gpu` alone is not enough:
- * many phones expose the object and then return no adapter.
- */
-export async function hasWebGpu() {
-  try {
-    const gpu = globalThis.navigator?.gpu;
-    return Boolean(gpu && (await gpu.requestAdapter()));
-  } catch {
-    return false;
-  }
 }
 
 const messageOf = (error) => String(error?.message ?? error);
@@ -89,6 +80,8 @@ export class Engine {
     this.backend = null;
     this.precision = null;
     this.plan = [];
+    // Set by the device check; see setPlan.
+    this.measuredPlan = null;
     // Every step that failed, in order: { backend, precision, stage, message }.
     this.failures = [];
   }
@@ -104,9 +97,18 @@ export class Engine {
    */
   async load(onProgress) {
     if (this.duration && this.decode) return;
+    const plan = this.measuredPlan ? this.voicePlan() : await this.guessedPlan();
+    // A step that already failed in this page is not tried again -- except
+    // the last, which is all that is left.
+    this.plan = plan.filter((step, index) => index === plan.length - 1 || !this.hasFailed(step));
+    await this.loadFirstWorking(this.plan, onProgress);
+  }
+
+  /** Without the device check: the chain as backend-plan.js guesses it. */
+  async guessedPlan() {
     // A phone does not even ask for an adapter unless the GPU was forced.
     const wantsGpu = !this.preferWasm && (!this.phone || this.forceGpu);
-    const plan = fallbackPlan({
+    return fallbackPlan({
       gpu: wantsGpu && (await hasWebGpu()),
       preferWasm: this.preferWasm,
       phone: this.phone,
@@ -114,10 +116,29 @@ export class Engine {
       hasInt8: Boolean(this.int8DecodePath),
       fullQuality: this.fullQuality,
     });
-    // A step that already failed in this page is not tried again -- except
-    // the last, which is all that is left.
-    this.plan = plan.filter((step, index) => index === plan.length - 1 || !this.hasFailed(step));
-    await this.loadFirstWorking(this.plan, onProgress);
+  }
+
+  voicePlan() {
+    return voicePlan(this.measuredPlan, {
+      hasInt8: Boolean(this.int8DecodePath),
+      fullQuality: this.fullQuality,
+    });
+  }
+
+  /**
+   * The device check's plan (js/engine/calibrate.js) in place of the guess;
+   * `null` returns to the guess. Loaded sessions stay only if they are still
+   * the plan's first step.
+   */
+  async setPlan(plan) {
+    const next = plan?.length ? plan : null;
+    if (JSON.stringify(next) === JSON.stringify(this.measuredPlan)) return;
+    this.measuredPlan = next;
+    if (!this.decode) return;
+    const first = this.measuredPlan ? this.voicePlan()[0] : null;
+    if (!sameStep(first, { backend: this.backend, precision: this.precision })) await this.release();
+    // Kept sessions: the chain walked on a failure must still be the new plan.
+    else this.plan = this.voicePlan();
   }
 
   hasFailed(step) {
@@ -247,7 +268,12 @@ export class Engine {
    * `noise` overrides the drawn `zp_noise`; the parity test passes zeros so
    * the browser's output can be compared with onnxruntime's in Python.
    */
-  async speakPhonemes(phonemes, { speed, variation, seed, noise: given }) {
+  async speakPhonemes(phonemes, settings) {
+    return edgeFade(await this.rawWaveform(phonemes, settings));
+  }
+
+  /** The decoder's output as it is, unfaded -- what the device check compares. */
+  async rawWaveform(phonemes, { speed, variation, seed, noise: given }) {
     const { Tensor } = this.ort;
     const tokens = tokenise(phonemes);
     if (!tokens.length) return new Float32Array(0);
@@ -276,7 +302,7 @@ export class Engine {
       zp_noise: new Tensor("float32", noise, mean.dims),
       noise_scale: new Tensor("float32", Float32Array.from([variation]), []),
     });
-    return edgeFade(decodeOutputs.waveform.data);
+    return decodeOutputs.waveform.data;
   }
 
   /** One chunk -> waveform, with a bleep wherever the censor left one. */

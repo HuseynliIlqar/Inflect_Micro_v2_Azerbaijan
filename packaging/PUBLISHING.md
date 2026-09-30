@@ -159,6 +159,17 @@ It caps its own memory (3 GiB by default, `--memory-gib`) and calibrates one
 sample at a time. Without that, onnxruntime's calibrator holds ~24 GiB of
 activations and froze a 16 GB machine.
 
+The playground's device check compares every backend's audio with a reference
+made from these graphs. Regenerate it whenever any file in `web/onnx/` (the
+Azerbaijani ones) changes -- otherwise every backend fails the check:
+
+```bash
+python tools/calibration_reference.py  # -> web/js/engine/calibration-reference.js
+```
+
+The file carries a hash of the graphs, so visitors who stored a verdict for the
+old ones are measured again.
+
 #### Regenerating the golden files
 
 `web/` is a port of the Python text layer, so its tests compare against output
@@ -207,6 +218,12 @@ node web/tests/test_waveform.mjs
 node web/tests/test_reveal.mjs
 node web/tests/test_phone_copy.mjs
 node web/tests/test_text_check.mjs
+node web/tests/test_fingerprint.mjs
+node web/tests/test_calibration_verdict.mjs
+node web/tests/test_calibrate.mjs
+node web/tests/test_calibration_progress.mjs
+node web/tests/test_calibration_store.mjs
+node web/tests/test_calibration_copy.mjs
 ```
 
 ### The Gradio Space (needs Pro)

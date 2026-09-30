@@ -18,6 +18,11 @@
  *   in:  { type: "cancel", id } -- handled at once, not queued; the request
  *        stops before its next chunk (or before it starts, if still queued)
  *   out: { id, type: "cancelled" }
+ *   in:  { id, kind: "calibrate", options: { framed } } -- the device check
+ *        (js/engine/device-check.js), progress as it measures, then
+ *   out: { id, type: "result", calibration, threads }
+ *   options.plan on a speech request is the check's plan; without it the
+ *        engine guesses the chain from the user agent.
  */
 
 // onnxruntime-web 1.30.0, served from this origin rather than a CDN: WebKit --
@@ -29,8 +34,9 @@ import * as ort from "../vendor/onnxruntime-web/ort.webgpu.min.mjs";
 import { phonemize, loadPhonemizer } from "./engine/phonemize.js";
 import { CancelledError, Engine } from "./engine/engine.js";
 import { fetchModels } from "./engine/fetch-model.js";
-import { planOptionsFromQuery, thisIsPhone } from "./engine/backend-plan.js";
+import { knownSteps, planOptionsFromQuery, thisIsPhone } from "./engine/backend-plan.js";
 import { checkText } from "./text/text-check.js";
+import { checkDevice } from "./engine/device-check.js";
 
 ort.env.wasm.wasmPaths = new URL("../vendor/onnxruntime-web/", import.meta.url).href;
 // Threads need cross-origin isolation, which a static Space does not send;
@@ -79,8 +85,24 @@ const ENGINES = {
 // arrives, read by the request it names at its next checkpoint.
 const cancelled = new Set();
 
-async function handle({ id, voice, text, options }) {
+async function calibrateDevice(post, options) {
+  const calibration = await checkDevice(ENGINES.az, {
+    threads,
+    framed: Boolean(options?.framed),
+    preferWasm,
+    forceGpu,
+    fullQuality,
+    onProgress: (stage, detail) => post({ type: "progress", stage, ...detail }),
+  });
+  post({ type: "result", calibration, threads });
+}
+
+async function handle({ id, kind, voice, text, options }) {
   const post = (message, transfer) => self.postMessage({ id, ...message }, transfer ?? []);
+  if (kind === "calibrate") {
+    await calibrateDevice(post, options);
+    return;
+  }
   const isCancelled = () => cancelled.has(id);
   const checkpoint = () => {
     if (isCancelled()) throw new CancelledError();
@@ -93,6 +115,7 @@ async function handle({ id, voice, text, options }) {
   // The page's "full quality" choice, per request; the engine reloads only if
   // that changes what runs.
   await engine.setFullQuality(Boolean(options?.fullQuality) || fullQuality);
+  await engine.setPlan(knownSteps(options?.plan));
   const state = () => ({
     backend: engine.backend,
     precision: engine.precision,

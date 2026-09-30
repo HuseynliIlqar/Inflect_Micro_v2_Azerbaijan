@@ -48,7 +48,22 @@ export const state = {
   modeVoice: "az",
   // "Full quality" skips the int8 step; `?precision=fp32` starts with it on.
   fullQuality: QUERY.fullQuality,
+  // The device check's verdict (js/engine/calibration-verdict.js), or null
+  // until it has run -- or if it could not.
+  calibration: null,
+  // True while the device check runs: the worker takes one request at a time,
+  // so Speak waits for it.
+  checking: false,
 };
+
+/**
+ * A phone that will not use its GPU: the plain phone texts apply. The device
+ * check decides when it has run; before that, the user-agent rule does.
+ */
+export function phoneOnCpu() {
+  if (!PHONE) return false;
+  return state.calibration ? state.calibration.chosen?.backend !== "webgpu" : !QUERY.forceGpu;
+}
 
 /** A label in the page's current language. */
 export const t = (key, values) => label(state.language, key, values);

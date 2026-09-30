@@ -12,7 +12,7 @@ import { DEFAULT_LANGUAGE } from "./ui/i18n.js";
 import { applyTheme, initialTheme, readStoredTheme } from "./ui/theme.js";
 import { els } from "./page/dom.js";
 import { state, t } from "./page/context.js";
-import { checkDevice } from "./page/device.js";
+import { remeasure, startDeviceCheck } from "./page/calibration.js";
 import { applyLanguage, applyVoice } from "./page/language.js";
 import { copyDiagnostics } from "./page/mode-view.js";
 import { renderTextCheck } from "./page/text-view.js";
@@ -54,6 +54,10 @@ els.modeAction.addEventListener("click", () => {
   speak();
 });
 els.copyDiagnostics.addEventListener("click", copyDiagnostics);
+els.dialogRemeasure.addEventListener("click", () => {
+  els.dialog.close();
+  remeasure();
+});
 els.phoneWhy.addEventListener("click", () => els.deviceDetails.click());
 els.text.addEventListener("input", () => renderTextCheck());
 els.text.addEventListener("keydown", (event) => {
@@ -63,4 +67,4 @@ els.text.addEventListener("keydown", (event) => {
 applyTheme(initialTheme(readStoredTheme(), location.search), { remember: false });
 applyLanguage(DEFAULT_LANGUAGE);
 els.status.textContent = t("loading");
-checkDevice();
+startDeviceCheck();

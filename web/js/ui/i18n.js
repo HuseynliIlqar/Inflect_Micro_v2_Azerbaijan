@@ -6,6 +6,8 @@
  * Azerbaijani here is label data, not documentation -- see CLAUDE.md.
  */
 
+import { CALIBRATION_LABELS } from "./i18n-calibration.js";
+
 export const DEFAULT_LANGUAGE = "az";
 
 export const LANGUAGE_NAMES = { az: "Azərbaycanca", en: "English" };
@@ -280,8 +282,8 @@ export const LABELS = {
 };
 
 export function label(language, key, values) {
-  const table = LABELS[language] ?? LABELS[DEFAULT_LANGUAGE];
-  let text = table[key] ?? key;
+  const code = LABELS[language] ? language : DEFAULT_LANGUAGE;
+  let text = LABELS[code][key] ?? CALIBRATION_LABELS[code]?.[key] ?? key;
   if (values) {
     for (const [name, value] of Object.entries(values)) {
       text = text.split(`{${name}}`).join(String(value));
