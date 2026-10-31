@@ -1,5 +1,5 @@
 ---
-title: Azerbaijani Text-to-Speech
+title: Avaz — On-device Text-to-Speech
 emoji: 🗣️
 colorFrom: blue
 colorTo: indigo
@@ -11,7 +11,7 @@ custom_headers:
   cross-origin-embedder-policy: require-corp
   cross-origin-opener-policy: same-origin
   cross-origin-resource-policy: cross-origin
-short_description: Free, offline Azerbaijani text-to-speech in your browser
+short_description: On-device text-to-speech, in the browser and on phones
 models:
   - owensong/Inflect-Micro-v2
 datasets:
@@ -19,23 +19,36 @@ datasets:
 tags:
   - text-to-speech
   - tts
-  - azerbaijani
+  - on-device
+  - mobile
   - offline
+  - azerbaijani
+  - english
   - vits
   - onnx
   - webgpu
 ---
 
-# Azerbaijani text-to-speech, in the browser
+# Avaz — text-to-speech that runs on your device
 
-Free, open-source Azerbaijani text-to-speech (`azerbaycan-tts`): a
-9.36M-parameter VITS model speaking Azerbaijani, running **entirely on your
-machine**, with no sign-up and no server. It is a fine-tune of
+**Avaz** is open-source text-to-speech that runs on the device itself -- in the
+browser, on a CPU, with no server. We are building it for natural intonation
+on phones. Today it speaks Azerbaijani and English; Turkish and Russian are
+next (planned, no dates yet). This page is its playground.
+
+The Azerbaijani voice is the Inflect-Micro-v2 Azerbaijani model, a
+9.36M-parameter VITS network and a fine-tune of
 [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)
 by Owen Song: 200,000 steps on 25.07 hours of Azerbaijani speech, 409 of its
-410 tensors carried over bit-identically. Nothing you type is sent anywhere: the model and the phonemiser are
+410 tensors carried over bit-identically. The English voice is that base model,
+unmodified. Nothing you type is sent anywhere: the model and the phonemiser are
 downloaded once, cached by the browser, and run there. Once the page has
-loaded, it works with the network switched off.
+loaded, it works with the network switched off, with no sign-up.
+
+**We are not there yet.** The current model is small and fast, but its
+intonation is still flat, especially over long sentences, and phone browsers
+run it slowly. The weak spots are listed under *Speed* and *Limitations* below,
+and we fix them release by release.
 
 - **Two ONNX graphs per voice** (38 MB) through ONNX Runtime Web, on WebGPU where the
   browser has it -- about 3-5x faster than real time, the same as the Python
@@ -83,7 +96,9 @@ the device.
 One voice, no emotion control, no voice cloning. At 9.36M parameters the speech
 is clear but not fully natural, and the vocoder leaves a metallic resonance on
 some sentences. Intonation flattens over long sentences, which is why the text
-is cut into roughly fifteen-word chunks.
+is cut into roughly fifteen-word chunks. eSpeak NG puts a stress on 92.2% of
+words, so the reading is flat. The Azerbaijani training audio is most likely
+synthetic, which caps the quality.
 
 **Two voices.** The Azerbaijani one is this project's model. The English one is
 [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)
@@ -101,7 +116,8 @@ from a CDN by this page.
 Do not use this voice to impersonate a real person or to produce deceptive
 content.
 
-How it works, its limits and a FAQ (including commercial use), as plain pages:
+The goal, the languages, the weak spots, how it works and a FAQ (including
+commercial use), as plain pages:
 [in English](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about-en.html) ·
 [in Azerbaijani](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html).
 

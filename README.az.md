@@ -1,13 +1,35 @@
-# Azərbaycanca TTS
+# Avaz
 
-Azərbaycan dilində danışan **tam oflayn** mətn→səs modeli. 9.36M parametr,
-24 kHz mono, adi noutbukun prosessorunda **real vaxtdan 2–4 dəfə sürətli**
-işləyir. Server, API açarı, internet — heç biri lazım deyil.
+**Avaz cihazın özündə işləyən açıq mənbəli mətn-nitq (TTS) layihəsidir —
+brauzerdə, prosessorda, serversiz. Onu telefonda təbii intonasiya üçün
+qururuq.** API açarı və qeydiyyat lazım deyil, mətn cihazdan çıxmır.
 
-Bu model Owen Song-un
+**Dillər.** Hazırda azərbaycanca və ingiliscə; növbəti dillər türkcə və
+ruscadır (planlaşdırılıb, hələ tarix yoxdur). Azərbaycan səsi bu reponun
+modelidir, Inflect-Micro-v2 Azerbaijani: 9.36M parametr, 24 kHz mono, adi
+noutbukun prosessorunda **real vaxtdan 2–4 dəfə sürətli** işləyir və tam
+oflayndır. Bu model Owen Song-un
 **[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)**
 checkpoint-inin fine-tune-udur (Apache-2.0) — 25.07 saatlıq azərbaycanca nitq
-üzərində 200.000 addım, 410 tensordan 409-u bit-bit köçürülüb.
+üzərində 200.000 addım, 410 tensordan 409-u bit-bit köçürülüb. İngilis səsi isə
+həmin baza modelin özüdür, dəyişiklik edilmədən.
+
+**Hədəfə hələ çatmamışıq.** İndiki 9.36M parametrli model kiçik və sürətlidir,
+amma intonasiyası hələ yeknəsəqdir, xüsusən uzun cümlələrdə, telefon
+brauzerində isə yavaş işləyir. Zəif yerlərimizi açıq yazırıq və onları
+versiyadan versiyaya düzəldirik.
+
+### Hara gedirik
+
+- **Uzun cümlələrdə intonasiya.** Yeknəsəqləşir, ona görə hələlik mətn təxminən
+  15 sözlük hissələrə bölünür.
+- **Vurğu.** eSpeak NG sözlərin 92.2 faizinə vurğu qoyur, ona görə oxunuş
+  monotondur. Eksperimental `--prosody` qatı hər mətni yaxşılaşdırmır.
+- **Telefonda sürət.** Telefon brauzeri modeli adətən prosessorda işlədir
+  (WebAssembly, int8 dekoder) və bir cümlə bir dəqiqəyə qədər çəkə bilər.
+- **Səs.** Vokoder bəzi cümlələrdə metal tembr yaradır, təlim səs yazıları isə
+  çox güman ki, sintetikdir və bu, keyfiyyətə tavan qoyur.
+- **Bir səs.** Emosiya idarəsi və səs klonlama yoxdur.
 
 > For the English documentation: **[README.md](README.md)**
 

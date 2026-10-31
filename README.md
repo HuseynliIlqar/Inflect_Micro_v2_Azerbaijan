@@ -1,13 +1,35 @@
-# Azerbaijani TTS
+# Avaz
 
-A **fully offline** text-to-speech model that speaks Azerbaijani. 9.36M
-parameters, 24 kHz mono, **2-4x faster than real time** on an ordinary laptop
-CPU. No server, no API key, no internet.
+**Avaz is open-source text-to-speech that runs on the device itself --- in the
+browser, on a CPU, with no server. We are building it for natural intonation
+on phones.** No API key, no account, and the text never leaves the device.
 
-It is a fine-tune of
+**Languages.** Azerbaijani and English today; Turkish and Russian are next
+(planned, no dates yet). The Azerbaijani voice is this repository's model,
+Inflect-Micro-v2 Azerbaijani: 9.36M parameters, 24 kHz mono, **2-4x faster
+than real time** on an ordinary laptop CPU, and fully offline. It is a
+fine-tune of
 **[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)**
 by Owen Song (Apache-2.0) --- 200,000 steps on 25.07 hours of Azerbaijani
-speech, 409 of its 410 tensors carried over bit-identically.
+speech, 409 of its 410 tensors carried over bit-identically. The English voice
+is that base model, unmodified.
+
+**We are not there yet.** The current 9.36M-parameter model is small and fast,
+but its intonation is still flat, especially over long sentences, and phone
+browsers run it slowly. We list our weak spots openly and fix them release by
+release.
+
+### Where it is going
+
+- **Intonation over long sentences.** It flattens, so for now the text is cut
+  into chunks of about 15 words.
+- **Stress.** eSpeak NG stresses 92.2% of words, so the reading is flat. The
+  experimental `--prosody` layer does not improve every text.
+- **Speed on phones.** A phone browser usually runs the model on the CPU
+  (WebAssembly, int8 decoder), and a sentence can take up to a minute.
+- **The sound.** The vocoder leaves a metallic resonance on some sentences, and
+  the training audio is most likely synthetic, which caps the quality.
+- **One voice.** No emotion control, no voice cloning.
 
 > Azərbaycanca oxumaq üçün: **[README.az.md](README.az.md)**
 

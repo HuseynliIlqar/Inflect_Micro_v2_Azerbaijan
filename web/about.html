@@ -3,25 +3,25 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Azərbaycanca mətni səsə çevirmək: pulsuz, oflayn TTS haqqında</title>
+    <title>Avaz — Azərbaycan dilində mətni cihazın özündə səsə çevirən TTS</title>
     <!-- Static on purpose: most AI crawlers run no script. about-en.html says the
          same in English; tests/test_seo.mjs checks both, and the FAQ markup. -->
-    <meta name="description" content="Brauzerdə işləyən pulsuz Azərbaycan TTS: necə işləyir, internetsiz işləyirmi, mətniniz harada qalır, kommersiya istifadəsi və modelin məhdudiyyətləri." />
+    <meta name="description" content="Avaz cihazın özündə işləyən açıq mənbəli mətn-nitq (TTS) layihəsidir: brauzerdə, prosessorda, serversiz. Hazırda azərbaycanca və ingiliscə, sonra türkcə və rusca." />
     <link rel="canonical" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html" />
     <link rel="alternate" hreflang="az" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html" />
     <link rel="alternate" hreflang="en" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about-en.html" />
     <link rel="alternate" hreflang="x-default" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="azerbaycan-tts" />
+    <meta property="og:site_name" content="Avaz" />
     <meta property="og:locale" content="az_AZ" />
     <meta property="og:locale:alternate" content="en_US" />
-    <meta property="og:title" content="Azərbaycanca mətni səsə çevirmək: pulsuz, oflayn TTS haqqında" />
-    <meta property="og:description" content="Brauzerdə işləyən pulsuz Azərbaycan TTS: necə işləyir, internetsiz işləyirmi, mətniniz harada qalır və kommersiya istifadəsi." />
+    <meta property="og:title" content="Avaz — Azərbaycan dilində mətni cihazın özündə səsə çevirən TTS" />
+    <meta property="og:description" content="Cihazın özündə işləyən açıq mənbəli mətn-nitq (TTS); hədəfimiz telefonda təbii intonasiyadır. Hazırda azərbaycanca və ingiliscə, sonra türkcə və rusca." />
     <meta property="og:url" content="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html" />
     <meta property="og:image" content="https://cdn-thumbnails.huggingface.co/social-thumbnails/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#f4f6f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f1519" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0b1013" media="(prefers-color-scheme: dark)" />
     <script src="./js/page/theme-boot.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -34,22 +34,22 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json">
       { "@context": "https://schema.org", "@type": "FAQPage", "inLanguage": "az", "mainEntity": [
-        { "@type": "Question", "name": "Azərbaycan dilində mətni necə səsləndirə bilərəm?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Səsləndirmə səhifəsini açın, mətni yazın və «Səsləndir» düyməsini basın. Səsi oradaca dinləyə və «Endir» düyməsi ilə WAV faylı kimi saxlaya bilərsiniz. Heç nə quraşdırmaq lazım deyil." } },
+        { "@type": "Question", "name": "Avaz nədir?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Avaz cihazın özündə işləyən açıq mənbəli mətn-nitq (TTS) layihəsidir: brauzerdə, prosessorda, serversiz. Onu telefonda təbii intonasiya üçün qururuq. Səsləndirmə səhifəsini açın, mətni yazın və səsləndirin: səsi oradaca dinləyə və WAV faylı kimi saxlaya bilərsiniz. Heç nə quraşdırmaq lazım deyil." } },
+        { "@type": "Question", "name": "Hansı dillərdə danışır?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Hazırda azərbaycanca və ingiliscə. Azərbaycan səsi bizim modelimizdir, Inflect-Micro-v2 Azerbaijani; ingilis səsi isə onun uyğunlaşdırıldığı baza modelin özüdür, Owen Song-un owensong/Inflect-Micro-v2 modeli, heç bir dəyişiklik edilmədən. Növbəti dillər türkcə və ruscadır: planlaşdırılıb, amma hələ tarix yoxdur." } },
         { "@type": "Question", "name": "Pulsuzdurmu? Qeydiyyat lazımdırmı?",
           "acceptedAnswer": { "@type": "Answer", "text": "Pulsuzdur və qeydiyyat tələb etmir. Yeganə limit bir dəfəyə 500 simvoldur; daha uzun mətni hissə-hissə səsləndirin." } },
-        { "@type": "Question", "name": "İnternetsiz işləyirmi?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Bəli. İlk açılışda model (təxminən 37 MB) yüklənir və brauzerdə saxlanılır. Bundan sonra səhifə internet olmadan da səs yaradır." } },
-        { "@type": "Question", "name": "Yazdığım mətn serverə göndərilirmi?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Xeyr. Mətn və hazır səs cihazınızdan çıxmır, çünki model brauzerin içində işləyir. Şəbəkədən yalnız səhifənin, modelin və fonemləşdiricinin faylları yüklənir." } },
-        { "@type": "Question", "name": "Hansı brauzerdə ən sürətli işləyir? Telefonda işləyirmi?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Ən sürətlisi kompüterdə Chrome və ya Edge-dir: orada model WebGPU ilə real vaxtdan sürətli işləyir. Telefonda da işləyir, amma hesablama prosessorda getdiyi üçün daha yavaşdır." } },
+        { "@type": "Question", "name": "İnternetsiz işləyirmi? Mətnim harasa göndərilirmi?",
+          "acceptedAnswer": { "@type": "Answer", "text": "İnternetsiz işləyir və mətniniz heç yerə göndərilmir. İlk açılışda model (təxminən 37 MB) yüklənir və brauzerdə saxlanılır; bundan sonra səhifə internet olmadan da səs yaradır. Mətn və hazır səs cihazınızdan çıxmır, çünki model brauzerin içində işləyir. Şəbəkədən yalnız səhifənin, modelin və fonemləşdiricinin faylları yüklənir." } },
+        { "@type": "Question", "name": "Telefonda işləyirmi?",
+          "acceptedAnswer": { "@type": "Answer", "text": "İşləyir, amma yavaş. Telefon brauzerində model adətən prosessorda işləyir (WebAssembly, int8 dekoderi ilə) və bir cümlə bir dəqiqəyə qədər çəkə bilər. Ən sürətlisi kompüterdə Chrome və ya Edge-dir: orada model WebGPU ilə qrafik prosessorda, real vaxtdan sürətli işləyir. Telefonda sürət və təbii intonasiya əsas işimizdir." } },
         { "@type": "Question", "name": "Kommersiya məqsədilə istifadə etmək olarmı?",
           "acceptedAnswer": { "@type": "Answer", "text": "Bəli: kod və model çəkiləri Apache-2.0 lisenziyalıdır, işlətmək məhdudlaşdırılmır. Yalnız bir şərt var və o, modeldən yox, fonemləşdiricidən gəlir: eSpeak NG və Python tərəfdəki phonemizer GPL-3.0-or-later lisenziyalıdır. Onlarla birləşmiş məhsulu yaymaq — masaüstü tətbiq, konteyner, müştəriyə verilən binar — GPL-3.0 öhdəlikləri gətirir. Çıxış yolu budur: model öncədən fonemləşdirilmiş mətni qəbul edir (accepts_prephonemized_input), ona görə məhsul öz fonemləşdiricisini işlədə bilər. Azərbaycanca təlim datası müəllifinin icazəsi ilə, adının çəkilməsi şərti ilə istifadə olunub. İngilis səsi sintetikdir və Apache-2.0-dır, lakin açıq-çəkidir, açıq-data deyil. Real bir insanı təqlid etmək və aldadıcı məzmun hazırlamaq qadağandır. Bu, hüquqi məsləhət deyil." } },
         { "@type": "Question", "name": "Modeli öz kompüterimdə necə işlədə bilərəm?",
           "acceptedAnswer": { "@type": "Answer", "text": "Kod GitHub-dadır: repozitoriyanı klonlayın, pip install -r requirements.txt edin və python say.py \"Salam.\" işə salın. Model adi noutbuk prosessorunda real vaxtdan 2-4 dəfə sürətli işləyir və internet tələb etmir. Çəkilər Hugging Face-də də var, PyTorch və ONNX formatında." } },
         { "@type": "Question", "name": "Model necə hazırlanıb?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Model Owen Song-un ingilis dilli Inflect-Micro-v2 modelindən (Apache-2.0) uyğunlaşdırılıb: 25.07 saatlıq Azərbaycan nitqi üzərində 200 000 addım öyrədilib. Təlim datası ughurabbasov/azerbaijani-tts-dataset-dir; müəllifi istifadəyə icazə verib və adının çəkilməsini xahiş edib. Səhifədəki ingilis səsi isə baza modelin özüdür: modelin haradan başladığını eşitmək üçün." } }
+          "acceptedAnswer": { "@type": "Answer", "text": "Azərbaycan modeli, Inflect-Micro-v2 Azerbaijani, Owen Song-un ingilis dilli Inflect-Micro-v2 modelindən (Apache-2.0) uyğunlaşdırılıb: 25.07 saatlıq Azərbaycan nitqi üzərində 200 000 addım öyrədilib. Təlim datası ughurabbasov/azerbaijani-tts-dataset-dir; müəllifi istifadəyə icazə verib və adının çəkilməsini xahiş edib. Səhifədəki ingilis səsi isə baza modelin özüdür: Azərbaycan səsinin haradan başladığını eşitmək üçün." } }
       ] }
     </script>
   </head>
@@ -61,20 +61,102 @@
         <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M3 12h2M7.5 8v8M12 4v16M16.5 9v6M21 12h0" />
         </svg>
-        <span class="brand-name">azerbaycan-tts</span>
+        <span class="brand-name">Avaz</span>
       </a>
       <a class="about-lang" href="./about-en.html" hreflang="en" lang="en">English</a>
     </header>
 
     <main id="content" class="about">
-      <h1>Azərbaycan dilində mətni səsə çevirmək — pulsuz və internetsiz</h1>
+      <h1>Avaz — mətni cihazın özündə səsə çevirən TTS</h1>
       <p class="lead">
-        <span translate="no">azerbaycan-tts</span> Azərbaycan dilində yazılmış mətni nitqə çevirən açıq mənbəli
-        modeldir. Hesablamanın hamısı sizin brauzerinizdə gedir: qeydiyyat yoxdur,
-        server yoxdur, mətniniz heç yerə göndərilmir. Səhifə bir dəfə yükləndikdən
-        sonra internet olmadan da işləyir.
+        <span translate="no">Avaz</span> cihazın özündə işləyən açıq mənbəli mətn-nitq
+        (TTS) layihəsidir — brauzerdə, prosessorda, serversiz. Onu telefonda təbii
+        intonasiya üçün qururuq. Hazırda azərbaycanca və ingiliscə danışır. Qeydiyyat
+        yoxdur, mətniniz heç yerə göndərilmir, səhifə bir dəfə yükləndikdən sonra isə
+        internet olmadan da işləyir.
       </p>
       <p><a class="cta" href="./index.html">Səsləndirməyə başla</a></p>
+
+      <section aria-labelledby="goal">
+        <h2 id="goal">Məqsədimiz</h2>
+        <p>
+          Telefonun özündə işləyən və təbii intonasiya ilə oxuyan səs: server yoxdur,
+          qeydiyyat yoxdur, internet lazım deyil, mətn cihazdan çıxmır. Getdiyimiz
+          istiqamət budur.
+        </p>
+        <p>
+          Bu yolda hazırladığımız hər şey açıq mənbəlidir. Kod və model çəkiləri
+          Apache-2.0 lisenziyalıdır, təlim prosesi də açıqdır — hər kəs onları yoxlaya,
+          işlədə və üzərində öz işini qura bilər.
+        </p>
+      </section>
+
+      <section aria-labelledby="languages">
+        <h2 id="languages">Dillər</h2>
+        <ul>
+          <li>
+            <strong>Azərbaycanca</strong> — əsas səs, Inflect-Micro-v2 Azerbaijani
+            modeli. Rəqəmləri, tarixləri, pul məbləğlərini və ixtisarları insan ucadan
+            necə deyirsə, elə oxuyur.
+          </li>
+          <li>
+            <strong>İngiliscə</strong> — Azərbaycan modelinin uyğunlaşdırıldığı baza
+            model, Owen Song-un owensong/Inflect-Micro-v2 modeli, heç bir dəyişiklik
+            edilmədən: Azərbaycan səsinin haradan başladığını eşitmək üçün.
+          </li>
+          <li>
+            <strong>Türkcə və rusca</strong> — növbədədir. Planlaşdırılıb, hələ tarix
+            yoxdur.
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="status">
+        <h2 id="status">Hazırda haradayıq</h2>
+        <p>
+          Hədəfə hələ çatmamışıq. İndiki 9.36M parametrli model kiçik və sürətlidir,
+          amma intonasiyası hələ yeknəsəqdir, xüsusən uzun cümlələrdə, telefon
+          brauzerində isə yavaş işləyir. Zəif yerlərimizi açıq yazırıq və onları
+          versiyadan versiyaya düzəldirik.
+        </p>
+        <ul>
+          <li>
+            <strong>Uzun cümlədə intonasiya yeknəsəqləşir.</strong> Hələlik mətn
+            təxminən 15 sözlük hissələrə bölünür — bu uzunluq sınaqla seçilib. Bu,
+            problemi yumşaldır, amma aradan qaldırmır.
+          </li>
+          <li>
+            <strong>Oxunuş monotondur.</strong> Hərfləri fonemlərə çevirən eSpeak NG
+            sözlərin 92.2 faizinə vurğu qoyur, ona görə az söz önə çıxır. Komanda sətrində
+            eksperimental vurğu qatı var (<code translate="no">--prosody</code>); hər
+            mətni yaxşılaşdırmadığı üçün istəyə bağlı qalır.
+          </li>
+          <li>
+            <strong>Bəzi cümlələrdə metal tembr eşidilir.</strong> Bu, vokoderdən —
+            modelin səsi yaradan hissəsindən gəlir. Repozitoriyadakı təmizləmə aləti onu
+            saxlanılmış səsdə azaldır; səsləndirmə səhifəsi bu aləti işlətmir.
+          </li>
+          <li>
+            <strong>Telefon brauzerində yavaşdır.</strong> Orada model adətən
+            prosessorda işləyir (WebAssembly, int8 dekoderi ilə) və bir cümlə bir
+            dəqiqəyə qədər çəkə bilər. WebGPU olan kompüterdə isə real vaxtdan
+            sürətlidir. Telefonda sürət, intonasiya ilə birlikdə, əsas işimizdir.
+          </li>
+          <li>
+            <strong>Bir səs.</strong> Emosiya idarəsi və səs klonlama yoxdur.
+          </li>
+          <li>
+            <strong>Təlim səs yazıları, çox güman ki, sintetikdir.</strong> Onları yəqin
+            ki, başqa bir TTS sistemi yaradıb, ona görə bu səs o sistemdən yaxşı səslənə
+            bilməz. Daha yaxşı səs üçün daha yaxşı səs yazıları lazımdır.
+          </li>
+        </ul>
+        <p>
+          Kiçik məhdudiyyətlər: bir dəfəyə ən çoxu 500 simvol səsləndirilir; mətn Latın
+          əlifbası ilə yazılmalıdır, çünki başqa əlifbadakı hərflər düzgün oxunmur;
+          söyüşlər bip səsi ilə əvəz olunur.
+        </p>
+      </section>
 
       <section aria-labelledby="how">
         <h2 id="how">Necə işləyir</h2>
@@ -94,26 +176,25 @@
         </p>
       </section>
 
-      <section aria-labelledby="limits">
-        <h2 id="limits">Məhdudiyyətlər</h2>
-        <ul>
-          <li>Bir səs var; emosiya idarəsi və səs klonlama yoxdur.</li>
-          <li>Nitq aydındır, lakin tam təbii deyil: bəzi cümlələrdə metal tembr eşidilir.</li>
-          <li>Latın əlifbası ilə yazılmış mətn üçündür: başqa əlifbadakı hərflər düzgün oxunmur.</li>
-          <li>Bir dəfəyə ən çoxu 500 simvol səsləndirilir.</li>
-          <li>Telefonda və WebGPU olmayan brauzerdə yavaşdır: bir cümlə bir dəqiqəyə qədər çəkə bilər.</li>
-          <li>Söyüşlər bip səsi ilə əvəz olunur.</li>
-        </ul>
-      </section>
-
       <section id="faq" aria-labelledby="faq-title">
         <h2 id="faq-title">Tez-tez verilən suallar</h2>
 
-        <h3>Azərbaycan dilində mətni necə səsləndirə bilərəm?</h3>
+        <h3>Avaz nədir?</h3>
         <p>
-          Səsləndirmə səhifəsini açın, mətni yazın və «Səsləndir» düyməsini basın. Səsi
-          oradaca dinləyə və «Endir» düyməsi ilə WAV faylı kimi saxlaya bilərsiniz.
-          Heç nə quraşdırmaq lazım deyil.
+          Avaz cihazın özündə işləyən açıq mənbəli mətn-nitq (TTS) layihəsidir:
+          brauzerdə, prosessorda, serversiz. Onu telefonda təbii intonasiya üçün
+          qururuq. Səsləndirmə səhifəsini açın, mətni yazın və səsləndirin: səsi
+          oradaca dinləyə və WAV faylı kimi saxlaya bilərsiniz. Heç nə quraşdırmaq
+          lazım deyil.
+        </p>
+
+        <h3>Hansı dillərdə danışır?</h3>
+        <p>
+          Hazırda azərbaycanca və ingiliscə. Azərbaycan səsi bizim modelimizdir,
+          Inflect-Micro-v2 Azerbaijani; ingilis səsi isə onun uyğunlaşdırıldığı baza
+          modelin özüdür, Owen Song-un owensong/Inflect-Micro-v2 modeli, heç bir
+          dəyişiklik edilmədən. Növbəti dillər türkcə və ruscadır: planlaşdırılıb, amma
+          hələ tarix yoxdur.
         </p>
 
         <h3>Pulsuzdurmu? Qeydiyyat lazımdırmı?</h3>
@@ -122,24 +203,22 @@
           daha uzun mətni hissə-hissə səsləndirin.
         </p>
 
-        <h3>İnternetsiz işləyirmi?</h3>
+        <h3>İnternetsiz işləyirmi? Mətnim harasa göndərilirmi?</h3>
         <p>
-          Bəli. İlk açılışda model (təxminən 37&nbsp;MB) yüklənir və brauzerdə saxlanılır.
-          Bundan sonra səhifə internet olmadan da səs yaradır.
+          İnternetsiz işləyir və mətniniz heç yerə göndərilmir. İlk açılışda model
+          (təxminən 37&nbsp;MB) yüklənir və brauzerdə saxlanılır; bundan sonra səhifə
+          internet olmadan da səs yaradır. Mətn və hazır səs cihazınızdan çıxmır, çünki
+          model brauzerin içində işləyir. Şəbəkədən yalnız səhifənin, modelin və
+          fonemləşdiricinin faylları yüklənir.
         </p>
 
-        <h3>Yazdığım mətn serverə göndərilirmi?</h3>
+        <h3>Telefonda işləyirmi?</h3>
         <p>
-          Xeyr. Mətn və hazır səs cihazınızdan çıxmır, çünki model brauzerin içində
-          işləyir. Şəbəkədən yalnız səhifənin, modelin və fonemləşdiricinin faylları
-          yüklənir.
-        </p>
-
-        <h3>Hansı brauzerdə ən sürətli işləyir? Telefonda işləyirmi?</h3>
-        <p>
-          Ən sürətlisi kompüterdə Chrome və ya Edge-dir: orada model WebGPU ilə real
-          vaxtdan sürətli işləyir. Telefonda da işləyir, amma hesablama prosessorda
-          getdiyi üçün daha yavaşdır.
+          İşləyir, amma yavaş. Telefon brauzerində model adətən prosessorda işləyir
+          (WebAssembly, int8 dekoderi ilə) və bir cümlə bir dəqiqəyə qədər çəkə bilər.
+          Ən sürətlisi kompüterdə Chrome və ya Edge-dir: orada model WebGPU ilə qrafik
+          prosessorda, real vaxtdan sürətli işləyir. Telefonda sürət və təbii
+          intonasiya əsas işimizdir.
         </p>
 
         <h3>Kommersiya məqsədilə istifadə etmək olarmı?</h3>
@@ -167,11 +246,12 @@
 
         <h3>Model necə hazırlanıb?</h3>
         <p>
-          Model Owen Song-un ingilis dilli Inflect-Micro-v2 modelindən (Apache-2.0)
-          uyğunlaşdırılıb: 25.07 saatlıq Azərbaycan nitqi üzərində 200 000 addım
-          öyrədilib. Təlim datası ughurabbasov/azerbaijani-tts-dataset-dir; müəllifi
-          istifadəyə icazə verib və adının çəkilməsini xahiş edib. Səhifədəki ingilis
-          səsi isə baza modelin özüdür: modelin haradan başladığını eşitmək üçün.
+          Azərbaycan modeli, Inflect-Micro-v2 Azerbaijani, Owen Song-un ingilis dilli
+          Inflect-Micro-v2 modelindən (Apache-2.0) uyğunlaşdırılıb: 25.07 saatlıq
+          Azərbaycan nitqi üzərində 200 000 addım öyrədilib. Təlim datası
+          ughurabbasov/azerbaijani-tts-dataset-dir; müəllifi istifadəyə icazə verib və
+          adının çəkilməsini xahiş edib. Səhifədəki ingilis səsi isə baza modelin
+          özüdür: Azərbaycan səsinin haradan başladığını eşitmək üçün.
         </p>
       </section>
 

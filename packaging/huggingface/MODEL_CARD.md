@@ -32,6 +32,11 @@ A fine-tune of [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inf
 by Owen Song — 200,000 steps on 25.07 hours of Azerbaijani speech, 409 of its
 410 tensors carried over bit-identically.
 
+This checkpoint is the Azerbaijani voice of **Avaz**, an open-source
+text-to-speech project that runs on the device itself — in the browser, on a
+CPU, with no server — and aims at natural intonation on phones. Turkish and
+Russian are next.
+
 | | |
 | --- | --- |
 | **Hear it** | [The playground](https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan) — runs in your browser, nothing installed |

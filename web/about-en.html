@@ -3,25 +3,25 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Azerbaijani text-to-speech, free and offline: how it works</title>
+    <title>Avaz — on-device text-to-speech for Azerbaijani and English</title>
     <!-- Static on purpose: most AI crawlers run no script. about.html says the
          same in Azerbaijani; tests/test_seo.mjs checks both, and the FAQ markup. -->
-    <meta name="description" content="Free Azerbaijani text-to-speech that runs in your browser: how it works, whether it works offline, where your text goes, commercial use and the model's limits." />
+    <meta name="description" content="Avaz is open-source text-to-speech that runs on your device: in the browser, on a CPU, no server. Azerbaijani and English today; Turkish and Russian next." />
     <link rel="canonical" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about-en.html" />
     <link rel="alternate" hreflang="az" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html" />
     <link rel="alternate" hreflang="en" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about-en.html" />
     <link rel="alternate" hreflang="x-default" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="azerbaycan-tts" />
+    <meta property="og:site_name" content="Avaz" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:locale:alternate" content="az_AZ" />
-    <meta property="og:title" content="Azerbaijani text-to-speech, free and offline: how it works" />
-    <meta property="og:description" content="Free Azerbaijani text-to-speech that runs in your browser: how it works, offline use, where your text goes and commercial use." />
+    <meta property="og:title" content="Avaz — on-device text-to-speech for Azerbaijani and English" />
+    <meta property="og:description" content="Open-source text-to-speech that runs on your device, aiming at natural intonation on phones. Azerbaijani and English today; Turkish and Russian next." />
     <meta property="og:url" content="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about-en.html" />
     <meta property="og:image" content="https://cdn-thumbnails.huggingface.co/social-thumbnails/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#f4f6f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f1519" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0b1013" media="(prefers-color-scheme: dark)" />
     <script src="./js/page/theme-boot.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -34,22 +34,22 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <script type="application/ld+json">
       { "@context": "https://schema.org", "@type": "FAQPage", "inLanguage": "en", "mainEntity": [
-        { "@type": "Question", "name": "How do I turn Azerbaijani text into speech?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Open the playground, type the text and press «Səsləndir» (Speak). You can listen right there and save the audio as a WAV file with «Endir» (Download). Nothing needs to be installed." } },
+        { "@type": "Question", "name": "What is Avaz?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Avaz is open-source text-to-speech that runs on the device itself: in the browser, on a CPU, with no server. We are building it for natural intonation on phones. Open the playground, type the text and have it spoken: you can listen right there and save the audio as a WAV file. Nothing needs to be installed." } },
+        { "@type": "Question", "name": "Which languages does it speak?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Azerbaijani and English today. The Azerbaijani voice is our own model, Inflect-Micro-v2 Azerbaijani; the English one is the base model it was adapted from, owensong/Inflect-Micro-v2 by Owen Song, unmodified. Turkish and Russian are next: they are planned, but there are no dates yet." } },
         { "@type": "Question", "name": "Is it free? Do I need an account?",
           "acceptedAnswer": { "@type": "Answer", "text": "It is free and needs no account. The only limit is 500 characters at a time; speak longer text in parts." } },
-        { "@type": "Question", "name": "Does it work offline?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes. The first visit downloads the model (about 37 MB) and the browser keeps it. After that the page makes speech without the internet." } },
-        { "@type": "Question", "name": "Is my text sent to a server?",
-          "acceptedAnswer": { "@type": "Answer", "text": "No. The text and the audio never leave your device, because the model runs inside the browser. The network is used only to download the files of the page, the model and the phonemiser." } },
-        { "@type": "Question", "name": "Which browser is fastest? Does it work on a phone?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Chrome or Edge on a computer is fastest: there the model runs on WebGPU, faster than real time. It works on a phone too, but more slowly, because the work runs on the processor." } },
+        { "@type": "Question", "name": "Does it work offline? Is my text sent anywhere?",
+          "acceptedAnswer": { "@type": "Answer", "text": "It works offline, and your text is not sent anywhere. The first visit downloads the model (about 37 MB) and the browser keeps it; after that the page makes speech without the internet. The text and the audio never leave your device, because the model runs inside the browser. The network is used only to download the files of the page, the model and the phonemiser." } },
+        { "@type": "Question", "name": "Does it work on a phone?",
+          "acceptedAnswer": { "@type": "Answer", "text": "It works, but slowly. In a phone browser the model usually runs on the processor (WebAssembly, with an int8 decoder), and one sentence can take up to a minute. Chrome or Edge on a computer is fastest: there the model runs on the GPU through WebGPU, faster than real time. Speed on phones and natural intonation are our main work." } },
         { "@type": "Question", "name": "Can I use it commercially?",
           "acceptedAnswer": { "@type": "Answer", "text": "Yes: the code and the model weights are Apache-2.0, and running them is unrestricted. There is one condition, and it comes from the phonemiser, not the model: eSpeak NG, and phonemizer on the Python side, are GPL-3.0-or-later. Redistributing a combined work — a desktop app, a container image, a binary handed to customers — brings GPL-3.0 obligations. The way out: the model accepts pre-phonemised input (accepts_prephonemized_input), so a product can use its own phonemiser. The Azerbaijani training data is used with its author's permission, on condition of attribution. The English voice is synthetic and Apache-2.0, but the release is open-weight, not open-data. Impersonating a real person or producing deceptive content is not permitted. This is not legal advice." } },
         { "@type": "Question", "name": "How do I run the model on my own computer?",
           "acceptedAnswer": { "@type": "Answer", "text": "The code is on GitHub: clone the repository, run pip install -r requirements.txt and then python say.py \"Salam.\". On an ordinary laptop processor the model runs 2-4x faster than real time and needs no internet. The weights are also on Hugging Face, in PyTorch and ONNX." } },
         { "@type": "Question", "name": "How was the model made?",
-          "acceptedAnswer": { "@type": "Answer", "text": "It was adapted from Owen Song's English Inflect-Micro-v2 model (Apache-2.0): 200,000 training steps on 25.07 hours of Azerbaijani speech. The training data is ughurabbasov/azerbaijani-tts-dataset; its author permits use and asks to be credited. The English voice on the page is the base model itself, so you can hear where this model started." } }
+          "acceptedAnswer": { "@type": "Answer", "text": "The Azerbaijani model, Inflect-Micro-v2 Azerbaijani, was adapted from Owen Song's English Inflect-Micro-v2 model (Apache-2.0): 200,000 training steps on 25.07 hours of Azerbaijani speech. The training data is ughurabbasov/azerbaijani-tts-dataset; its author permits use and asks to be credited. The English voice on the page is the base model itself, so you can hear where the Azerbaijani one started." } }
       ] }
     </script>
   </head>
@@ -61,20 +61,103 @@
         <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M3 12h2M7.5 8v8M12 4v16M16.5 9v6M21 12h0" />
         </svg>
-        <span class="brand-name">azerbaycan-tts</span>
+        <span class="brand-name">Avaz</span>
       </a>
       <a class="about-lang" href="./about.html" hreflang="az" lang="az">Azərbaycanca</a>
     </header>
 
     <main id="content" class="about">
-      <h1>Turn Azerbaijani text into speech — free, and without the internet</h1>
+      <h1>Avaz — text-to-speech that runs on your device</h1>
       <p class="lead">
-        <span translate="no">azerbaycan-tts</span> is an open-source model that reads Azerbaijani text aloud. All
-        of the work happens in your browser: no sign-up, no server, and your text is
-        never sent anywhere. Once the page has loaded, it works with the network
-        switched off.
+        <span translate="no">Avaz</span> is open-source text-to-speech that runs on the
+        device itself — in the browser, on a CPU, with no server. We are building it
+        for natural intonation on phones. Today it speaks Azerbaijani and English.
+        There is no sign-up, your text is never sent anywhere, and once the page has
+        loaded it works with the network switched off.
       </p>
       <p><a class="cta" href="./index.html">Start speaking</a></p>
+
+      <section aria-labelledby="goal">
+        <h2 id="goal">Our goal</h2>
+        <p>
+          A voice that runs on the phone itself and reads with natural intonation: no
+          server, no account, no connection needed, and the text stays on the device.
+          That is where we are heading.
+        </p>
+        <p>
+          Everything we make on the way is open source. The code and the model weights
+          are Apache-2.0 and the training pipeline is public, so anyone can check them,
+          run them and build on them.
+        </p>
+      </section>
+
+      <section aria-labelledby="languages">
+        <h2 id="languages">Languages</h2>
+        <ul>
+          <li>
+            <strong>Azerbaijani</strong> — the main voice, the Inflect-Micro-v2
+            Azerbaijani model. It reads numbers, dates, money and abbreviations the way
+            a person says them aloud.
+          </li>
+          <li>
+            <strong>English</strong> — the base model the Azerbaijani one was adapted
+            from, owensong/Inflect-Micro-v2 by Owen Song, unmodified, so you can hear
+            where the Azerbaijani voice started.
+          </li>
+          <li>
+            <strong>Turkish and Russian</strong> — next. They are planned; there are no
+            dates yet.
+          </li>
+        </ul>
+      </section>
+
+      <section aria-labelledby="status">
+        <h2 id="status">Where we are</h2>
+        <p>
+          We are not there yet. The current 9.36M-parameter model is small and fast,
+          but its intonation is still flat, especially over long sentences, and phone
+          browsers run it slowly. We list our weak spots openly and fix them release by
+          release.
+        </p>
+        <ul>
+          <li>
+            <strong>Intonation flattens over long sentences.</strong> For now the text is
+            cut into chunks of about 15 words, a length chosen by testing. That softens
+            the problem; it does not remove it.
+          </li>
+          <li>
+            <strong>The reading is flat.</strong> eSpeak NG, which turns the letters into
+            phonemes, puts a stress on 92.2% of words, so few of them stand out. The
+            command line has an experimental stress layer
+            (<code translate="no">--prosody</code>); it does not improve every text, so
+            it stays optional.
+          </li>
+          <li>
+            <strong>Some sentences carry a metallic resonance.</strong> It comes from the
+            vocoder, the part of the model that makes the sound. A cleanup tool in the
+            repository reduces it in saved audio; the playground does not apply it.
+          </li>
+          <li>
+            <strong>It is slow in a phone browser.</strong> There the model usually runs
+            on the processor (WebAssembly, with an int8 decoder), and one sentence can
+            take up to a minute. On a computer with WebGPU it is faster than real time.
+            Speed on phones is our main work, together with intonation.
+          </li>
+          <li>
+            <strong>One voice.</strong> There is no emotion control and no voice cloning.
+          </li>
+          <li>
+            <strong>The training audio is most likely synthetic.</strong> It was probably
+            made by another TTS system, so this voice cannot sound better than that
+            system. A better voice needs better recordings.
+          </li>
+        </ul>
+        <p>
+          Smaller limits: at most 500 characters are spoken at a time; the text should
+          be in the Latin alphabet, because letters from other scripts are not read
+          correctly; profanity is replaced with a bleep.
+        </p>
+      </section>
 
       <section aria-labelledby="how">
         <h2 id="how">How it works</h2>
@@ -95,26 +178,24 @@
         </p>
       </section>
 
-      <section aria-labelledby="limits">
-        <h2 id="limits">Limitations</h2>
-        <ul>
-          <li>One voice; no emotion control and no voice cloning.</li>
-          <li>The speech is clear but not fully natural: some sentences carry a metallic resonance.</li>
-          <li>It is meant for text in the Latin alphabet: letters from other scripts are not read correctly.</li>
-          <li>At most 500 characters are spoken at a time.</li>
-          <li>It is slow on a phone and in a browser without WebGPU: one sentence can take up to a minute.</li>
-          <li>Profanity is replaced with a bleep.</li>
-        </ul>
-      </section>
-
       <section id="faq" aria-labelledby="faq-title">
         <h2 id="faq-title">Frequently asked questions</h2>
 
-        <h3>How do I turn Azerbaijani text into speech?</h3>
+        <h3>What is Avaz?</h3>
         <p>
-          Open the playground, type the text and press «Səsləndir» (Speak). You can
-          listen right there and save the audio as a WAV file with «Endir» (Download).
-          Nothing needs to be installed.
+          Avaz is open-source text-to-speech that runs on the device itself: in the
+          browser, on a CPU, with no server. We are building it for natural intonation
+          on phones. Open the playground, type the text and have it spoken: you can
+          listen right there and save the audio as a WAV file. Nothing needs to be
+          installed.
+        </p>
+
+        <h3>Which languages does it speak?</h3>
+        <p>
+          Azerbaijani and English today. The Azerbaijani voice is our own model,
+          Inflect-Micro-v2 Azerbaijani; the English one is the base model it was adapted
+          from, owensong/Inflect-Micro-v2 by Owen Song, unmodified. Turkish and Russian
+          are next: they are planned, but there are no dates yet.
         </p>
 
         <h3>Is it free? Do I need an account?</h3>
@@ -123,24 +204,22 @@
           speak longer text in parts.
         </p>
 
-        <h3>Does it work offline?</h3>
+        <h3>Does it work offline? Is my text sent anywhere?</h3>
         <p>
-          Yes. The first visit downloads the model (about 37&nbsp;MB) and the browser keeps
-          it. After that the page makes speech without the internet.
+          It works offline, and your text is not sent anywhere. The first visit
+          downloads the model (about 37&nbsp;MB) and the browser keeps it; after that the
+          page makes speech without the internet. The text and the audio never leave
+          your device, because the model runs inside the browser. The network is used
+          only to download the files of the page, the model and the phonemiser.
         </p>
 
-        <h3>Is my text sent to a server?</h3>
+        <h3>Does it work on a phone?</h3>
         <p>
-          No. The text and the audio never leave your device, because the model runs
-          inside the browser. The network is used only to download the files of the
-          page, the model and the phonemiser.
-        </p>
-
-        <h3>Which browser is fastest? Does it work on a phone?</h3>
-        <p>
-          Chrome or Edge on a computer is fastest: there the model runs on WebGPU,
-          faster than real time. It works on a phone too, but more slowly, because the
-          work runs on the processor.
+          It works, but slowly. In a phone browser the model usually runs on the
+          processor (WebAssembly, with an int8 decoder), and one sentence can take up to
+          a minute. Chrome or Edge on a computer is fastest: there the model runs on the
+          GPU through WebGPU, faster than real time. Speed on phones and natural
+          intonation are our main work.
         </p>
 
         <h3>Can I use it commercially?</h3>
@@ -170,11 +249,12 @@
 
         <h3>How was the model made?</h3>
         <p>
-          It was adapted from Owen Song's English Inflect-Micro-v2 model (Apache-2.0):
-          200,000 training steps on 25.07 hours of Azerbaijani speech. The training
-          data is ughurabbasov/azerbaijani-tts-dataset; its author permits use and asks
-          to be credited. The English voice on the page is the base model itself, so you
-          can hear where this model started.
+          The Azerbaijani model, Inflect-Micro-v2 Azerbaijani, was adapted from Owen
+          Song's English Inflect-Micro-v2 model (Apache-2.0): 200,000 training steps on
+          25.07 hours of Azerbaijani speech. The training data is
+          ughurabbasov/azerbaijani-tts-dataset; its author permits use and asks to be
+          credited. The English voice on the page is the base model itself, so you can
+          hear where the Azerbaijani one started.
         </p>
       </section>
 
