@@ -71,6 +71,14 @@ function checkHead(name, html, { lang, wantCanonical }) {
   for (const [, path] of html.matchAll(/(?:href|src)="\.\/([^"#?]+)/gu)) {
     expect(`${name}: ./${path} exists`, existsSync(new URL(path, WEB)));
   }
+  // The Hub shows these pages in an iframe that may not navigate the top
+  // window, and github.com and huggingface.co refuse to be framed
+  // (X-Frame-Options: DENY): an outbound link that stays in the frame lands
+  // on an error page. Each one must open a new tab.
+  for (const [anchor] of html.matchAll(/<a\b[^>]*\bhref="https?:\/\/[^"]*"[^>]*>/gu)) {
+    expect(`${name}: opens in a new tab: ${anchor}`,
+      /\btarget="_blank"/u.test(anchor) && /\brel="[^"]*\bnoopener\b/u.test(anchor));
+  }
 }
 
 // -- the playground ----------------------------------------------------------
