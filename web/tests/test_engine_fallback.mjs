@@ -109,6 +109,18 @@ const stagesOf = (engine) => engine.failures.map((f) => `${f.backend}/${f.precis
 }
 
 {
+  // Where each chunk sits in the clip, so the player can light the one heard.
+  const engine = engineWith(fakeOrt());
+  await engine.load();
+  const { waveform, chunks, chunkSpans } = await engine.speak("Salam. Necəsən? Yaxşıyam.", { maxWords: 1 });
+  expect("one span per chunk", chunkSpans.length, chunks.length);
+  expect("the first chunk starts the clip", chunkSpans[0][0], 0);
+  expect("every span has audio", chunkSpans.every(([start, end]) => end > start), true);
+  expect("a pause lies between spans", chunkSpans.slice(1).every(([start], i) => start > chunkSpans[i][1]), true);
+  expect("the last span ends the clip", chunkSpans[chunkSpans.length - 1][1], waveform.length);
+}
+
+{
   const engine = engineWith(fakeOrt({ breakLoad: ["wasm/int8", "wasm/fp32"] }));
   let message = "";
   try {

@@ -3,25 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Azərbaycanca mətni səsə çevirmək — pulsuz, oflayn TTS</title>
+    <title>Avaz: mətni səsə çevirin — telefonda, oflayn, açıq mənbə</title>
     <!-- Search and link previews; canonical = the Hub page, which ranks. Checked by tests/test_seo.mjs. -->
-    <meta name="description" content="Azərbaycan dilində mətni pulsuz səsə çevirin: qeydiyyatsız, internetsiz, birbaşa brauzerdə. Mətniniz heç yerə göndərilmir. Açıq mənbəli 9.36M VITS modeli." />
+    <meta name="description" content="Avaz telefonda və brauzerdə internetsiz işləyən açıq mənbəli TTS-dir. Hədəf: təbii intonasiya. Azərbaycanca və ingiliscə hazırdır, türkcə və rusca yoldadır." />
     <link rel="canonical" href="https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan" />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="azerbaycan-tts" />
+    <meta property="og:site_name" content="Avaz" />
     <meta property="og:locale" content="az_AZ" />
-    <meta property="og:title" content="Azərbaycanca mətni səsə çevirmək — pulsuz, oflayn TTS" />
-    <meta property="og:description" content="Azərbaycan dilində mətni pulsuz səsə çevirin: qeydiyyatsız, internetsiz, birbaşa brauzerdə. Mətniniz heç yerə göndərilmir." />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:title" content="Avaz: mətni səsə çevirin — telefonda, oflayn, açıq mənbə" />
+    <meta property="og:description" content="Cihazın özündə işləyən açıq mənbəli TTS. Hədəfimiz telefonda təbii intonasiyadır. Azərbaycanca və ingiliscə; türkcə və rusca yolda." />
     <meta property="og:url" content="https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan" />
     <meta property="og:image" content="https://cdn-thumbnails.huggingface.co/social-thumbnails/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json">
-      { "@context": "https://schema.org", "@type": "WebApplication", "name": "azerbaycan-tts",
-        "alternateName": ["Azerbaijani Text-to-Speech", "Azərbaycan dilində mətn-nitq sintezi"],
+      { "@context": "https://schema.org", "@type": "WebApplication", "name": "Avaz",
+        "alternateName": ["Avaz TTS", "Avaz text-to-speech", "azerbaycan-tts"],
         "url": "https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan",
-        "description": "Free Azerbaijani text-to-speech that runs entirely in the browser: no sign-up, no server, works offline once loaded. An open 9.36M-parameter VITS model.",
-        "applicationCategory": "MultimediaApplication", "operatingSystem": "Any; runs in a web browser",
+        "description": "Open-source text-to-speech that runs on the device itself, built for natural intonation on phones. Azerbaijani and English today; Turkish and Russian next. No sign-up, no server; works offline once loaded.",
+        "applicationCategory": "MultimediaApplication", "operatingSystem": "Any; runs in a web browser, phones included",
         "browserRequirements": "JavaScript and WebAssembly; WebGPU makes it faster",
+        "keywords": "on-device TTS, mobile text-to-speech, offline TTS, Azerbaijani TTS, open-source TTS, intonation",
         "inLanguage": ["az", "en"], "isAccessibleForFree": true,
         "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
         "license": "https://www.apache.org/licenses/LICENSE-2.0",
@@ -30,26 +32,23 @@
                    "https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan"] }
     </script>
     <meta name="theme-color" content="#f4f6f7" data-color="#f4f6f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#0f1519" data-color="#0f1519" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#0b1013" data-color="#0b1013" media="(prefers-color-scheme: dark)" />
     <!-- Blocking on purpose: the saved theme lands before the first paint. -->
     <script src="./js/page/theme-boot.js"></script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Onest carries ə, ğ, ı and İ in its latin-ext subset; the system font
-         takes over if it never arrives, so the page still works offline. -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap"
-    />
-    <!-- Order is the cascade: tokens, the page, then the components. -->
+    <!-- Onest and Geist Mono carry ə, ğ, ı and İ in latin-ext; system fonts take over offline. -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" />
+    <!-- Order is the cascade: tokens, the page top to bottom, then the components. -->
     <link rel="stylesheet" href="./css/tokens.css" />
     <link rel="stylesheet" href="./css/page/base.css" />
-    <link rel="stylesheet" href="./css/page/topbar.css" />
     <link rel="stylesheet" href="./css/page/controls.css" />
-    <link rel="stylesheet" href="./css/page/stage.css" />
+    <link rel="stylesheet" href="./css/page/topbar.css" />
+    <link rel="stylesheet" href="./css/page/hero.css" />
+    <link rel="stylesheet" href="./css/page/composer.css" />
     <link rel="stylesheet" href="./css/page/result.css" />
-    <link rel="stylesheet" href="./css/page/panel.css" />
+    <link rel="stylesheet" href="./css/page/sections.css" />
     <link rel="stylesheet" href="./css/page/footer.css" />
     <link rel="stylesheet" href="./css/page/responsive.css" />
     <link rel="stylesheet" href="./css/components/mode-banner.css" />
@@ -64,40 +63,26 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   </head>
   <body>
-    <a class="skip-link" href="#text">Mətnə keç</a>
+    <a class="skip-link" href="#text" data-l10n="skip_to_text">Mətnə keç</a>
 
     <header class="topbar">
-      <p class="brand" translate="no">
-        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M3 12h2M7.5 8v8M12 4v16M16.5 9v6M21 12h0" />
-        </svg>
-        <span class="brand-name">azerbaycan-tts</span>
-      </p>
-
+      <a class="brand" href="./index.html" translate="no">
+        <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 12h2M7.5 8v8M12 4v16M16.5 9v6M21 12h0" /></svg>
+        <span class="brand-name">Avaz</span>
+      </a>
       <div class="topbar-controls">
-        <div class="switch" role="group" aria-labelledby="language-label">
-          <span id="language-label" class="visually-hidden"></span>
-          <div class="segmented segmented-small">
-            <button type="button" class="segment is-active" data-language="az" lang="az" aria-label="Azərbaycanca">AZ</button>
-            <button type="button" class="segment" data-language="en" lang="en" aria-label="English">EN</button>
-          </div>
+        <div class="segmented" role="group" aria-labelledby="language-label">
+          <span id="language-label" class="visually-hidden" data-l10n="language_label">İnterfeys dili</span>
+          <button type="button" class="segment is-active" data-language="az" lang="az" aria-label="Azərbaycanca">AZ</button>
+          <button type="button" class="segment" data-language="en" lang="en" aria-label="English">EN</button>
         </div>
-
-        <div class="switch" role="group" aria-labelledby="theme-label">
-          <span id="theme-label" class="visually-hidden">Görünüş</span>
-          <div class="segmented segmented-small">
-            <button type="button" class="segment is-active" data-theme-choice="auto" aria-label="Avtomatik" title="Avtomatik">
-              <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="6.5" /><path class="fill" d="M10 3.5a6.5 6.5 0 0 1 0 13Z" /></svg>
-            </button>
-            <button type="button" class="segment" data-theme-choice="light" aria-label="Açıq" title="Açıq">
-              <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="3.5" /><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4" /></svg>
-            </button>
-            <button type="button" class="segment" data-theme-choice="dark" aria-label="Tünd" title="Tünd">
-              <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M15.5 12.5A6.5 6.5 0 0 1 7.5 4.5a6.5 6.5 0 1 0 8 8Z" /></svg>
-            </button>
-          </div>
-        </div>
-
+        <button id="theme-toggle" type="button" class="icon-button" aria-label="Tünd görünüşə keç">
+          <svg class="icon-sun" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="10" cy="10" r="3.5" /><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.3 4.3l1.4 1.4M14.3 14.3l1.4 1.4M4.3 15.7l1.4-1.4M14.3 5.7l1.4-1.4" /></svg>
+          <svg class="icon-moon" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M15.5 12.5A6.5 6.5 0 0 1 7.5 4.5a6.5 6.5 0 1 0 8 8Z" /></svg>
+        </button>
+        <a class="icon-button" href="https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan" target="_blank" rel="noopener" data-l10n-aria="github_label" aria-label="Mənbə kodu GitHub-da">
+          <svg class="icon-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.49c-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z" /></svg>
+        </a>
         <!-- Checked the moment the page opens; js/ui/device-check.js decides. -->
         <aside id="device-card" class="device-card" data-tone="pending" aria-labelledby="device-label">
           <span class="meter" data-bars="0" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -176,87 +161,120 @@
     <div id="toasts" class="toasts"></div>
 
     <main class="stage">
-      <section class="composer" aria-labelledby="title">
-        <h1 id="title">Azərbaycan dilində mətn-nitq sintezi</h1>
-        <!-- Static text = the label the script writes anyway, for crawlers that run no script. -->
-        <p id="subtitle" class="subtitle">9.36M parametrli VITS modeli, 24 kHz, tamamilə oflayn. Mətni yazın, parametrləri tənzimləyin və dinləyin.</p>
+      <section class="hero" aria-labelledby="title">
+        <!-- Speak, pause or stop; js/page/orb-view.js shapes it and animates only while something happens. -->
+        <button id="orb" type="button" class="orb" data-state="idle" aria-label="Səsləndir">
+          <span class="orb-glow" aria-hidden="true"></span>
+          <svg class="orb-svg" viewBox="-150 -150 300 300" aria-hidden="true" focusable="false">
+            <defs>
+              <radialGradient id="orb-fill" cx="34%" cy="28%" r="85%"><stop offset="0%" class="orb-stop-light" /><stop offset="55%" class="orb-stop-mid" /><stop offset="100%" class="orb-stop-edge" /></radialGradient>
+            </defs>
+            <path id="orb-ring-outer" class="orb-ring orb-ring-outer" d="M-122 0a122 122 0 1 0 244 0a122 122 0 1 0-244 0Z" />
+            <path id="orb-ring-inner" class="orb-ring" d="M-106 0a106 106 0 1 0 212 0a106 106 0 1 0-212 0Z" />
+            <path id="orb-blob" class="orb-blob" d="M-90 0a90 90 0 1 0 180 0a90 90 0 1 0-180 0Z" />
+            <circle id="orb-progress" class="orb-progress" r="138" pathLength="100" />
+            <path class="orb-icon orb-icon-play" d="M-9-14 15 0-9 14Z" />
+            <g class="orb-icon orb-icon-pause"><rect x="-12" y="-14" width="8" height="28" rx="2.5" /><rect x="4" y="-14" width="8" height="28" rx="2.5" /></g>
+            <rect class="orb-icon orb-icon-stop" x="-10" y="-10" width="20" height="20" rx="3.5" />
+          </svg>
+        </button>
+        <div class="orb-caption">
+          <p id="status" class="status" role="status" aria-live="polite"></p>
+          <p id="orb-hint" class="orb-hint" aria-hidden="true" data-l10n="orb_hint">Toxunun və dinləyin</p>
+          <span id="elapsed" class="elapsed" aria-hidden="true"></span>
+        </div>
+        <h1 id="title" data-l10n="hero_title">Mətni səsə çevirin — telefonda, internetsiz</h1>
+        <p id="subtitle" class="subtitle" data-l10n="hero_subtitle">Avaz cihazın özündə işləyən açıq mənbəli TTS-dir. Hədəfimiz telefonda təbii intonasiyadır; hələ yoldayıq və zəif yerlərimizi mütəmadi düzəldirik. Mətniniz cihazdan çıxmır.</p>
         <noscript>
           <p class="note">Bu səhifə JavaScript tələb edir: səs birbaşa brauzerinizdə yaradılır. <a href="./about.html">Layihə haqqında</a> · <a href="./about-en.html">About in English</a></p>
         </noscript>
-
-        <div class="voice-row" role="group" aria-labelledby="voice-label">
-          <span class="field-label" id="voice-label">Səs</span>
-          <div class="segmented">
-            <button type="button" class="segment is-active" data-voice="az">
-              Azərbaycanca
-            </button>
-            <button type="button" class="segment" data-voice="en">English</button>
-          </div>
-          <span class="field-info voice-info" id="voice-info"></span>
-        </div>
-
-        <label id="text-label" class="visually-hidden" for="text">Mətn</label>
-        <textarea
-          id="text"
-          class="script-input"
-          rows="4"
-          autocomplete="off"
-          name="text"
-          spellcheck="false"
-          enterkeyhint="go"
-        ></textarea>
-        <!-- The limit and what is wrong with the text; js/text/text-check.js decides. -->
-        <p id="text-count" class="char-count" translate="no"></p>
-        <p id="text-error" class="field-error" aria-live="polite" hidden></p>
-        <p id="text-warning" class="field-warning" aria-live="polite" hidden></p>
-
-        <div class="actions">
-          <button id="speak" type="button" class="primary speak">Səsləndir</button>
-          <button id="cancel" type="button" class="ghost cancel" aria-keyshortcuts="Escape" hidden>Dayandır</button>
-          <span id="elapsed" class="elapsed" aria-hidden="true"></span>
-        </div>
-
-        <div
-          id="progress"
-          class="progress"
-          role="progressbar"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          hidden
-        >
-          <div class="progress-fill"></div>
-        </div>
-        <p id="status" class="status" role="status" aria-live="polite"></p>
-        <p id="slow-note" class="note slow-note" hidden></p>
-
-        <!-- Phones only: why it is slower, where the result will appear, and
-             what gives full speed and quality. js/backend-plan.js decides. -->
-        <div id="phone-note" class="phone-note" role="note" hidden>
-          <svg class="phone-note-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-            <rect x="5" y="1.5" width="10" height="17" rx="2.2" />
-            <path d="M8.5 15.5h3" />
-          </svg>
-          <p>
-            <span id="phone-note-text"></span>
-            <button id="phone-why" type="button" class="link-button"></button>
-          </p>
-        </div>
-
-        <div class="examples">
-          <span id="examples-label" class="examples-label"></span>
-          <div id="examples" class="example-list"></div>
-        </div>
+        <span id="langs-label" class="visually-hidden" data-l10n="langs_label">Dillər</span>
+        <ul class="langs" aria-labelledby="langs-label">
+          <li class="lang is-ready"><span lang="az">Azərbaycanca</span><span class="lang-state" data-l10n="lang_ready">hazırdır</span></li>
+          <li class="lang is-ready"><span lang="en">English</span><span class="lang-state" data-l10n="lang_ready">hazırdır</span></li>
+          <li class="lang"><span lang="tr">Türkçe</span><span class="lang-state" data-l10n="lang_soon">tezliklə</span></li>
+          <li class="lang"><span lang="ru">Русский</span><span class="lang-state" data-l10n="lang_soon">tezliklə</span></li>
+        </ul>
       </section>
 
-      <section id="result" class="result" aria-labelledby="audio-label">
-        <div class="result-head">
-          <h2 id="audio-label" class="section-title"></h2>
-          <span id="result-ready" class="ready-chip" hidden>
-            <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10.5l3.5 3.5 7.5-8" /></svg>
-            <span id="result-ready-text"></span>
-          </span>
+      <section class="composer" aria-labelledby="text-label">
+        <div class="composer-head">
+          <div class="voice-switch" role="group" aria-labelledby="voice-label">
+            <span id="voice-label" class="visually-hidden" data-l10n="voice_label">Səs</span>
+            <button type="button" class="voice-option is-active" data-voice="az" aria-pressed="true">Azərbaycanca</button>
+            <button type="button" class="voice-option" data-voice="en" aria-pressed="false">İngiliscə</button>
+          </div>
+          <div class="composer-tools">
+            <!-- The limit and what is wrong with the text; js/text/text-check.js decides. -->
+            <p id="text-count" class="char-count" translate="no"></p>
+            <button id="clear-text" type="button" class="icon-button icon-button-quiet" data-l10n-aria="clear_text" aria-label="Mətni təmizlə">
+              <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5 5l10 10M15 5 5 15" /></svg>
+            </button>
+          </div>
         </div>
+        <p id="voice-info" class="voice-info"></p>
+        <label id="text-label" class="visually-hidden" for="text" data-l10n="text_label">Mətn</label>
+        <textarea id="text" class="script-input" rows="4" autocomplete="off" name="text" spellcheck="false" enterkeyhint="go"></textarea>
+        <p id="text-error" class="field-error" aria-live="polite" hidden></p>
+        <p id="text-warning" class="field-warning" aria-live="polite" hidden></p>
+        <div id="preview" class="preview" hidden>
+          <p class="preview-label"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M3 10h11M10 5l5 5-5 5" /></svg><span data-l10n="preview_label">Model belə oxuyacaq</span></p>
+          <p id="preview-text" class="preview-text"></p>
+        </div>
+        <div class="composer-foot">
+          <span id="parameters-heading" class="visually-hidden" data-l10n="parameters">Parametrlər</span>
+          <div class="chips" role="group" aria-labelledby="parameters-heading">
+            <button type="button" class="chip" data-panel="speed" aria-expanded="false" aria-controls="panel-speed"><span data-l10n="speed_label">Sürət</span><span id="speed-value" class="chip-value">1.00×</span></button>
+            <button type="button" class="chip" data-panel="variation" aria-expanded="false" aria-controls="panel-variation"><span data-l10n="chip_variation">Canlılıq</span><span id="variation-value" class="chip-value">0.67</span></button>
+            <button type="button" class="chip" data-panel="seed" aria-expanded="false" aria-controls="panel-seed"><span data-l10n="seed_label">Seed</span><span id="seed-value" class="chip-value">7</span></button>
+            <button type="button" class="chip" data-panel="more" aria-expanded="false" aria-controls="panel-more"><span data-l10n="chip_more">Əlavə</span></button>
+          </div>
+          <div class="actions">
+            <button id="cancel" type="button" class="ghost cancel" aria-keyshortcuts="Escape" hidden data-l10n="cancel">Dayandır</button>
+            <button id="speak" type="button" class="primary speak" aria-keyshortcuts="Control+Enter Meta+Enter"><span id="speak-label">Səsləndir</span><kbd id="speak-kbd" class="kbd" aria-hidden="true">Ctrl ↵</kbd></button>
+          </div>
+        </div>
+        <div id="panel-speed" class="tune" hidden>
+          <span aria-hidden="true" data-l10n="speed_slow">Yavaş</span>
+          <input id="speed" type="range" min="0.5" max="2" step="0.05" value="1" data-l10n-aria="speed_label" aria-label="Sürət" />
+          <span aria-hidden="true" data-l10n="speed_fast">Sürətli</span>
+        </div>
+        <div id="panel-variation" class="tune" hidden>
+          <span aria-hidden="true" data-l10n="variation_steady">Sabit</span>
+          <input id="variation" type="range" min="0" max="1" step="0.001" value="0.667" data-l10n-aria="chip_variation" aria-label="Canlılıq" />
+          <span aria-hidden="true" data-l10n="variation_lively">Canlı</span>
+        </div>
+        <div id="panel-seed" class="tune tune-wrap" hidden>
+          <input id="seed" type="number" name="seed" inputmode="numeric" autocomplete="off" min="0" step="1" value="7" data-l10n-aria="seed_label" aria-label="Seed" />
+          <button id="shuffle" type="button" class="ghost" data-l10n="random_seed">Təsadüfi seed</button>
+          <p class="tune-note" data-l10n="seed_hint">Eyni seed eyni oxunuşu verir. Bəyənmədiyiniz cümlə üçün dəyişin.</p>
+        </div>
+        <div id="panel-more" class="tune tune-stack" hidden>
+          <label class="checkbox"><input id="normalise" type="checkbox" checked /><span><span class="field-label" data-l10n="normalise_label">Mətni normallaşdır</span><span id="normalise-info" class="field-info"></span></span></label>
+          <label class="field" for="max-words"><span class="field-label" data-l10n="max_words_label">Hissə uzunluğu (söz)</span><span class="field-info" data-l10n="max_words_info">Cümlələr bu qədər sözlük hissələrə bölünür; 0 bölgünü modelin öz 280 simvolluq qaydasına buraxır. Standart: 15</span></label>
+          <span class="slider-row"><input id="max-words" type="range" min="0" max="40" step="1" value="15" data-l10n-aria="max_words_label" aria-label="Hissə uzunluğu (söz)" /><output id="max-words-value" for="max-words">15</output></span>
+        </div>
+        <div id="progress" class="progress composer-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" hidden><div class="progress-fill"></div></div>
+      </section>
 
+      <p id="slow-note" class="note slow-note" hidden></p>
+      <!-- Phones only: why it is slower, where the result will appear, and
+           what gives full speed and quality. js/backend-plan.js decides. -->
+      <div id="phone-note" class="phone-note" role="note" hidden>
+        <svg class="phone-note-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="5" y="1.5" width="10" height="17" rx="2.2" /><path d="M8.5 15.5h3" /></svg>
+        <p><span id="phone-note-text"></span> <button id="phone-why" type="button" class="link-button"></button></p>
+      </div>
+      <div class="examples">
+        <span id="examples-label" class="examples-label" data-l10n="examples_label">Nümunə cümlələr</span>
+        <div id="examples" class="example-list"></div>
+      </div>
+
+      <section id="result" class="result" aria-labelledby="audio-label" hidden>
+        <div class="result-head">
+          <h2 id="audio-label" class="section-label" data-l10n="audio_label">Nəticə</h2>
+          <span id="result-ready" class="ready-chip" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M4.5 10.5l3.5 3.5 7.5-8" /></svg><span id="result-ready-text" data-l10n="result_ready_badge">Hazırdır</span></span>
+          <span id="mode-badge" class="mode-badge" translate="no" hidden></span>
+        </div>
         <!-- Which step of the fallback chain is speaking; js/mode-banner.js decides. -->
         <div id="mode-banner" class="mode-banner" role="note" aria-labelledby="mode-title" aria-live="polite" hidden>
           <svg class="mode-icon" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
@@ -271,117 +289,72 @@
             <button id="mode-action" type="button" class="ghost mode-action" hidden></button>
           </div>
         </div>
-
-        <!-- A picture of the audio; the <audio> below is the real control. -->
-        <div class="wave" data-state="empty">
-          <canvas id="wave" class="wave-canvas" aria-hidden="true"></canvas>
-          <p id="wave-empty" class="wave-empty"></p>
+        <div class="player">
+          <button id="play" type="button" class="play" data-l10n-aria="play" aria-label="Dinlə" disabled>
+            <svg class="icon-play" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M6.5 4.2v11.6c0 .6.6.9 1.1.6l9-5.8c.4-.3.4-.9 0-1.2l-9-5.8c-.5-.3-1.1 0-1.1.6Z" /></svg>
+            <svg class="icon-pause" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="5" y="4" width="3.5" height="12" rx="1" /><rect x="11.5" y="4" width="3.5" height="12" rx="1" /></svg>
+          </button>
+          <div class="wave" data-state="empty">
+            <canvas id="wave" class="wave-canvas" role="slider" tabindex="-1" aria-disabled="true" data-l10n-aria="wave_label" aria-label="Oxutma yeri" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0"></canvas>
+            <p id="wave-empty" class="wave-empty"></p>
+          </div>
+          <span id="time" class="time" translate="no">0:00 / 0:00</span>
         </div>
-
-        <audio id="audio" controls preload="none" aria-describedby="stats" hidden></audio>
-        <div class="result-actions">
-          <a id="download" class="ghost" download="azerbaycan-tts.wav" hidden></a>
-          <button id="copy-diagnostics" type="button" class="ghost" hidden></button>
-          <span id="mode-badge" class="mode-badge" translate="no" hidden></span>
+        <audio id="audio" preload="auto" hidden></audio>
+        <ol id="chunks" class="chunk-list"></ol>
+        <div class="result-foot">
+          <p id="stats" class="stats"></p>
+          <div class="result-actions">
+            <button id="copy-diagnostics" type="button" class="link-button" hidden></button>
+            <button id="regen" type="button" class="ghost" disabled><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M16 10a6 6 0 1 1-1.8-4.3M16 3.5v3h-3" /></svg><span data-l10n="regen">Başqa oxunuş</span></button>
+            <a id="download" class="solid" download="avaz.wav" hidden><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 3v10M5.5 8.5 10 13l4.5-4.5M4 16.5h12" /></svg><span data-l10n="download_wav">WAV yüklə</span></a>
+          </div>
         </div>
-        <p id="stats" class="stats"></p>
         <p id="copy-status" class="note" role="status" aria-live="polite"></p>
         <pre id="diagnostics" class="diagnostics" translate="no" hidden></pre>
       </section>
 
-      <div class="lower">
-        <section class="panel" aria-labelledby="parameters-heading">
-          <h2 id="parameters-heading" class="section-title">Parametrlər</h2>
+      <section id="history" class="history" aria-labelledby="history-title" hidden>
+        <h2 id="history-title" class="section-label" data-l10n="history_title">Bu sessiyada</h2>
+        <ul id="history-list" class="history-list"></ul>
+      </section>
 
-          <label class="field">
-            <span class="field-label" id="speed-label">Sürət</span>
-            <span class="field-info" id="speed-info"></span>
-            <span class="slider-row">
-              <input id="speed" type="range" min="0.5" max="2" step="0.05" value="1" />
-              <output id="speed-value" for="speed">1.00</output>
-            </span>
-          </label>
+      <ul class="facts">
+        <li><strong data-l10n="fact_server_value">0 bayt</strong><span data-l10n="fact_server">serverə göndərilir</span></li>
+        <li><strong data-l10n="fact_langs_value">2 + 2</strong><span data-l10n="fact_langs">dil: AZ, EN hazır; TR, RU yolda</span></li>
+        <li><strong data-l10n="fact_download_value">37 MB</strong><span data-l10n="fact_download">bir dəfə yüklənir, sonra oflayn</span></li>
+        <li><strong data-l10n="fact_licence_value">Apache-2.0</strong><span data-l10n="fact_licence">açıq kod və model</span></li>
+      </ul>
 
-          <label class="field">
-            <span class="field-label" id="variation-label">Dəyişkənlik</span>
-            <span class="field-info" id="variation-info"></span>
-            <span class="slider-row">
-              <input
-                id="variation"
-                type="range"
-                min="0"
-                max="1"
-                step="0.001"
-                value="0.667"
-              />
-              <output id="variation-value" for="variation">0.667</output>
-            </span>
-          </label>
+      <section class="mission" aria-labelledby="mission-title">
+        <h2 id="mission-title" data-l10n="mission_title">Hədəfimiz: telefonda təbii intonasiya</h2>
+        <p data-l10n="mission_text">Hədəfə hələ çatmamışıq. İndiki 9.36M parametrli model kiçik və sürətlidir, amma intonasiyası hələ yeknəsəqdir, telefon brauzeri isə onu yavaş işlədir. Zəif yerlərimizi açıq yazırıq və mütəmadi düzəldirik:</p>
+        <ul class="weak-list">
+          <li data-l10n="weak_1">İntonasiya uzun cümlədə düzləşir — ona görə mətni təxminən 15 sözlük hissələrə bölürük.</li>
+          <li data-l10n="weak_2">eSpeak sözlərin 92%-ni vurğulayır və oxunuş yeknəsəq çıxır; öz vurğu qatımız hələ sınaqdadır.</li>
+          <li data-l10n="weak_3">Telefon brauzerində model adətən prosessorda işləyir: bir cümlə bir dəqiqəyə qədər çəkə bilər.</li>
+          <li data-l10n="weak_4">Vokoder bəzi cümlələrdə metal tembr qoyur.</li>
+        </ul>
+        <a class="more-link" href="./about.html" data-about-link><span data-l10n="mission_more">Layihə haqqında ətraflı</span> <span aria-hidden="true">→</span></a>
+      </section>
 
-          <label class="field">
-            <span class="field-label" id="seed-label">Seed</span>
-            <span class="field-info" id="seed-info"></span>
-            <span class="slider-row">
-              <input
-                id="seed"
-                type="number"
-                name="seed"
-                inputmode="numeric"
-                autocomplete="off"
-                min="0"
-                step="1"
-                value="7"
-              />
-              <button id="shuffle" type="button" class="ghost"></button>
-            </span>
-          </label>
-
-          <label class="field checkbox">
-            <input id="normalise" type="checkbox" checked />
-            <span>
-              <span class="field-label" id="normalise-label"></span>
-              <span class="field-info" id="normalise-info"></span>
-            </span>
-          </label>
-
-          <details class="advanced">
-            <summary id="advanced-label"></summary>
-            <label class="field">
-              <span class="field-label" id="max-words-label"></span>
-              <span class="field-info" id="max-words-info"></span>
-              <span class="slider-row">
-                <input id="max-words" type="range" min="0" max="40" step="1" value="15" />
-                <output id="max-words-value" for="max-words">15</output>
-              </span>
-            </label>
-          </details>
-        </section>
-
-        <section class="panel" aria-labelledby="chunks-label">
-          <h2 class="section-title" id="chunks-label"></h2>
-          <p class="field-info" id="chunks-info"></p>
-          <pre id="chunks" class="chunks" aria-live="polite"></pre>
-
-          <details class="about">
-            <summary id="about-label"></summary>
-            <p id="offline-note" class="note">Səhifə yükləndikdən sonra internet olmadan da işləyir — bütün hesablama sizin brauzerinizdə gedir.</p>
-            <p id="speed-note" class="note"></p>
-          </details>
-        </section>
-      </div>
+      <section class="faq" aria-labelledby="faq-title">
+        <h2 id="faq-title" data-l10n="faq_title">Tez-tez verilən suallar</h2>
+        <details><summary><span data-l10n="faq_q1">Avaz nədir?</span></summary><p data-l10n="faq_a1">Cihazın özündə işləyən açıq mənbəli mətn-nitq (TTS) layihəsidir. Hədəfimiz telefonda, internetsiz, təbii intonasiyalı nitqdir. Bu səhifə modeli birbaşa brauzerinizdə işlədir.</p></details>
+        <details><summary><span data-l10n="faq_q2">Hansı dilləri dəstəkləyir?</span></summary><p data-l10n="faq_a2">Hazırda Azərbaycanca və ingiliscə; türkcə və rusca növbədədir. İngilis səsi Owen Song-un Inflect-Micro-v2 baza modelidir, Azərbaycan modeli ondan uyğunlaşdırılıb.</p></details>
+        <details><summary><span data-l10n="faq_q3">Pulsuzdurmu? Mətnim serverə göndərilir?</span></summary><p data-l10n="faq_a3">Pulsuzdur və qeydiyyat tələb etmir; bir dəfəyə ən çoxu 500 simvol səsləndirilir. Mətn və səs cihazınızdan çıxmır: model brauzerdə işləyir və ilk yükləmədən sonra internetsiz də işləyir.</p></details>
+        <details><summary><span data-l10n="faq_q4">Telefonda işləyir?</span></summary><p data-l10n="faq_a4">İşləyir, amma telefon brauzerində model adətən prosessorda işlədiyi üçün yavaşdır: bir cümlə bir dəqiqəyə qədər çəkə bilər. Ən sürətlisi kompüterdə Chrome və ya Edge-dir. Telefonda sürət və intonasiya bizim əsas işimizdir.</p></details>
+        <details><summary><span data-l10n="faq_q5">Rəqəmləri və tarixləri düzgün oxuyur?</span></summary><p data-l10n="faq_a5">Azərbaycanca mətndə bəli: «25%» — «iyirmi beş faiz», «01/09/1939» — «bir sentyabr min doqquz yüz otuz doqquzuncu il», «II» — «İkinci». Model nəyi oxuyacağını yazarkən mətnin altında görürsünüz.</p></details>
+        <details><summary><span data-l10n="faq_q6">Kommersiya məqsədilə istifadə etmək olar?</span></summary><p data-l10n="faq_a6">Kod və model çəkiləri Apache-2.0-dır, işlətmək məhdudlaşdırılmır. Yeganə şərt fonemləşdiricidən gəlir: eSpeak NG və phonemizer GPL-3.0-or-later-dir, onlarla birləşmiş məhsulu yaymaq GPL-3.0 öhdəlikləri gətirir. Çıxış yolu: model öncədən fonemləşdirilmiş mətni qəbul edir (accepts_prephonemized_input). Azərbaycanca təlim datası müəllifinin icazəsi ilə, adının çəkilməsi şərti ilə istifadə olunub. İngilis səsi sintetikdir və Apache-2.0-dır, amma açıq-çəkidir, açıq-data deyil. Bu, hüquqi məsləhət deyil.</p></details>
+      </section>
     </main>
 
     <footer class="page-foot">
-      <p id="footer">Bir səs, emosiya idarəsi və səs klonlama yoxdur. 9.36M parametrli modeldə nitq aydındır, lakin tam təbii deyil. Bu səsdən real bir insanı təqlid etmək və ya aldadıcı məzmun hazırlamaq üçün istifadə etməyin.</p>
-      <p id="censor-note" class="note"></p>
+      <p id="footer" data-l10n="footer">Bir səs, emosiya idarəsi və səs klonlama yoxdur. 9.36M parametrli modeldə nitq aydındır, lakin tam təbii deyil. Bu səsdən real bir insanı təqlid etmək və ya aldadıcı məzmun hazırlamaq üçün istifadə etməyin.</p>
+      <p id="censor-note" class="note" data-l10n="censor_note">Söyüşlər hər iki səsdə bip səsi ilə əvəz olunur.</p>
       <p class="note links">
-        <a id="about-link" href="./about.html">Layihə haqqında</a>
-        <a
-          id="feedback-link"
-          href="https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan/discussions"
-          target="_blank"
-          rel="noopener"
-        >Rəy bildirin</a>
+        <a id="about-link" href="./about.html" data-about-link data-l10n="about_link">Layihə haqqında</a>
+        <a id="feedback-link" href="https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan/discussions" target="_blank" rel="noopener" data-l10n="feedback_link">Rəy bildirin</a>
         <a href="https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan" target="_blank" rel="noopener">GitHub</a>
         <a href="https://huggingface.co/owensong/Inflect-Micro-v2" target="_blank" rel="noopener">Inflect-Micro-v2</a>
         <span>Apache-2.0</span>

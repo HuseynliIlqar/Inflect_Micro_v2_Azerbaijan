@@ -1,0 +1,244 @@
+/* -- the hero: the orb, the line under it, the heading and the languages -------- */
+
+.stage {
+  max-width: calc(var(--stage) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 0 var(--gutter) 2.5rem;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* -- the orb: Speak, pause or stop. js/page/orb-view.js shapes it. */
+.orb {
+  --orb: clamp(190px, 58vw, 250px);
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--orb);
+  height: var(--orb);
+  margin-top: 0.25rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.orb:focus-visible {
+  outline-offset: 6px;
+}
+
+.orb:disabled {
+  cursor: progress;
+}
+
+.orb-svg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* A soft halo drawn by a gradient, scaled by a transform: no filter per frame. */
+.orb-glow {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 42%, transparent), transparent);
+  will-change: transform;
+}
+
+.orb-stop-light {
+  stop-color: var(--accent-2);
+}
+
+.orb-stop-mid {
+  stop-color: var(--accent);
+}
+
+.orb-stop-edge {
+  stop-color: var(--accent);
+  stop-opacity: 0.78;
+}
+
+.orb-blob {
+  fill: url(#orb-fill);
+}
+
+.orb-ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: 0.34;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.orb-ring-outer {
+  stroke-opacity: 0.18;
+}
+
+/* The progress ring: pathLength 100, so the offset is the percent left. */
+.orb-progress {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  transform: rotate(-90deg);
+  opacity: 0;
+  transition: opacity 0.3s, stroke-dashoffset 0.2s linear;
+}
+
+.orb-progress.is-visible {
+  opacity: 1;
+}
+
+.orb-progress.is-indeterminate {
+  stroke-dasharray: 22 78;
+  animation: orb-spin 1.4s linear infinite;
+}
+
+@keyframes orb-spin {
+  from {
+    transform: rotate(-90deg);
+  }
+  to {
+    transform: rotate(270deg);
+  }
+}
+
+.orb-icon {
+  display: none;
+  fill: var(--accent-ink);
+}
+
+.orb-icon-play {
+  stroke: var(--accent-ink);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+
+.orb[data-icon="play"] .orb-icon-play,
+.orb[data-icon="pause"] .orb-icon-pause,
+.orb[data-icon="stop"] .orb-icon-stop {
+  display: inline;
+}
+
+.orb[data-state="check"] .orb-icon {
+  display: none;
+}
+
+/* At rest the orb breathes on the compositor; the script is not running. */
+.orb[data-state="idle"] .orb-svg {
+  animation: orb-breathe 5s ease-in-out infinite;
+}
+
+@keyframes orb-breathe {
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+@media (hover: hover) {
+  .orb:hover:not(:disabled) .orb-blob {
+    filter: brightness(1.06);
+  }
+}
+
+/* -- under the orb: what is happening, or what a tap will do. */
+.orb-caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.6rem;
+  justify-content: center;
+  max-width: 46ch;
+  min-height: 1.6rem;
+  margin-top: 0.4rem;
+  font: 500 0.8rem/1.6 var(--mono);
+  letter-spacing: 0.01em;
+  color: var(--ink-soft);
+}
+
+.status,
+.orb-hint {
+  margin: 0;
+}
+
+.status:empty {
+  display: none;
+}
+
+.status:not(:empty) ~ .orb-hint {
+  display: none;
+}
+
+.elapsed {
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.elapsed:empty {
+  display: none;
+}
+
+.hero h1 {
+  margin-top: 1.6rem;
+}
+
+.subtitle {
+  max-width: 34rem;
+  margin: 0.9rem 0 0;
+  font-size: 1.06rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.hero noscript .note {
+  max-width: 34rem;
+}
+
+/* -- the languages: two ready, two coming. */
+.langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  margin: 1.1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lang {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  min-height: 30px;
+  padding: 0.2rem 0.75rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 999px;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
+
+.lang.is-ready {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background: var(--accent-soft);
+  color: var(--ink);
+}
+
+.lang-state {
+  font: 500 0.72rem var(--mono);
+  color: var(--faint);
+}
+
+.lang.is-ready .lang-state {
+  color: var(--accent);
+}

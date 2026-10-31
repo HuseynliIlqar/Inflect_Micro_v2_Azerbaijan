@@ -12,9 +12,13 @@
 }
 
 .about-lang {
-  padding: 0.45rem 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 0.9rem;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: 999px;
+  background: var(--panel);
   color: inherit;
   font-size: 0.9rem;
   text-decoration: none;
@@ -73,12 +77,20 @@
 .lead {
   font-size: 1.12rem;
   color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.about p,
+.about li {
+  text-wrap: pretty;
 }
 
 .cta {
-  display: inline-block;
-  padding: 0.75rem 1.2rem;
-  border-radius: var(--radius);
+  display: inline-flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 0 1.4rem;
+  border-radius: 999px;
   background: var(--accent);
   color: var(--accent-ink);
   font-weight: 600;

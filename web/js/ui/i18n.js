@@ -7,6 +7,7 @@
  */
 
 import { CALIBRATION_LABELS } from "./i18n-calibration.js";
+import { PAGE_LABELS } from "./i18n-page.js";
 
 export const DEFAULT_LANGUAGE = "az";
 
@@ -143,7 +144,7 @@ export const LABELS = {
     "wave_empty": "Səsləndirdiyiniz mətnin dalğa forması burada görünəcək.",
     "about_label": "Sürət və oflayn iş haqqında",
     "about_link": "Layihə haqqında",
-    "page_title": "Azərbaycanca mətni səsə çevirmək — pulsuz, oflayn TTS",
+    "page_title": "Avaz: mətni səsə çevirin — telefonda, oflayn, açıq mənbə",
     "stats": "{seconds} s səs, {elapsed} s-də hazırlandı ({realtime}x real vaxt) · {chunks} · {rate} Hz"
   },
   "en": {
@@ -276,14 +277,14 @@ export const LABELS = {
     "wave_empty": "The waveform of what you speak will appear here.",
     "about_label": "About speed and offline use",
     "about_link": "About the project",
-    "page_title": "Azerbaijani text-to-speech — free, offline, in your browser",
+    "page_title": "Avaz: open-source text-to-speech that runs on your phone",
     "stats": "{seconds} s of audio in {elapsed} s ({realtime}x real time) · {chunks} · {rate} Hz"
   }
 };
 
 export function label(language, key, values) {
   const code = LABELS[language] ? language : DEFAULT_LANGUAGE;
-  let text = LABELS[code][key] ?? CALIBRATION_LABELS[code]?.[key] ?? key;
+  let text = LABELS[code][key] ?? CALIBRATION_LABELS[code]?.[key] ?? PAGE_LABELS[code]?.[key] ?? key;
   if (values) {
     for (const [name, value] of Object.entries(values)) {
       text = text.split(`{${name}}`).join(String(value));

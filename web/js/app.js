@@ -13,41 +13,51 @@ import { applyTheme, initialTheme, readStoredTheme } from "./ui/theme.js";
 import { els } from "./page/dom.js";
 import { state, t } from "./page/context.js";
 import { remeasure, startDeviceCheck } from "./page/calibration.js";
-import { applyLanguage, applyVoice } from "./page/language.js";
+import { FIRST_TEXT, applyLanguage, applyVoice, markExample } from "./page/language.js";
 import { copyDiagnostics } from "./page/mode-view.js";
 import { renderTextCheck } from "./page/text-view.js";
+import { renderPreview } from "./page/preview-view.js";
+import { initControls } from "./page/controls-view.js";
+import { renderOrb } from "./page/busy-view.js";
+import { toggleTheme } from "./page/theme-view.js";
+import { onPick } from "./page/history-view.js";
+import { orb } from "./page/orb-view.js";
 import { cancelSynthesis, speak } from "./page/speak.js";
+import { onKeydown, onOrb, onPickClip, onRegen } from "./page/actions.js";
 
 for (const button of document.querySelectorAll("[data-language]")) {
   button.addEventListener("click", () => applyLanguage(button.dataset.language));
 }
-
 for (const button of document.querySelectorAll("[data-voice]")) {
-  button.addEventListener("click", () => applyVoice(button.dataset.voice));
+  button.addEventListener("click", () => {
+    applyVoice(button.dataset.voice);
+    renderOrb();
+  });
 }
+els.themeToggle.addEventListener("click", toggleTheme);
+initControls();
 
-for (const button of document.querySelectorAll("[data-theme-choice]")) {
-  button.addEventListener("click", () => applyTheme(button.dataset.themeChoice));
-}
-
-els.speed.addEventListener("input", () => {
-  els.speedValue.textContent = Number(els.speed.value).toFixed(2);
-});
-els.variation.addEventListener("input", () => {
-  els.variationValue.textContent = Number(els.variation.value).toFixed(3);
-});
-els.maxWords.addEventListener("input", () => {
-  els.maxWordsValue.textContent = els.maxWords.value;
-});
-els.shuffle.addEventListener("click", () => {
-  els.seed.value = String(Math.floor(Math.random() * 2 ** 31));
-});
+els.orb.addEventListener("click", onOrb);
 els.speak.addEventListener("click", speak);
 els.cancel.addEventListener("click", cancelSynthesis);
-document.addEventListener("keydown", (event) => {
-  // Escape belongs to the device dialog while it is open.
-  if (event.key !== "Escape" || !state.busy || els.dialog?.open) return;
-  cancelSynthesis();
+els.regen.addEventListener("click", onRegen);
+onPick(onPickClip);
+document.addEventListener("keydown", onKeydown);
+
+els.text.addEventListener("input", () => {
+  renderTextCheck();
+  renderPreview();
+  markExample();
+  renderOrb();
+});
+els.normalise.addEventListener("change", () => {
+  renderPreview();
+  renderOrb();
+});
+els.clearText.addEventListener("click", () => {
+  els.text.value = "";
+  els.text.dispatchEvent(new Event("input"));
+  els.text.focus();
 });
 els.modeAction.addEventListener("click", () => {
   state.fullQuality = els.modeAction.dataset.action === "full";
@@ -59,12 +69,11 @@ els.dialogRemeasure.addEventListener("click", () => {
   remeasure();
 });
 els.phoneWhy.addEventListener("click", () => els.deviceDetails.click());
-els.text.addEventListener("input", () => renderTextCheck());
-els.text.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) speak();
-});
 
 applyTheme(initialTheme(readStoredTheme(), location.search), { remember: false });
+els.text.value = FIRST_TEXT;
 applyLanguage(DEFAULT_LANGUAGE);
+renderPreview();
+orb.start();
 els.status.textContent = t("loading");
 startDeviceCheck();

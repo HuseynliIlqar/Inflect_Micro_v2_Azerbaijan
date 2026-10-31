@@ -1,68 +1,23 @@
-/* -- controls ------------------------------------------------------------------ */
-
-.segmented {
-  display: inline-flex;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: var(--panel);
-}
-
-.segment {
-  display: inline-flex;
-  gap: 0.35rem;
-  align-items: center;
-  justify-content: center;
-  padding: 0.45rem 0.85rem;
-  border: 0;
-  background: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.segment + .segment {
-  border-inline-start: 1px solid var(--line);
-}
-
-.segment.is-active {
-  background: var(--accent);
-  color: var(--accent-ink);
-}
-
-.segmented-small .segment {
-  padding: 0.3rem 0.6rem;
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.segment svg {
-  width: 1.05rem;
-  height: 1.05rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-}
-
-.segment svg .fill {
-  fill: currentColor;
-  stroke: none;
-}
+/* -- controls shared by the page and its dialogs ------------------------------- */
 
 button,
-.ghost {
+.ghost,
+.solid {
   font: inherit;
-  border-radius: var(--radius);
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+}
+
+/* The one loud button: Speak, and OK in the dialogs. */
 .primary {
   width: 100%;
-  padding: 0.75rem 1.2rem;
+  min-height: 44px;
+  padding: 0.7rem 1.2rem;
   border: 0;
+  border-radius: 999px;
   background: var(--accent);
   color: var(--accent-ink);
   font-weight: 600;
@@ -70,31 +25,271 @@ button,
 
 .primary[disabled] {
   opacity: 0.55;
-  cursor: progress;
 }
 
-.ghost {
-  display: inline-block;
-  padding: 0.45rem 0.8rem;
-  border: 1px solid var(--line);
+/* Quiet pill buttons and links that look like them. */
+.ghost,
+.solid {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
   background: transparent;
-  color: inherit;
-  font-size: 0.9rem;
+  color: var(--ink);
+  font-size: 0.86rem;
+  font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
+}
+
+.solid {
+  border-color: transparent;
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.ghost svg,
+.solid svg {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ghost:disabled {
+  opacity: 0.5;
+}
+
+/* Round icon buttons in the top bar and the composer. */
+.icon-button {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--panel);
+  color: var(--ink-soft);
+}
+
+.icon-button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-button .icon-fill {
+  fill: currentColor;
+  stroke: none;
+}
+
+.icon-button-quiet {
+  width: 32px;
+  height: 32px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--faint);
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+/* A two-way switch: AZ | EN in the top bar. */
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+}
+
+.segment {
+  min-width: 34px;
+  min-height: 28px;
+  padding: 0.15rem 0.6rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-soft);
+  font: 600 0.78rem/1 var(--font);
+  letter-spacing: 0.02em;
+}
+
+.segment.is-active {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* -- inputs ------------------------------------------------------------------- */
+
+input[type="range"] {
+  width: 100%;
+  min-width: 0;
+  height: 22px;
+  margin: 0;
+  background: transparent;
+  accent-color: var(--accent);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 4px;
+  background: var(--line-strong);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 4px;
+  background: var(--line-strong);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  width: 18px;
+  height: 18px;
+  margin-top: -7px;
+  border: 3px solid var(--panel);
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 3px solid var(--panel);
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* The focus ring goes on the thumb, where the eye already is. */
+input[type="range"]:focus-visible {
+  outline: none;
+}
+
+input[type="range"]:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 1px var(--accent), 0 0 0 5px color-mix(in srgb, var(--focus) 45%, transparent);
+}
+
+input[type="range"]:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--focus) 45%, transparent);
+}
+
+input[type="number"] {
+  width: 7.5rem;
+  min-height: 38px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius);
+  background: var(--raise);
+  color: var(--ink);
+  font: 500 0.9rem var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.checkbox {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+}
+
+.checkbox input {
+  width: 18px;
+  height: 18px;
+  margin: 0.15rem 0 0;
+  accent-color: var(--accent);
+}
+
+.field-label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.field-info {
+  display: block;
+  margin-top: 0.1rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+/* -- the progress bar (the composer's edge, and the device check) --------------- */
+
+.progress {
+  position: relative;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: var(--accent);
+  transition: width 0.25s ease-out;
+}
+
+/* Unknown size: a segment sweeps across instead of a width that means nothing. */
+.progress.is-indeterminate .progress-fill {
+  position: absolute;
+  inset-block: 0;
+  width: 35%;
+  animation: progress-sweep 1.2s ease-in-out infinite;
+}
+
+@keyframes progress-sweep {
+  from {
+    left: -35%;
+  }
+  to {
+    left: 100%;
+  }
 }
 
 /* Only where a pointer can hover: on a touch screen the hover colour would
    stick to the last button tapped. */
 @media (hover: hover) {
-  .segment:hover:not(.is-active),
-  .example:hover,
-  .ghost:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+  .ghost:hover:not(:disabled),
+  .icon-button:hover,
+  .segment:hover:not(.is-active) {
+    border-color: var(--line-strong);
+    color: var(--ink);
   }
 
-  .primary:hover:not([disabled]) {
+  .icon-button-quiet:hover {
+    background: var(--raise);
+  }
+
+  .primary:hover:not([disabled]),
+  .solid:hover {
     filter: brightness(1.08);
   }
 }

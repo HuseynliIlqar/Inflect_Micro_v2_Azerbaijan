@@ -1,0 +1,135 @@
+/* -- below the playground: the facts, the goal and its weak spots, the FAQ -------- */
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  width: 100%;
+  margin: 3.5rem 0 0;
+  padding: 0;
+  border-block: 1px solid var(--line);
+  list-style: none;
+}
+
+.facts li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 1.1rem 0.25rem;
+}
+
+.facts strong {
+  font: 500 1.25rem/1.2 var(--mono);
+  letter-spacing: -0.02em;
+}
+
+.facts span {
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.mission,
+.faq {
+  width: 100%;
+  margin-top: 3.5rem;
+}
+
+.mission h2,
+.faq h2 {
+  margin: 0 0 0.9rem;
+  font-size: clamp(1.4rem, 3.2vw, 1.65rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.mission p {
+  max-width: var(--measure);
+  margin: 0;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.weak-list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Each weak spot as a quiet row with a small open circle: work in progress. */
+.weak-list li {
+  position: relative;
+  max-width: var(--measure);
+  padding-inline-start: 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.weak-list li::before {
+  content: "";
+  position: absolute;
+  top: 0.45em;
+  inset-inline-start: 0.2rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 2px solid var(--dot-warn);
+  border-radius: 50%;
+}
+
+.more-link {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 0.6rem;
+  font-weight: 500;
+}
+
+/* -- the FAQ: a disclosure per question, the answer readable when open. */
+.faq details {
+  border-bottom: 1px solid var(--line);
+}
+
+.faq details:first-of-type {
+  border-top: 1px solid var(--line);
+}
+
+.faq summary {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  padding: 1rem 0.15rem;
+  font-size: 1.04rem;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+/* The plus turns into a cross when the answer is open. */
+.faq summary::after {
+  content: "+";
+  flex: none;
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--faint);
+  transition: transform 0.3s;
+}
+
+.faq details[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.faq details p {
+  max-width: 40rem;
+  margin: 0 0 1.2rem;
+  font-size: 0.97rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}

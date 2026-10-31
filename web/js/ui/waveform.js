@@ -58,9 +58,20 @@ export function drawWave(canvas, heights, { played = 0, rest, heard }) {
   const barWidth = Math.max(1, step * 0.6);
   const middle = height / 2;
   const playedBars = played * heights.length;
-  for (let index = 0; index < heights.length; index += 1) {
-    const barHeight = Math.max(MIN_BAR_PX, heights[index] * (height - 2));
-    context.fillStyle = index < playedBars ? heard : rest;
-    context.fillRect(index * step + (step - barWidth) / 2, middle - barHeight / 2, barWidth, barHeight);
+  // Two paths, one per colour, not one fill per bar: it redraws every frame
+  // while a clip plays, on a phone that is also running the model.
+  for (const heardPass of [false, true]) {
+    context.fillStyle = heardPass ? heard : rest;
+    context.beginPath();
+    for (let index = 0; index < heights.length; index += 1) {
+      if ((index < playedBars) !== heardPass) continue;
+      const barHeight = Math.max(MIN_BAR_PX, heights[index] * (height - 2));
+      const x = index * step + (step - barWidth) / 2;
+      const y = middle - barHeight / 2;
+      // Rounded where the browser can; square bars are the fallback.
+      if (context.roundRect) context.roundRect(x, y, barWidth, barHeight, Math.min(barWidth, barHeight) / 2);
+      else context.rect(x, y, barWidth, barHeight);
+    }
+    context.fill();
   }
 }

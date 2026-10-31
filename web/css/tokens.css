@@ -1,21 +1,32 @@
 /* Design tokens: one light set, then the dark set twice -- once for a device
-   in dark mode, once for a visitor who picked dark. Keep the three in sync. */
+   in dark mode, once for a visitor who picked dark. Keep the three in sync.
+   Text colours are measured: --ink-soft and --faint keep 4.5:1 on --paper,
+   --panel and --raise in both themes; --field-line and --wave-rest keep 3:1. */
 
 :root {
   color-scheme: light dark;
 
-  --ink: #15202a;
-  --ink-soft: #56636f;
   --paper: #f4f6f7;
   --panel: #ffffff;
-  --line: #d9e0e4;
+  --raise: #eef2f4;
+  --line: #e1e7ea;
+  --line-strong: #b9c4ca;
+  --ink: #15202a;
+  --ink-soft: #56636f;
+  --faint: #5f6c75;
   --accent: #0b6770;
+  --accent-2: #5cc6b4;
   --accent-ink: #ffffff;
   --accent-soft: #e1eff0;
+  /* Text on --accent-2 (the "Ready" button): dark in both themes. */
+  --on-accent-2: #052326;
   --focus: #0b6770;
-  --wave-rest: #8a979f;
-  /* Form fields need a 3:1 boundary (WCAG 1.4.11); --line is for dividers. */
+  --wave-rest: #84919a;
   --field-line: #7f8c95;
+  --dot-good: #2f9e55;
+  --dot-warn: #c98a1e;
+  --dot-bad: #d24b4b;
+  --shadow-card: 0 30px 60px -40px rgb(21 32 42 / 0.22);
   /* The mode banner: fast mode and fallbacks are warnings, not errors. */
   --warn-bg: #fff5e0;
   --warn-line: #e0a23c;
@@ -30,29 +41,39 @@
 
   --radius: 10px;
   --radius-lg: 16px;
+  --radius-xl: 24px;
   --gap: 1rem;
-  --gutter: max(16px, env(safe-area-inset-left));
-  --stage: 1040px;
+  --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-right));
+  --frame: 1120px;
+  --stage: 760px;
   --measure: 68ch;
   --font: "Onest", ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 /* Dark follows the device unless the visitor picked light; `data-theme` is set
    by js/ui/theme.js (and js/page/theme-boot.js, before first paint). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --ink: #e4ebee;
-    --ink-soft: #93a2ad;
-    --paper: #0f1519;
-    --panel: #151d22;
-    --line: #243038;
+    --paper: #0b1013;
+    --panel: #11181c;
+    --raise: #172127;
+    --line: #1f2a31;
+    --line-strong: #34434c;
+    --ink: #e6eef0;
+    --ink-soft: #9aa9b3;
+    --faint: #7e8f99;
     --accent: #56c2c8;
+    --accent-2: #a7ecd2;
     --accent-ink: #052326;
-    --accent-soft: #11302f;
+    --accent-soft: #13292c;
     --focus: #7fd3d8;
-    --wave-rest: #5f707b;
-    --field-line: #5f707b;
+    --wave-rest: #5a6b76;
+    --field-line: #5a6b76;
+    --dot-good: #4fd18b;
+    --dot-warn: #e7b04a;
+    --dot-bad: #e06464;
+    --shadow-card: inset 0 1px 0 rgb(255 255 255 / 0.03), 0 30px 60px -40px rgb(0 0 0 / 0.5);
     --warn-bg: #2a2111;
     --warn-line: #9a6f22;
     --warn-ink: #f2d8a2;
@@ -67,17 +88,25 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --ink: #e4ebee;
-  --ink-soft: #93a2ad;
-  --paper: #0f1519;
-  --panel: #151d22;
-  --line: #243038;
+  --paper: #0b1013;
+  --panel: #11181c;
+  --raise: #172127;
+  --line: #1f2a31;
+  --line-strong: #34434c;
+  --ink: #e6eef0;
+  --ink-soft: #9aa9b3;
+  --faint: #7e8f99;
   --accent: #56c2c8;
+  --accent-2: #a7ecd2;
   --accent-ink: #052326;
-  --accent-soft: #11302f;
+  --accent-soft: #13292c;
   --focus: #7fd3d8;
-  --wave-rest: #5f707b;
-  --field-line: #5f707b;
+  --wave-rest: #5a6b76;
+  --field-line: #5a6b76;
+  --dot-good: #4fd18b;
+  --dot-warn: #e7b04a;
+  --dot-bad: #e06464;
+  --shadow-card: inset 0 1px 0 rgb(255 255 255 / 0.03), 0 30px 60px -40px rgb(0 0 0 / 0.5);
   --warn-bg: #2a2111;
   --warn-line: #9a6f22;
   --warn-ink: #f2d8a2;

@@ -355,6 +355,9 @@ export class Engine {
     throwIfCancelled(isCancelled);
 
     const pieces = [];
+    // [start, end) of each chunk's own audio, in samples: the player lights
+    // the chunk being heard.
+    const chunkSpans = [];
     let total = 0;
     for (let index = 0; index < chunks.length; index += 1) {
       if (index) {
@@ -368,6 +371,7 @@ export class Engine {
       const settings = { speed, variation, seed: seed + index };
       const piece = await this.speakChunk(chunks[index], settings, onBackend, isCancelled);
       pieces.push(piece);
+      chunkSpans.push([total, total + piece.length]);
       total += piece.length;
     }
 
@@ -380,6 +384,6 @@ export class Engine {
     for (let index = 0; index < waveform.length; index += 1) {
       waveform[index] = Math.max(-1, Math.min(1, waveform[index]));
     }
-    return { waveform, chunks, sampleRate: SAMPLE_RATE };
+    return { waveform, chunks, chunkSpans, sampleRate: SAMPLE_RATE };
   }
 }

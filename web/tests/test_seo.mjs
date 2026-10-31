@@ -3,7 +3,7 @@
 // say exactly what the page shows -- Google ignores (and may penalise) markup
 // that does not match the visible text.
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { LABELS } from "../js/ui/i18n.js";
+import { LABELS, label } from "../js/ui/i18n.js";
 
 const WEB = new URL("../", import.meta.url);
 const REPO = new URL("../../", import.meta.url);
@@ -97,17 +97,38 @@ expect("index.html: the app is in Azerbaijani", [app?.inLanguage].flat().include
 expect("index.html: the app is free", app?.isAccessibleForFree === true && app?.offers?.price === "0");
 expect("index.html: <noscript> points to the About page",
   /<noscript>[\s\S]*href="\.\/about\.html"[\s\S]*<\/noscript>/u.test(index));
-// The static text is what the script writes on load, so nothing jumps.
-const staticText = (id) =>
-  plain(index.match(new RegExp(`<(\\w+)\\b[^>]*\\bid="${id}"[^>]*>([\\s\\S]*?)</\\1>`, "u"))?.[2] ?? "");
-for (const [id, key] of [["subtitle", "subtitle"], ["offline-note", "offline_note"],
-  ["footer", "footer"], ["about-link", "about_link"]]) {
-  expect(`index.html: #${id} holds the Azerbaijani "${key}" label`, staticText(id) === LABELS.az[key]);
+// Every `data-l10n` element holds, statically, the Azerbaijani label the script
+// writes on load: crawlers read it, and nothing jumps when the script runs.
+const labelled = [...index.matchAll(/<(\w+)\b[^>]*\bdata-l10n="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/gu)];
+expect("index.html: labelled elements found", labelled.length >= 40);
+for (const [, , key, inner] of labelled) {
+  expect(`index.html: data-l10n="${key}" holds its Azerbaijani label`, plain(inner) === label("az", key));
+  expect(`[en] ${key} label exists`, label("en", key) !== key);
+}
+for (const [, key, aria] of index.matchAll(/\bdata-l10n-aria="([^"]+)"[^>]*\baria-label="([^"]*)"/gu)) {
+  expect(`index.html: aria-label of "${key}" is its Azerbaijani label`, aria === label("az", key));
 }
 expect("index.html: the footer links the About page", /id="about-link"\s+href="\.\/about\.html"/u.test(index));
 for (const language of Object.keys(LABELS)) {
   for (const key of ["about_link", "page_title"]) {
     expect(`[${language}] ${key} label exists`, Boolean(LABELS[language][key]));
+  }
+}
+
+// The project's name is Avaz wherever a search result or an AI answer reads it.
+expect("index.html: the title names Avaz", /Avaz/u.test(attr(index, /<title>([^<]*)<\/title>/u) ?? ""));
+expect("index.html: the description names Avaz", /Avaz/u.test(meta(index, "description") ?? ""));
+expect("index.html: the app is called Avaz", app?.name === "Avaz");
+
+// CLAUDE.md: the commercial-use answer is never compressed into "free for
+// commercial use". Each language keeps every condition.
+const COMMERCIAL = {
+  az: [/GPL-3\.0/u, /accepts_prephonemized_input/u, /adının çəkilməsi/u, /açıq-çəki/u, /hüquqi məsləhət deyil/u],
+  en: [/GPL-3\.0/u, /accepts_prephonemized_input/u, /attribution/u, /open-weight, not open-data/u, /not legal advice/u],
+};
+for (const [language, rules] of Object.entries(COMMERCIAL)) {
+  for (const rule of rules) {
+    expect(`[${language}] the commercial answer keeps ${rule}`, rule.test(label(language, "faq_a6")));
   }
 }
 
@@ -123,6 +144,7 @@ const faqCounts = {};
 for (const [lang, file] of Object.entries(ABOUT)) {
   const html = read(file);
   checkHead(file, html, { lang, wantCanonical: `${ORIGIN}/${file}` });
+  expect(`${file}: the title names Avaz`, /Avaz/u.test(attr(html, /<title>([^<]*)<\/title>/u) ?? ""));
   expect(`${file}: at most ${MAX_PAGE_LINES} lines`, html.split("\n").length <= MAX_PAGE_LINES);
   for (const [other, otherFile] of Object.entries(ABOUT)) {
     expect(`${file}: hreflang ${other}`,

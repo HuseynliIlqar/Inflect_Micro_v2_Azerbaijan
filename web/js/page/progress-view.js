@@ -5,15 +5,20 @@ import { els } from "./dom.js";
 import { state, t } from "./context.js";
 import { renderModeBanner, renderSlowNote } from "./mode-view.js";
 import { reviseDevice } from "./device.js";
+import { orb } from "./orb-view.js";
+import { renderSpeakBusy } from "./busy-view.js";
 
 /** `undefined` hides the bar, `null` makes it indeterminate, 0..1 fills it. */
 export function setProgress(fraction, text = els.status.textContent) {
   const bar = els.progress;
   const fill = bar.firstElementChild;
+  // The same fraction on the ring round the orb and on the Speak button.
+  orb.setProgress(fraction);
   if (fraction === undefined) {
     bar.hidden = true;
     return;
   }
+  if (state.busy) renderSpeakBusy(fraction);
   bar.hidden = false;
   bar.setAttribute("aria-label", t("progress_label"));
   if (text) bar.setAttribute("aria-valuetext", text);

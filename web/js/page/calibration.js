@@ -18,6 +18,7 @@ import { client } from "./client.js";
 import { els } from "./dom.js";
 import { device, guessDevice } from "./device.js";
 import { renderPhoneNote } from "./mode-view.js";
+import { renderOrb } from "./busy-view.js";
 import {
   APPLE_MOBILE, EXPECTED_THREADS, IN_FRAME, PHONE, QUERY, state, t,
 } from "./context.js";
@@ -31,6 +32,7 @@ let storeKey = null;
 function setChecking(on) {
   state.checking = on;
   els.speak.disabled = on;
+  renderOrb();
 }
 
 function accept(calibration, { announce }) {

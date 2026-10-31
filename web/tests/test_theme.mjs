@@ -1,5 +1,5 @@
-// Which theme the page starts in.
-import { initialTheme } from "../js/ui/theme.js";
+// Which theme the page starts in, and where the one toggle button takes it.
+import { initialTheme, toggledTheme } from "../js/ui/theme.js";
 
 const failures = [];
 let checked = 0;
@@ -16,6 +16,13 @@ expect("Hub hint, dark", initialTheme(null, "?__theme=dark"), "dark");
 expect("Hub hint, light", initialTheme(null, "?__theme=light&x=1"), "light");
 expect("unknown hint ignored", initialTheme(null, "?__theme=system"), "auto");
 expect("corrupt storage ignored", initialTheme("purple", ""), "auto");
+
+// The toggle always lands on the opposite of what is on screen.
+expect("auto on a dark device -> light", toggledTheme("auto", true), "light");
+expect("auto on a light device -> dark", toggledTheme("auto", false), "dark");
+expect("dark -> light", toggledTheme("dark", false), "light");
+expect("light -> dark", toggledTheme("light", true), "dark");
+expect("unknown counts as auto", toggledTheme("purple", true), "light");
 
 if (failures.length) {
   for (const f of failures) console.error("FAIL", f.name, "got", f.got, "want", f.want);

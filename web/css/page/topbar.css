@@ -1,4 +1,4 @@
-/* -- the top bar: identity on the left, page settings on the right ----------- */
+/* -- the top bar: the name on the left, language, theme, source and device on the right */
 
 .topbar {
   display: flex;
@@ -6,27 +6,30 @@
   gap: 0.6rem 1rem;
   align-items: center;
   justify-content: space-between;
-  /* The bar spans the window; its contents line up with the stage below. */
-  padding: 0.7rem max(var(--gutter), calc((100% - var(--stage)) / 2 + var(--gutter)));
-  border-bottom: 1px solid var(--line);
-  background: var(--panel);
+  max-width: calc(var(--frame) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 1rem var(--gutter);
 }
 
 .brand {
   display: inline-flex;
-  gap: 0.5rem;
+  gap: 0.55rem;
   align-items: center;
+  min-height: 40px;
   margin: 0;
+  color: var(--ink);
   font-weight: 600;
+  font-size: 1rem;
   letter-spacing: -0.01em;
+  text-decoration: none;
 }
 
 .brand-mark {
-  width: 1.4rem;
-  height: 1.4rem;
+  width: 22px;
+  height: 22px;
   fill: none;
   stroke: var(--accent);
-  stroke-width: 2.4;
+  stroke-width: 2.2;
   stroke-linecap: round;
 }
 
@@ -35,4 +38,22 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+  justify-content: flex-end;
+}
+
+/* The theme button shows where a click goes: a moon on a light page. */
+#theme-toggle .icon-sun,
+#theme-toggle[data-next="light"] .icon-moon {
+  display: none;
+}
+
+#theme-toggle[data-next="light"] .icon-sun {
+  display: block;
+}
+
+@media (hover: hover) {
+  .brand:hover .brand-name {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
 }

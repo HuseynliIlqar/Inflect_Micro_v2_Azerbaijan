@@ -1,44 +1,59 @@
 /* Phones, sideways screens and reduced motion. Loaded after every page file so these rules win. */
 
-/* -- phones ------------------------------------------------------------------ */
-
-/* A finger needs about 44px; a mouse does not, so the desktop stays compact. */
+/* -- touch: a finger needs ~44px; a mouse does not, so the desktop stays compact -- */
 @media (pointer: coarse) {
-  .segment,
+  .chip,
+  .example,
+  .voice-option {
+    min-height: 40px;
+  }
+
+  .icon-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .segment {
+    min-width: 40px;
+    min-height: 34px;
+  }
+
   .ghost,
-  .example {
+  .solid {
     min-height: 44px;
-  }
-
-  .segmented-small .segment {
-    min-width: 44px;
-  }
-
-  .ghost {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .primary {
-    min-height: 48px;
-  }
-
-  /* Padding, not display: flex -- flex would drop the disclosure triangle. */
-  .advanced summary,
-  .about summary {
-    padding-block: 0.7rem;
   }
 
   .links a {
     display: inline-block;
-    min-width: 44px;
-    padding-block: 0.75rem;
-    text-align: center;
+    padding-block: 0.6rem;
+  }
+
+  .link-button {
+    min-height: 44px;
+  }
+
+  /* iOS zooms into any field under 16px; these stay at 16. */
+  input[type="number"],
+  .script-input {
+    font-size: max(16px, 1em);
   }
 }
 
+/* A keyboard shortcut means nothing on a touch screen. */
+@media (hover: none), (pointer: coarse) {
+  .kbd {
+    display: none;
+  }
+}
+
+/* -- phones ------------------------------------------------------------------- */
 @media (max-width: 640px) {
+  /* Name and switches on one line; the device card takes the line below. */
+  .topbar {
+    gap: 0.5rem;
+    padding-block: 0.75rem;
+  }
+
   .topbar-controls {
     display: contents;
   }
@@ -47,113 +62,186 @@
     margin-inline-end: auto;
   }
 
-  /* The heading right below names the page; the mark is enough up here. */
-  .brand-name {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
+  .composer {
+    margin-top: 1.75rem;
+    border-radius: 20px;
   }
 
-  .subtitle {
-    margin-bottom: 1.2rem;
-    font-size: 0.95rem;
+  .composer-head {
+    padding: 0.7rem 0.7rem 0;
   }
 
   .script-input {
     min-height: 8rem;
-    padding: 0.85rem 0.9rem;
+    padding: 0.85rem 1rem 0.5rem;
+  }
+
+  .preview,
+  .voice-info,
+  .composer .field-error,
+  .composer .field-warning {
+    margin-inline: 1rem;
+  }
+
+  .tune {
+    gap: 0.75rem;
+    padding-inline: 1rem;
+  }
+
+  /* Knobs on one line, Speak across the full width below them. */
+  .composer-foot {
+    padding: 0.65rem 0.7rem 0.75rem;
+  }
+
+  .chips {
+    display: grid;
+    flex-basis: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .chip {
+    justify-content: center;
+  }
+
+  .actions {
+    flex: 1 1 100%;
   }
 
   .speak {
     flex: 1;
+    min-width: 0;
   }
 
-  .elapsed {
-    flex-basis: 100%;
-    margin-inline-start: 0;
-    text-align: end;
+  .result {
+    padding: 0.9rem 0.85rem;
+    border-radius: 20px;
+  }
+
+  .facts {
+    margin-top: 2.75rem;
+  }
+
+  .mission,
+  .faq {
+    margin-top: 2.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* The clock goes under the waveform, so the bars get the whole width. */
+  .player {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.35rem 0.75rem;
+  }
+
+  .play {
+    width: 44px;
+    height: 44px;
   }
 
   .wave {
-    height: 88px;
-    padding: 0.6rem 0.75rem;
+    height: 46px;
   }
 
-  .voice-row .segmented {
-    display: flex;
-    width: 100%;
-  }
-
-  .voice-row .segment {
-    flex: 1 1 auto;
+  .time {
+    grid-column: 2;
     min-width: 0;
-    padding-inline: 0.5rem;
   }
 
-  .panel {
-    padding: 1rem 0.9rem;
+  .result-actions {
+    flex: 1 1 100%;
+  }
+
+  .result-actions .ghost,
+  .result-actions .solid {
+    flex: 1;
+  }
+
+  .result-actions .link-button {
+    flex-basis: 100%;
+    text-align: start;
+  }
+
+  .faq summary {
+    font-size: 0.98rem;
   }
 }
 
-/* A phone held sideways has ~360px of height: the header must not eat half. */
-@media (max-height: 500px) and (orientation: landscape) {
-  .stage {
-    padding-top: 1rem;
-  }
-
-  /* So the text box and the button share the first screen. */
-  .script-input {
-    min-height: 5rem;
-  }
-
-  /* Descriptions only: upright, the same phone shows them again. */
-  .subtitle,
-  .voice-info {
+/* Narrow phones: "123" alone, "/ 500" back once the limit is near. */
+@media (max-width: 420px) {
+  .char-count:not(.is-near):not(.is-over) .count-max {
     display: none;
   }
 
-  .voice-row {
-    margin-bottom: 0.6rem;
+  .voice-option {
+    padding-inline: 0.6rem;
+  }
+}
+
+/* 320px phones: the voice switch takes the whole line, the tools the next. */
+@media (max-width: 360px) {
+  .composer-head {
+    flex-wrap: wrap;
+    gap: 0.25rem;
   }
 
-  /* One line: the width is there, the height is not. */
-  h1 {
-    max-width: none;
-    margin-bottom: 0.7rem;
-    font-size: 1.35rem;
+  .voice-switch {
+    flex: 1 1 100%;
   }
 
+  .composer-tools {
+    margin-inline-start: auto;
+  }
+
+  .char-count .count-max {
+    display: inline;
+  }
+
+  .voice-option {
+    font-size: 0.8rem;
+  }
+
+  .chip {
+    padding-inline: 0.6rem;
+  }
+
+  .lang {
+    padding-inline: 0.6rem;
+  }
+}
+
+/* -- a phone held sideways has ~360px of height: the orb must not eat it all -- */
+@media (max-height: 500px) and (orientation: landscape) {
   .topbar {
     padding-block: 0.4rem;
   }
-}
 
-/* 320px phones: keep "İngiliscə (baza model)" on one line. */
-@media (max-width: 360px) {
-  .voice-row .segment {
-    padding-inline: 0.35rem;
-    font-size: 0.82rem;
-  }
-}
-
-/* Folding phones (~280px): the voice labels cannot share a line, so the
-   options stack instead of being clipped. */
-@media (max-width: 300px) {
-  .voice-row .segmented {
-    flex-direction: column;
+  .orb {
+    --orb: 140px;
   }
 
-  .voice-row .segment + .segment {
-    border-inline-start: 0;
-    border-block-start: 1px solid var(--line);
+  .hero h1 {
+    margin-top: 0.75rem;
+    font-size: 1.6rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+  }
+
+  .composer {
+    margin-top: 1.25rem;
+  }
+
+  .script-input {
+    min-height: 5rem;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation: none !important;
     transition: none !important;
   }
@@ -162,6 +250,12 @@
   .progress.is-indeterminate .progress-fill {
     left: 0;
     width: 100%;
+    opacity: 0.45;
+  }
+
+  .orb-progress.is-indeterminate {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
     opacity: 0.45;
   }
 }

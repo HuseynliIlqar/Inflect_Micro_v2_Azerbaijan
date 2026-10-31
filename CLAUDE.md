@@ -8,6 +8,16 @@ was adapted from.
 Read `README.md` for what the project does. This file is about how to work on it
 without breaking it.
 
+**How the project presents itself.** People see it as **Avaz**: open-source
+text-to-speech that runs on the device, built for natural intonation on phones.
+Today it speaks Azerbaijani and English; Turkish and Russian are next (no dates).
+It is honest about being on the way -- the weak spots (flat intonation, slow
+phone browsers, the vocoder's ring) are listed openly on the page, the About
+pages, `web/llms.txt` and both READMEs. The repository, Space and model ids keep
+the name `Inflect_Micro_v2_Azerbaijan`; the Azerbaijani checkpoint keeps the
+model name "Inflect-Micro-v2 Azerbaijani". Do not claim features, apps, dates or
+benchmarks that do not exist.
+
 This is the single source of truth for agent instructions. `AGENTS.md` and
 `.cursor/rules/` point here on purpose -- keep `AGENTS.md` a pointer, never a
 copy, or the two will drift apart.
@@ -81,8 +91,10 @@ help, Markdown. Azerbaijani appears only as *language data*:
   words) and `TEXT` in `tools/calibration_reference.py` (its test sentence)
 - the `_AZ` table in `webui/i18n.py` -- the interface's own labels; the page has
   to speak Azerbaijani, and this is the only module where it does
-- the same labels in `web/js/ui/i18n.js`, and the few of them written into
-  `web/index.html` as static text (`tests/test_seo.mjs` keeps them equal)
+- the same labels in `web/js/ui/i18n.js`, the playground's own labels in
+  `web/js/ui/i18n-page.js` (hero, goal, FAQ), the Azerbaijani text of every
+  `data-l10n` element written into `web/index.html` (`tests/test_seo.mjs` keeps
+  them equal), and the example sentences in `web/js/page/language.js`
 - phoneme strings anywhere
 
 Translating any of those changes behaviour. There are two deliberate prose
@@ -113,8 +125,9 @@ That is documented and bounded. Do not add more GPL dependencies, and do not
 relicense our Apache-2.0 code. See `THIRD_PARTY_NOTICES.md`.
 
 **Both READMEs answer the commercial-use question, and must keep saying the
-same thing** -- and so must the FAQ in `web/about.html` / `web/about-en.html`
-and the licence line in `web/llms.txt`. Running it is unrestricted; redistributing a combined work brings
+same thing** -- and so must the FAQ in `web/about.html` / `web/about-en.html`,
+the `faq_a6` label the playground shows (`tests/test_seo.mjs` checks its
+conditions in both languages) and the licence line in `web/llms.txt`. Running it is unrestricted; redistributing a combined work brings
 GPL-3.0 obligations for `phonemizer` and eSpeak NG; `accepts_prephonemized_input`
 is the way out. The English voice is synthetic and Apache-2.0, but the release is
 open-weight, not open-data. The Azerbaijani training data is used with the
@@ -163,9 +176,11 @@ that into "free for commercial use".
   `[project.optional-dependencies] app` and in `requirements-app.txt`, never in
   `requirements.txt`: someone importing `aztts` as a library should not pay for
   a web stack. `app.py` is the only module allowed to import it.
-- **The English voice is a guest, not a second product.** `EnVoice` exists so a
-  visitor can hear where this model started. None of the Azerbaijani text
-  layers apply to it: no `normalize_az`, no `restress`. Keep it that way --
+- **English is a supported language, but technically still the guest.** The
+  page offers it as one of Avaz's two languages; underneath, `EnVoice` is the
+  unmodified base model, there so a visitor can hear where this model started,
+  and the copy always credits it as Owen Song's Inflect-Micro-v2. None of the
+  Azerbaijani text layers apply to it: no `normalize_az`, no `restress`. Keep it that way --
   Azerbaijani number words in an English sentence is the failure mode. The one
   exception is `censor_az`, which writes nothing, only bleeps.
 - **`web/` is a port, and a port drifts.** The JavaScript in `web/js/text/` mirrors

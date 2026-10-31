@@ -12,7 +12,7 @@ export const THEMES = ["auto", "light", "dark"];
 export const STORAGE_KEY = "theme";
 
 // The browser chrome colour for each explicit theme; mirrors `--paper`.
-const THEME_COLORS = { light: "#f4f6f7", dark: "#0f1519" };
+const THEME_COLORS = { light: "#f4f6f7", dark: "#0b1013" };
 
 /**
  * The theme to start with: a saved choice wins, then Hugging Face's
@@ -24,6 +24,15 @@ export function initialTheme(stored, search = "") {
   const hinted = new URLSearchParams(search).get("__theme");
   if (hinted === "light" || hinted === "dark") return hinted;
   return "auto";
+}
+
+/**
+ * Where the one theme button goes: the opposite of what is on screen. From
+ * "auto" that depends on the device, so the caller says whether it is dark.
+ */
+export function toggledTheme(current, systemDark) {
+  const showing = current === "light" || current === "dark" ? current : systemDark ? "dark" : "light";
+  return showing === "dark" ? "light" : "dark";
 }
 
 export function readStoredTheme() {
@@ -52,11 +61,6 @@ export function applyTheme(theme, { remember = true } = {}) {
   for (const meta of document.querySelectorAll('meta[name="theme-color"]')) {
     // Each tag keeps its own media query in "auto"; an explicit theme overrides both.
     meta.content = next === "auto" ? meta.dataset.color : THEME_COLORS[next];
-  }
-  for (const button of document.querySelectorAll("[data-theme-choice]")) {
-    const active = button.dataset.themeChoice === next;
-    button.classList.toggle("is-active", active);
-    button.setAttribute("aria-pressed", String(active));
   }
   if (remember) storeTheme(next);
   return next;

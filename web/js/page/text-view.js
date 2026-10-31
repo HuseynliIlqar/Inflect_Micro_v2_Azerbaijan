@@ -11,7 +11,11 @@ let shownTextError = null;
 function renderCounter(check) {
   const visible = document.createElement("span");
   visible.setAttribute("aria-hidden", "true");
-  visible.textContent = t("char_count", { count: check.count, max: check.max });
+  // "123" and " / 500" apart: a narrow screen shows the limit only near it.
+  const limit = document.createElement("span");
+  limit.className = "count-max";
+  limit.textContent = ` / ${check.max}`;
+  visible.append(String(check.count), limit);
   const spoken = document.createElement("span");
   spoken.className = "visually-hidden";
   spoken.textContent = t("char_count_label", { count: check.count, max: check.max });

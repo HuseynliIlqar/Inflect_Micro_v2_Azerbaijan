@@ -1,6 +1,6 @@
-/* A quiet page with one loud thing: the waveform of what was just spoken.
-   Caspian teal on cool paper; Onest for everything, monospace only where the
-   text is literally machine input (the chunks, the diagnostics). */
+/* A dark, quiet page with one living thing: the orb that speaks. Caspian
+   teal on deep slate (or cool paper in light); Onest for words, Geist Mono for
+   anything that is a number, a measurement or machine output. */
 
 * {
   box-sizing: border-box;
@@ -11,32 +11,35 @@
   display: none !important;
 }
 
+html {
+  background: var(--paper);
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
   margin: 0;
+  min-height: 100vh;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
   padding-bottom: env(safe-area-inset-bottom);
   background: var(--paper);
   color: var(--ink);
   font: 16px/1.55 var(--font);
-  -webkit-text-size-adjust: 100%;
+  overflow-wrap: break-word;
 }
 
 h1 {
-  margin: 0 0 0.4rem;
-  max-width: 22ch;
+  margin: 0;
   text-wrap: balance;
-  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
-  font-weight: 650;
-  line-height: 1.12;
-  letter-spacing: -0.02em;
+  font-size: clamp(2rem, 5.4vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
 }
 
-.section-title {
-  margin: 0 0 0.9rem;
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: -0.005em;
+h2 {
+  text-wrap: balance;
 }
 
 a {
@@ -51,4 +54,24 @@ a:hover {
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+/* A small caps-and-mono label over a section: "RESULT", "THIS SESSION". */
+.section-label {
+  margin: 0;
+  font: 500 0.72rem/1.4 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.note {
+  margin: 0.6rem 0 0;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
 }

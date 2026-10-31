@@ -258,6 +258,9 @@ node web/tests/test_calibration_progress.mjs
 node web/tests/test_calibration_store.mjs
 node web/tests/test_calibration_copy.mjs
 node web/tests/test_seo.mjs
+node web/tests/test_orb_motion.mjs
+node web/tests/test_player.mjs
+node web/tests/test_diff_words.mjs
 ```
 
 ### The Gradio Space (needs Pro)

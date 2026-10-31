@@ -1,36 +1,43 @@
 /** Every element the page script touches, looked up once. */
 
 const $ = (id) => document.getElementById(id);
+const all = (selector) => [...document.querySelectorAll(selector)];
 
 export const els = {
-  title: $("title"), subtitle: $("subtitle"), languageLabel: $("language-label"),
-  themeLabel: $("theme-label"),
-  text: $("text"), textLabel: $("text-label"), speak: $("speak"), cancel: $("cancel"),
-  status: $("status"),
-  examplesLabel: $("examples-label"), examples: $("examples"),
-  audio: $("audio"), audioLabel: $("audio-label"), download: $("download"), stats: $("stats"),
-  parameters: $("parameters-heading"),
-  speed: $("speed"), speedValue: $("speed-value"), speedLabel: $("speed-label"), speedInfo: $("speed-info"),
+  // -- top bar
+  themeToggle: $("theme-toggle"),
+  // -- hero: the orb and the status line under it
+  orb: $("orb"), orbBlob: $("orb-blob"), orbRingInner: $("orb-ring-inner"),
+  orbRingOuter: $("orb-ring-outer"), orbProgress: $("orb-progress"),
+  orbGlow: document.querySelector(".orb-glow"), orbHint: $("orb-hint"),
+  status: $("status"), elapsed: $("elapsed"),
+  // -- the composer
+  text: $("text"), textCount: $("text-count"), textError: $("text-error"), textWarning: $("text-warning"),
+  clearText: $("clear-text"), voiceInfo: $("voice-info"),
+  preview: $("preview"), previewText: $("preview-text"),
+  chips: all(".chip[data-panel]"),
+  speed: $("speed"), speedValue: $("speed-value"),
   variation: $("variation"), variationValue: $("variation-value"),
-  variationLabel: $("variation-label"), variationInfo: $("variation-info"),
-  seed: $("seed"), seedLabel: $("seed-label"), seedInfo: $("seed-info"), shuffle: $("shuffle"),
-  normalise: $("normalise"), normaliseLabel: $("normalise-label"), normaliseInfo: $("normalise-info"),
-  advancedLabel: $("advanced-label"),
+  seed: $("seed"), seedValue: $("seed-value"), shuffle: $("shuffle"),
+  normalise: $("normalise"), normaliseInfo: $("normalise-info"),
   maxWords: $("max-words"), maxWordsValue: $("max-words-value"),
-  maxWordsLabel: $("max-words-label"), maxWordsInfo: $("max-words-info"),
-  chunks: $("chunks"), chunksLabel: $("chunks-label"), chunksInfo: $("chunks-info"),
-  voiceLabel: $("voice-label"), voiceInfo: $("voice-info"),
-  offlineNote: $("offline-note"), speedNote: $("speed-note"),
-  footer: $("footer"), censorNote: $("censor-note"), aboutLabel: $("about-label"),
-  feedbackLink: $("feedback-link"), aboutLink: $("about-link"),
-  skipLink: document.querySelector(".skip-link"),
-  wave: $("wave"), waveBox: document.querySelector(".wave"), waveEmpty: $("wave-empty"),
-  progress: $("progress"), elapsed: $("elapsed"), slowNote: $("slow-note"),
+  speak: $("speak"), speakLabel: $("speak-label"), speakKbd: $("speak-kbd"), cancel: $("cancel"),
+  progress: $("progress"),
+  slowNote: $("slow-note"),
   phoneNote: $("phone-note"), phoneNoteText: $("phone-note-text"), phoneWhy: $("phone-why"),
-  result: $("result"), resultReady: $("result-ready"), resultReadyText: $("result-ready-text"),
+  examples: $("examples"),
+  // -- the result
+  result: $("result"), resultReady: $("result-ready"),
   modeBanner: $("mode-banner"), modeTitle: $("mode-title"), modeText: $("mode-text"),
   modeGpu: $("mode-gpu"), modeAction: $("mode-action"), modeBadge: $("mode-badge"),
+  play: $("play"), wave: $("wave"), waveBox: document.querySelector(".wave"), waveEmpty: $("wave-empty"),
+  time: $("time"), audio: $("audio"), chunks: $("chunks"),
+  stats: $("stats"), regen: $("regen"), download: $("download"),
   copyDiagnostics: $("copy-diagnostics"), copyStatus: $("copy-status"), diagnostics: $("diagnostics"),
+  history: $("history"), historyList: $("history-list"),
+  // Every link to the About page; its target follows the interface language.
+  aboutLinks: all("[data-about-link]"),
+  // -- the device check: card, dialog, first-visit measurement
   deviceCard: $("device-card"), deviceMeter: document.querySelector("#device-card .meter"),
   deviceLabel: $("device-label"), deviceTitle: $("device-title"), deviceDetails: $("device-details"),
   dialog: $("device-dialog"), dialogMeter: document.querySelector("#device-dialog .meter"),
@@ -47,6 +54,5 @@ export const els = {
   calRunsOn: $("cal-runs-on"), calWhy: $("cal-why"), calReasons: $("cal-reasons"),
   calNoteOnce: $("cal-note-once"), calError: $("cal-error"), calSkip: $("cal-skip"),
   calRetry: $("cal-retry"), calContinue: $("cal-continue"),
-  toasts: $("toasts"), textError: $("text-error"), textCount: $("text-count"),
-  textWarning: $("text-warning"),
+  toasts: $("toasts"),
 };

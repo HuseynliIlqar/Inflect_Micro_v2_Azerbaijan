@@ -10,7 +10,7 @@
  *   in:  { id, voice, text, options } -- text is checked by js/text/text-check.js;
  *        a refused one comes back as an error whose message is the reason
  *   out: { id, type: "progress", stage, ...detail }
- *        { id, type: "result", waveform, chunks, backend, precision, fallbacks, threads }
+ *        { id, type: "result", waveform, chunks, chunkSpans, backend, precision, fallbacks, threads }
  *          (waveform transferred; precision is "fp32" or "int8"; fallbacks lists
  *          every step that failed)
  *   options.fullQuality skips the int8 step of the fallback chain.
@@ -133,14 +133,14 @@ async function handle({ id, kind, voice, text, options }) {
   post({ type: "progress", stage: "backend", ...state() });
   checkpoint();
 
-  const { waveform, chunks } = await engine.speak(verdict.text, {
+  const { waveform, chunks, chunkSpans } = await engine.speak(verdict.text, {
     ...options,
     isCancelled,
     onChunk: (done, total) => post({ type: "progress", stage: "chunk", done, total }),
     onBackend: () => post({ type: "progress", stage: "backend", ...state() }),
   });
   post(
-    { type: "result", waveform, chunks, ...state() },
+    { type: "result", waveform, chunks, chunkSpans, ...state() },
     [waveform.buffer],
   );
 }
