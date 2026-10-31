@@ -160,6 +160,11 @@ Azerbaijani, `about-en.html` in English, each with a FAQ and matching
   canonical; its title and tags come from `STATIC_SPACE_README.md`. The About
   pages are canonical on the static origin and are the only entries in the
   sitemap (a sitemap cannot list another host).
+- **Hugging Face serves its own `robots.txt`** on `*.static.hf.space` (allow
+  all, no `Sitemap:` line) and ignores the Space's file, so the sitemap is not
+  discovered from it: submit it by hand (below). `web/robots.txt` still ships,
+  for the day the page has a domain of its own. `sitemap.xml` and `llms.txt`
+  are served as written.
 - **When an About page changes,** edit both languages, regenerate nothing by
   hand -- the test fails until each FAQ's JSON-LD repeats its visible text
   exactly -- and bump that page's `<lastmod>` in `sitemap.xml`.

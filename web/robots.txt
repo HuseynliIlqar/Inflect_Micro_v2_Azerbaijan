@@ -1,6 +1,9 @@
 # The playground's static origin. index.html names the Hub page
 # (huggingface.co/spaces/...) as its canonical; the About pages are canonical
 # here. Nothing is blocked: AI crawlers are welcome to read the About pages.
+# Hugging Face serves its own robots.txt on *.static.hf.space (allow all, no
+# Sitemap line), so crawlers do not get this file there -- submit the sitemap
+# in Search Console and Bing by hand. It takes effect on a domain of our own.
 User-agent: *
 Allow: /
 

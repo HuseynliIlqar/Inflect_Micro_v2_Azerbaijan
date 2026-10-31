@@ -18,7 +18,7 @@ web/
   about.html          About the project, in Azerbaijani: static, for search and AI crawlers
   about-en.html       the same in English
   favicon.svg         the icon every page links
-  robots.txt, sitemap.xml, llms.txt   what crawlers read at the root
+  robots.txt, sitemap.xml, llms.txt   what crawlers read at the root (the Hub overrides robots.txt)
   css/tokens.css      colour tokens (light and both dark blocks)
   css/page/           the page, top to bottom, then its responsive rules
   css/components/     banner, device card and dialog, toasts, phone notes
