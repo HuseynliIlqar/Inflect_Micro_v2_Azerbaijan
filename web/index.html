@@ -20,22 +20,8 @@
       data-color="#0f1519"
       media="(prefers-color-scheme: dark)"
     />
-    <script>
-      // Before the first paint, so a dark choice never flashes white.
-      // The same rule as initialTheme() in js/ui/theme.js.
-      (function () {
-        var theme = null;
-        try {
-          theme = localStorage.getItem("theme");
-        } catch (e) {}
-        if (theme !== "light" && theme !== "dark") {
-          theme = new URLSearchParams(location.search).get("__theme");
-        }
-        if (theme === "light" || theme === "dark") {
-          document.documentElement.setAttribute("data-theme", theme);
-        }
-      })();
-    </script>
+    <!-- Blocking on purpose: the saved theme lands before the first paint. -->
+    <script src="./js/page/theme-boot.js"></script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -64,10 +50,7 @@
     <link rel="stylesheet" href="./css/components/phone-result.css" />
     <link rel="stylesheet" href="./css/components/dialog-compact.css" />
     <link rel="stylesheet" href="./css/components/calibration.css" />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect width='16' height='16' rx='4' fill='%230b6770'/><path d='M3 8h1M5.5 5v6M8 3v10M10.5 6v4M13 8h0' stroke='white' stroke-width='1.6' stroke-linecap='round'/></svg>"
-    />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
   </head>
   <body>
     <a class="skip-link" href="#text">Mətnə keç</a>

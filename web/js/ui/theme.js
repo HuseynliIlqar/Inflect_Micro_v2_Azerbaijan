@@ -3,8 +3,9 @@
  *
  * The choice lives on `<html data-theme>`; the stylesheets in css/ read it. "auto" is the
  * absence of the attribute, so the stylesheet's `prefers-color-scheme` rule
- * decides. An inline script in `index.html` applies the saved choice before the
- * first paint, so a dark page never flashes white while this module loads.
+ * decides. `js/page/theme-boot.js`, a blocking script in each page's <head>,
+ * applies the saved choice before the first paint, so a dark page never
+ * flashes white while this module loads.
  */
 
 export const THEMES = ["auto", "light", "dark"];

@@ -39,7 +39,7 @@
 }
 
 /* Dark follows the device unless the visitor picked light; `data-theme` is set
-   by js/theme.js (and the inline script in index.html, before first paint). */
+   by js/ui/theme.js (and js/page/theme-boot.js, before first paint). */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --ink: #e4ebee;
