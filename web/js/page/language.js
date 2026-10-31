@@ -38,8 +38,12 @@ const TEXT_LABELS = [
   ["phoneNoteText", "phone_note"], ["phoneWhy", "phone_why"],
   ["resultReadyText", "result_ready_badge"], ["skipLink", "skip_to_text"],
   ["waveEmpty", "wave_empty"], ["aboutLabel", "about_label"], ["footer", "footer"],
-  ["feedbackLink", "feedback_link"],
+  ["feedbackLink", "feedback_link"], ["aboutLink", "about_link"],
 ];
+
+// The About page is static HTML, one file per language, so a crawler that runs
+// no script still reads it; the link follows the interface language.
+const ABOUT_PAGES = { az: "./about.html", en: "./about-en.html" };
 
 function markPressed(selector, dataKey, value) {
   for (const button of document.querySelectorAll(selector)) {
@@ -91,9 +95,12 @@ export function applyLanguage(next) {
   if (statusKey) els.status.textContent = t(statusKey);
 
   document.documentElement.lang = state.language;
-  document.title = t("title");
+  // The tab and the search result say what the page does; the <h1> stays the
+  // label the Gradio page shares.
+  document.title = t("page_title");
   for (const [element, key] of TEXT_LABELS) els[element].textContent = t(key);
   els.text.placeholder = t("text_placeholder");
+  els.aboutLink.href = ABOUT_PAGES[state.language] ?? ABOUT_PAGES.az;
   // The theme buttons are icons: the word is their accessible name and tooltip.
   for (const button of document.querySelectorAll("[data-theme-choice]")) {
     const name = t(`theme_${button.dataset.themeChoice}`);

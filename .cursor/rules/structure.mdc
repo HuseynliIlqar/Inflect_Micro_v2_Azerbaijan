@@ -31,6 +31,7 @@ is in `CLAUDE.md` under "Long files and messy folders".
 
   ```
   web/index.html  README.md  package.json
+  web/about.html  about-en.html  favicon.svg  robots.txt  sitemap.xml  llms.txt
   web/css/tokens.css  css/page/  css/components/
   web/js/app.js  js/worker.js  js/page/  js/engine/  js/text/  js/ui/
   web/tests/

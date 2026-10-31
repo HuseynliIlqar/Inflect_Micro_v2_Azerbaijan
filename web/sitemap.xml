@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Canonical URLs on this origin only. index.html is left out: its canonical
+     is the Hub page, which a sitemap on this host cannot list. Update lastmod
+     when an About page changes. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html</loc>
+    <lastmod>2026-10-31</lastmod>
+    <xhtml:link rel="alternate" hreflang="az" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about-en.html" />
+  </url>
+  <url>
+    <loc>https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about-en.html</loc>
+    <lastmod>2026-10-31</lastmod>
+    <xhtml:link rel="alternate" hreflang="az" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about-en.html" />
+  </url>
+</urlset>

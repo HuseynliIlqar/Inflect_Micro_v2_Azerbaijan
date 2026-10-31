@@ -3,23 +3,34 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <title>Azərbaycan dilində mətn-nitq sintezi</title>
-    <meta
-      name="description"
-      content="Offline Azerbaijani text-to-speech running entirely in the browser: a 9.36M-parameter VITS model through ONNX Runtime Web."
-    />
-    <meta
-      name="theme-color"
-      content="#f4f6f7"
-      data-color="#f4f6f7"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content="#0f1519"
-      data-color="#0f1519"
-      media="(prefers-color-scheme: dark)"
-    />
+    <title>Azərbaycanca mətni səsə çevirmək — pulsuz, oflayn TTS</title>
+    <!-- Search and link previews; canonical = the Hub page, which ranks. Checked by tests/test_seo.mjs. -->
+    <meta name="description" content="Azərbaycan dilində mətni pulsuz səsə çevirin: qeydiyyatsız, internetsiz, birbaşa brauzerdə. Mətniniz heç yerə göndərilmir. Açıq mənbəli 9.36M VITS modeli." />
+    <link rel="canonical" href="https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="azerbaycan-tts" />
+    <meta property="og:locale" content="az_AZ" />
+    <meta property="og:title" content="Azərbaycanca mətni səsə çevirmək — pulsuz, oflayn TTS" />
+    <meta property="og:description" content="Azərbaycan dilində mətni pulsuz səsə çevirin: qeydiyyatsız, internetsiz, birbaşa brauzerdə. Mətniniz heç yerə göndərilmir." />
+    <meta property="og:url" content="https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan" />
+    <meta property="og:image" content="https://cdn-thumbnails.huggingface.co/social-thumbnails/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json">
+      { "@context": "https://schema.org", "@type": "WebApplication", "name": "azerbaycan-tts",
+        "alternateName": ["Azerbaijani Text-to-Speech", "Azərbaycan dilində mətn-nitq sintezi"],
+        "url": "https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan",
+        "description": "Free Azerbaijani text-to-speech that runs entirely in the browser: no sign-up, no server, works offline once loaded. An open 9.36M-parameter VITS model.",
+        "applicationCategory": "MultimediaApplication", "operatingSystem": "Any; runs in a web browser",
+        "browserRequirements": "JavaScript and WebAssembly; WebGPU makes it faster",
+        "inLanguage": ["az", "en"], "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "author": { "@type": "Person", "name": "Ilqar Huseynli", "url": "https://github.com/HuseynliIlqar" },
+        "sameAs": ["https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan",
+                   "https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan"] }
+    </script>
+    <meta name="theme-color" content="#f4f6f7" data-color="#f4f6f7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1519" data-color="#0f1519" media="(prefers-color-scheme: dark)" />
     <!-- Blocking on purpose: the saved theme lands before the first paint. -->
     <script src="./js/page/theme-boot.js"></script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
@@ -167,7 +178,11 @@
     <main class="stage">
       <section class="composer" aria-labelledby="title">
         <h1 id="title">Azərbaycan dilində mətn-nitq sintezi</h1>
-        <p id="subtitle" class="subtitle"></p>
+        <!-- Static text = the label the script writes anyway, for crawlers that run no script. -->
+        <p id="subtitle" class="subtitle">9.36M parametrli VITS modeli, 24 kHz, tamamilə oflayn. Mətni yazın, parametrləri tənzimləyin və dinləyin.</p>
+        <noscript>
+          <p class="note">Bu səhifə JavaScript tələb edir: səs birbaşa brauzerinizdə yaradılır. <a href="./about.html">Layihə haqqında</a> · <a href="./about-en.html">About in English</a></p>
+        </noscript>
 
         <div class="voice-row" role="group" aria-labelledby="voice-label">
           <span class="field-label" id="voice-label">Səs</span>
@@ -349,7 +364,7 @@
 
           <details class="about">
             <summary id="about-label"></summary>
-            <p id="offline-note" class="note"></p>
+            <p id="offline-note" class="note">Səhifə yükləndikdən sonra internet olmadan da işləyir — bütün hesablama sizin brauzerinizdə gedir.</p>
             <p id="speed-note" class="note"></p>
           </details>
         </section>
@@ -357,9 +372,10 @@
     </main>
 
     <footer class="page-foot">
-      <p id="footer"></p>
+      <p id="footer">Bir səs, emosiya idarəsi və səs klonlama yoxdur. 9.36M parametrli modeldə nitq aydındır, lakin tam təbii deyil. Bu səsdən real bir insanı təqlid etmək və ya aldadıcı məzmun hazırlamaq üçün istifadə etməyin.</p>
       <p id="censor-note" class="note"></p>
       <p class="note links">
+        <a id="about-link" href="./about.html">Layihə haqqında</a>
         <a
           id="feedback-link"
           href="https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan/discussions"

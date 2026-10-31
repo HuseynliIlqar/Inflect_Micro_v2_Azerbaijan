@@ -22,7 +22,7 @@ export const els = {
   voiceLabel: $("voice-label"), voiceInfo: $("voice-info"),
   offlineNote: $("offline-note"), speedNote: $("speed-note"),
   footer: $("footer"), censorNote: $("censor-note"), aboutLabel: $("about-label"),
-  feedbackLink: $("feedback-link"),
+  feedbackLink: $("feedback-link"), aboutLink: $("about-link"),
   skipLink: document.querySelector(".skip-link"),
   wave: $("wave"), waveBox: document.querySelector(".wave"), waveEmpty: $("wave-empty"),
   progress: $("progress"), elapsed: $("elapsed"), slowNote: $("slow-note"),

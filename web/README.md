@@ -9,12 +9,16 @@ nothing and never sleeps.
 ## How it works
 
 The folder is laid out by role. Each directory holds small, single-purpose
-files; nothing at the top level except the page, this README and
-`package.json`.
+files. The top level holds only this README, `package.json` and what a URL
+must reach at the site's root: the pages and the files crawlers ask for there.
 
 ```
 web/
   index.html          the page
+  about.html          About the project, in Azerbaijani: static, for search and AI crawlers
+  about-en.html       the same in English
+  favicon.svg         the icon every page links
+  robots.txt, sitemap.xml, llms.txt   what crawlers read at the root
   css/tokens.css      colour tokens (light and both dark blocks)
   css/page/           the page, top to bottom, then its responsive rules
   css/components/     banner, device card and dialog, toasts, phone notes
@@ -30,7 +34,19 @@ web/
 
 The stylesheets are listed in `index.html` in cascade order: tokens, every
 file in `css/page/`, then `css/components/`. A new file goes where its rules
-belong in that order, not at the end.
+belong in that order, not at the end. The About pages link a subset -- tokens,
+`base`, `topbar`, `footer`, then `css/page/about.css` -- and nothing else.
+
+**What crawlers read.** Most AI crawlers run no JavaScript, so everything a
+search result or an AI answer should know is static: `index.html`'s `<head>`
+(description, Open Graph, `WebApplication` JSON-LD, a canonical pointing at the
+Hub page), the subtitle, offline note and footer -- written in the HTML as the
+same Azerbaijani labels the script writes on load -- a `<noscript>`, and the
+two About pages with a FAQ whose `FAQPage` JSON-LD repeats the visible text
+word for word. `tests/test_seo.mjs` holds it together, including that every
+top-level file is in the publish recipe; `packaging/PUBLISHING.md` explains the
+two URLs, the sitemap and Search Console. `index.html` is at the ~400-line
+limit: anything more in its `<head>` needs a split first.
 
 | Piece | What it does |
 | --- | --- |
@@ -61,6 +77,8 @@ belong in that order, not at the end.
 | `js/ui/device-view.js`, `js/ui/notify.js` | The device card, its dialog, and toasts |
 | `js/ui/progress.js` | The progress bar's arithmetic |
 | `js/ui/theme.js` | Light, dark or automatic; the choice is remembered on the device |
+| `js/page/theme-boot.js` | The saved theme on `<html>` before the first paint. A classic script, blocking, in every page's `<head>` before the stylesheets -- never `defer`, `async` or a module, or a dark page flashes white |
+| `css/page/about.css` | The About pages: one column of prose under the playground's top bar |
 | `js/ui/i18n.js` | Interface labels, generated from `webui/i18n.py` |
 | `js/ui/i18n-calibration.js` | The device check's labels, read by the same `label()` |
 | `js/ui/calibration-progress.js`, `calibration-copy.js` | The check's screen as a pure reducer; what its verdict says |
@@ -285,6 +303,7 @@ node tests/test_calibration_store.mjs    # when a stored verdict is reused
 node tests/test_calibration_copy.mjs     # what the verdict says, in both languages
 node tests/test_theme.mjs          # which theme the page starts in
 node tests/test_waveform.mjs       # the bars and seeking
+node tests/test_seo.mjs            # what crawlers read: head, About pages, FAQ markup, sitemap
 ```
 
 The golden files under `tests/golden/` are generated from the Python side; the

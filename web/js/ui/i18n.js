@@ -142,6 +142,8 @@ export const LABELS = {
     "skip_to_text": "Mətnə keç",
     "wave_empty": "Səsləndirdiyiniz mətnin dalğa forması burada görünəcək.",
     "about_label": "Sürət və oflayn iş haqqında",
+    "about_link": "Layihə haqqında",
+    "page_title": "Azərbaycanca mətni səsə çevirmək — pulsuz, oflayn TTS",
     "stats": "{seconds} s səs, {elapsed} s-də hazırlandı ({realtime}x real vaxt) · {chunks} · {rate} Hz"
   },
   "en": {
@@ -273,6 +275,8 @@ export const LABELS = {
     "skip_to_text": "Skip to the text",
     "wave_empty": "The waveform of what you speak will appear here.",
     "about_label": "About speed and offline use",
+    "about_link": "About the project",
+    "page_title": "Azerbaijani text-to-speech — free, offline, in your browser",
     "stats": "{seconds} s of audio in {elapsed} s ({realtime}x real time) · {chunks} · {rate} Hz"
   }
 };

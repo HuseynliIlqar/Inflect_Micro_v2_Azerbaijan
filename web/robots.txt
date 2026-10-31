@@ -1,0 +1,7 @@
+# The playground's static origin. index.html names the Hub page
+# (huggingface.co/spaces/...) as its canonical; the About pages are canonical
+# here. Nothing is blocked: AI crawlers are welcome to read the About pages.
+User-agent: *
+Allow: /
+
+Sitemap: https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/sitemap.xml

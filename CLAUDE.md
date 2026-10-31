@@ -81,11 +81,15 @@ help, Markdown. Azerbaijani appears only as *language data*:
   words) and `TEXT` in `tools/calibration_reference.py` (its test sentence)
 - the `_AZ` table in `webui/i18n.py` -- the interface's own labels; the page has
   to speak Azerbaijani, and this is the only module where it does
+- the same labels in `web/js/ui/i18n.js`, and the few of them written into
+  `web/index.html` as static text (`tests/test_seo.mjs` keeps them equal)
 - phoneme strings anywhere
 
-Translating any of those changes behaviour. `README.az.md` is the one deliberate
-exception -- it is the Azerbaijani mirror of `README.md` and must be kept in
-sync when README content changes.
+Translating any of those changes behaviour. There are two deliberate prose
+exceptions, each the Azerbaijani mirror of an English file and kept in sync
+with it: `README.az.md` (of `README.md`) and `web/about.html` (of
+`web/about-en.html`, the playground's static About page for search and AI
+crawlers).
 
 **Never call `.lower()` or `.upper()` on Azerbaijani text.** Azerbaijani has
 dotted and dotless i: `I` lowercases to `ı`, `İ` lowercases to `i`. Use
@@ -109,7 +113,8 @@ That is documented and bounded. Do not add more GPL dependencies, and do not
 relicense our Apache-2.0 code. See `THIRD_PARTY_NOTICES.md`.
 
 **Both READMEs answer the commercial-use question, and must keep saying the
-same thing.** Running it is unrestricted; redistributing a combined work brings
+same thing** -- and so must the FAQ in `web/about.html` / `web/about-en.html`
+and the licence line in `web/llms.txt`. Running it is unrestricted; redistributing a combined work brings
 GPL-3.0 obligations for `phonemizer` and eSpeak NG; `accepts_prephonemized_input`
 is the way out. The English voice is synthetic and Apache-2.0, but the release is
 open-weight, not open-data. The Azerbaijani training data is used with the
@@ -193,7 +198,9 @@ stylesheets of 640-800 lines loose at its top level, next to the page.
 - **Group a folder by role once it holds more than a handful of files.** No
   loose scripts at a folder's top level beside its entry point. `web/` is the
   model: `index.html`, `README.md` and `package.json` at the top, then `css/`,
-  `js/{page,engine,text,ui}/` and `tests/`.
+  `js/{page,engine,text,ui}/` and `tests/`. The only other top-level files are
+  ones a URL must reach at the site root: the About pages, `favicon.svg`,
+  `robots.txt`, `sitemap.xml`, `llms.txt`.
 - **Stylesheets split in cascade order.** A CSS split cuts the file into
   consecutive pieces and `web/index.html` links them in the same order, so the
   cascade cannot change. A new stylesheet goes where its rules belong in that
@@ -216,6 +223,7 @@ stylesheets of 640-800 lines loose at its top level, next to the page.
 | Add or change a CLI flag | `say.py` |
 | Change the browser interface, its labels or parameters | `app.py`, `webui/` |
 | Change the browser playground (the static Space) | `web/` (its layout is in `web/README.md`) |
+| Change what search engines and AI crawlers read | `web/index.html` `<head>`, `web/about.html` + `about-en.html`, `web/{robots.txt,sitemap.xml,llms.txt}`, `packaging/huggingface/STATIC_SPACE_README.md` (the Hub page's title and tags); `web/tests/test_seo.mjs` checks them |
 | Change how the English base model is spoken | `aztts/en_voice.py` |
 | Audio cleanup, seed selection | `tools/` |
 | Rebuild the int8 decoder the playground runs on the CPU | `tools/quantize_decoder.py` |

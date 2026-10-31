@@ -1,0 +1,29 @@
+# azerbaycan-tts
+
+> Free, open-source Azerbaijani text-to-speech that runs entirely in the browser, or offline on an ordinary CPU. A 9.36M-parameter VITS model (24 kHz, one voice), fine-tuned from owensong/Inflect-Micro-v2. The text never leaves the device; no sign-up, no server.
+
+- The browser playground needs no install: type Azerbaijani text, press Speak, download a WAV. Up to 500 characters at a time. The first visit downloads about 37 MB; after that it works offline.
+- It reads numbers, dates, percentages and currency the way a person says them aloud ("25%" -> "iyirmi beş faiz", "19,99 AZN" -> "on doqquz manat doxsan doqquz qəpik").
+- On a laptop CPU the Python package runs 2-4x faster than real time. In the browser, WebGPU (Chrome, Edge on a computer) is faster than real time; phones are slower.
+- Limits: one voice, no emotion control, no voice cloning; it is meant for text in the Latin alphabet (other scripts are not read correctly); the speech is clear but not fully natural.
+- Licence: the code and both checkpoints are Apache-2.0. The phonemiser (eSpeak NG, and phonemizer on the Python side) is GPL-3.0-or-later: running it is unrestricted, but redistributing a combined work brings GPL-3.0 obligations. The model accepts pre-phonemised input (`accepts_prephonemized_input`), which is the way out. The Azerbaijani training data is used with its author's permission, on condition of attribution. The English guest voice is synthetic and Apache-2.0, but open-weight, not open-data. Not legal advice.
+- Not permitted: impersonating a real person or producing deceptive content.
+
+## Try it
+
+- [Playground on Hugging Face](https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan): the page itself, running in the browser
+- [About the project, in English](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about-en.html): how it works, limits and a FAQ
+- [About the project, in Azerbaijani](https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/about.html): the same page in Azerbaijani
+
+## Use it in code
+
+- [GitHub repository](https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan): the `aztts` Python library, the `say.py` command line, tests and the training pipeline
+- [README](https://raw.githubusercontent.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan/main/README.md): setup, command line, Python API, licence and commercial use
+- [Model weights on Hugging Face](https://huggingface.co/ilqarrrr/Inflect_Micro_v2_Azerbaijan): PyTorch and ONNX
+
+## Optional
+
+- [How the model was trained](https://raw.githubusercontent.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan/main/docs/MODEL.md)
+- [Third-party notices](https://raw.githubusercontent.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan/main/THIRD_PARTY_NOTICES.md)
+- [Base model: owensong/Inflect-Micro-v2](https://huggingface.co/owensong/Inflect-Micro-v2)
+- [Training data: ughurabbasov/azerbaijani-tts-dataset](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset)

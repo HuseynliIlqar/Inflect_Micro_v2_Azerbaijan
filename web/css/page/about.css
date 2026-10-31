@@ -1,0 +1,102 @@
+/* The About pages: one readable column of prose under the playground's top
+   bar. Linked last, after tokens, base, topbar and footer, so it only adds. */
+
+.topbar .brand {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* A jump to #faq or the skip link's #content leaves a little air above. */
+.about [id] {
+  scroll-margin-top: 1rem;
+}
+
+.about-lang {
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: inherit;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.about {
+  max-width: calc(var(--measure) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 3rem) var(--gutter) 0;
+}
+
+.about h1 {
+  max-width: none;
+  margin-bottom: 0.8rem;
+}
+
+.about h2,
+.about h3 {
+  text-wrap: balance;
+}
+
+.about h2 {
+  margin: 2.4rem 0 0.7rem;
+  font-size: 1.3rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.about h3 {
+  margin: 1.5rem 0 0.35rem;
+  font-size: 1.02rem;
+  font-weight: 600;
+}
+
+.about h3 + p {
+  margin-top: 0;
+}
+
+.about ul {
+  padding-left: 1.2rem;
+}
+
+.about li + li {
+  margin-top: 0.35rem;
+}
+
+.about code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  font-family: var(--mono);
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+.lead {
+  font-size: 1.12rem;
+  color: var(--ink-soft);
+}
+
+.cta {
+  display: inline-block;
+  padding: 0.75rem 1.2rem;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* Only where a pointer can hover, as on the playground. */
+@media (hover: hover) {
+  .about-lang:hover {
+    border-color: var(--accent);
+  }
+
+  .topbar .brand:hover .brand-name {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+
+  .cta:hover {
+    text-decoration: underline;
+  }
+}

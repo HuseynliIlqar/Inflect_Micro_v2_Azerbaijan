@@ -125,11 +125,16 @@ one is static.
 ```bash
 git clone https://huggingface.co/spaces/ilqarrrr/Inflect_Micro_v2_Azerbaijan hf-space
 cd hf-space
-# The page's files: index.html, css/ and js/. Drop what an older layout left
-# at the top (app.js, worker.js, *.css) and the old js/ so no stale file ships.
+# The page's files: the pages, what crawlers read, css/ and js/. Drop what an
+# older layout left at the top (app.js, worker.js, *.css) and the old js/ so no
+# stale file ships. web/tests/test_seo.mjs fails if a top-level file is missing here.
 git rm -rq --ignore-unmatch app.js worker.js styles.css components.css tokens.css css js
-cp ../web/index.html .
+cp ../web/index.html ../web/about.html ../web/about-en.html ../web/favicon.svg .
+cp ../web/robots.txt ../web/sitemap.xml ../web/llms.txt .
 cp -r ../web/css ../web/js .
+# The Space's README: its YAML is the Hub page's title, tags and the
+# custom_headers that give wasm threads. Edit it here, never on the Hub.
+cp ../packaging/huggingface/STATIC_SPACE_README.md README.md
 mkdir -p onnx && cp ../web/onnx/*.onnx onnx/
 # onnxruntime-web from the page's own origin -- WebKit (every iPhone browser)
 # refuses a CDN's modules in a worker. Without it the Space ships a page whose
@@ -138,10 +143,33 @@ mkdir -p onnx && cp ../web/onnx/*.onnx onnx/
 mkdir -p vendor && cp -r ../web/vendor/onnxruntime-web vendor/
 # The 27 MB .wasm must go through LFS (the Space's *.wasm rule); check it is listed:
 git lfs ls-files | grep -q "ort-wasm-simd-threaded.asyncify.wasm" || git add --renormalize vendor/
-# README.md needs `sdk: static`, `app_file: index.html` and the `custom_headers`
-# block from web/README.md in its YAML header (the headers give wasm threads).
 git add -A && git commit -m "Update the playground" && git push
 ```
+
+#### Search engines and AI crawlers
+
+Most AI crawlers run no JavaScript, so what they can read is static:
+`index.html`'s `<head>` (description, Open Graph, `WebApplication` JSON-LD) and
+the text the script would write anyway, the two About pages (`about.html` in
+Azerbaijani, `about-en.html` in English, each with a FAQ and matching
+`FAQPage` JSON-LD), `robots.txt`, `sitemap.xml` and `llms.txt`.
+`web/tests/test_seo.mjs` holds all of that together.
+
+- **Two URLs, one canonical each.** The Hub page
+  (`huggingface.co/spaces/...`) is what ranks, so `index.html` names it as its
+  canonical; its title and tags come from `STATIC_SPACE_README.md`. The About
+  pages are canonical on the static origin and are the only entries in the
+  sitemap (a sitemap cannot list another host).
+- **When an About page changes,** edit both languages, regenerate nothing by
+  hand -- the test fails until each FAQ's JSON-LD repeats its visible text
+  exactly -- and bump that page's `<lastmod>` in `sitemap.xml`.
+- **Search Console and Bing Webmaster Tools.** `huggingface.co` cannot be
+  verified, the static origin can: add a *URL-prefix* property for
+  `https://ilqarrrr-inflect-micro-v2-azerbaijan.static.hf.space/`, choose
+  *HTML file* verification, put the file the console hands you in the Space
+  repository's root (not in `web/` -- it is per account) and push. Then submit
+  `sitemap.xml`. Bing can import the property from Search Console. The publish
+  step above never deletes that file: it only removes the paths it names.
 
 The ONNX export is not in this repository (`web/onnx/` is ignored): the
 repository already carries two checkpoints, and the Space is where the graphs
@@ -224,6 +252,7 @@ node web/tests/test_calibrate.mjs
 node web/tests/test_calibration_progress.mjs
 node web/tests/test_calibration_store.mjs
 node web/tests/test_calibration_copy.mjs
+node web/tests/test_seo.mjs
 ```
 
 ### The Gradio Space (needs Pro)
