@@ -13,7 +13,7 @@ not from us. `model/` is the Azerbaijani adaptation's full export package;
 is the English weights alone, tracked through Git LFS so a clone speaks both
 languages.
 
-- **`model/checksums.sha256` verifies 24 files in that directory.** Any edit
+- **`model/checksums.sha256` verifies 25 files in that directory.** Any edit
   breaks verification, and the check is part of the release process.
 - **`model-en/checksums.sha256` verifies its six vendored files.** `README.md`
   there is ours and is deliberately outside the checksum list.

@@ -11,7 +11,7 @@ that agents which do not look for `CLAUDE.md` still find their way there.
 The three rules worth repeating here, because breaking them is silent:
 
 1. **Never edit `model/`, `model-en/` or `training/base-model/`.** They are
-   vendored upstream exports; `model/checksums.sha256` verifies 24 files and
+   vendored upstream exports; `model/checksums.sha256` verifies 25 files and
    `model-en/checksums.sha256` verifies 6, and any edit breaks them. The `ə` and
    `ʃ` characters in there are IPA phoneme symbols, not Azerbaijani text.
 2. **All prose is English.** Azerbaijani appears only as language data (example

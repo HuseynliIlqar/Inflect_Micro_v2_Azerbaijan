@@ -34,7 +34,7 @@ it does; these rules describe how to change it without breaking it.
 ## Hard rules
 
 1. **Never edit `model/`, `model-en/` or `training/base-model/`.** They are
-   upstream exports. `model/checksums.sha256` verifies 24 files and
+   upstream exports. `model/checksums.sha256` verifies 25 files and
    `model-en/checksums.sha256` verifies 6; any edit breaks them. Wrap the model
    in `aztts/` instead of patching it. `aztts/en_voice.py` never imports the
    English package's Python: both packages declare modules named `inference`,
@@ -72,7 +72,7 @@ python -m pytest                                  # ~3s, no model load
 for f in web/tests/*.mjs; do node "$f" || break; done   # every web suite
 python say.py "Salam."                            # end to end -> out/01.wav
 python say.py --voice en "Hello."                 # the English voice
-cd model && sha256sum -c checksums.sha256         # 24 files, all OK
+cd model && sha256sum -c checksums.sha256         # 25 files, all OK
 cd model-en && sha256sum -c checksums.sha256      # 6 files, all OK
 ```
 
@@ -91,8 +91,12 @@ package, needed only for training work.
 
 ## Do not chase these
 
-Properties of a 9.36M model, not bugs: one voice, no emotion control, metallic
-vocoder resonance on some sentences, flat intonation (eSpeak stresses 92.2% of
-words), flattening over long sentences. The training audio is most likely
-synthetic, so the quality ceiling is the system that produced it. See
-`docs/MODEL.md`.
+Properties of a 9.36M model, not bugs, as measured on the v2 checkpoint:
+- one voice, no emotion control;
+- yes/no questions end falling;
+- m->n, b->d and q->k confusions at sentence edges;
+- 2-4 kHz harmonic clarity below the teacher's;
+- flattening over long sentences.
+
+The training audio is distilled from a teacher TTS, so the quality ceiling is
+the teacher. See `training/v2/README.md`.

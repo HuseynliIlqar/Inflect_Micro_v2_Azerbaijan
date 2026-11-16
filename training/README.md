@@ -3,6 +3,12 @@
 This folder records **how the model was made**. Nothing here is needed to run
 the model — the [README](../README.md) at the project root is enough for that.
 
+> **Second round.** The checkpoint now in `model/` comes from a second training
+> round: distilled data, a stress frontend and a polished decoder. It is
+> documented in [v2/README.md](v2/README.md), together with its test battery and
+> the dataset-v2 sentences. The plan for the next model is
+> [v3/PLAN.md](v3/PLAN.md). The text below describes the first round.
+
 There are two kinds of file here, and the difference matters:
 
 | | |

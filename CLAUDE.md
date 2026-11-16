@@ -42,7 +42,7 @@ nothing to download for normal work.
 python -m pytest                     # ~3 seconds, never loads the model
 for f in web/tests/*.mjs; do node "$f" || break; done   # every web suite; a failure stops
 python -m compileall -q say.py app.py aztts webui tools training
-cd model && sha256sum -c checksums.sha256       # 24 files, all must say OK
+cd model && sha256sum -c checksums.sha256       # 25 files, all must say OK
 cd model-en && sha256sum -c checksums.sha256    # 6 files, all must say OK
 python say.py --show-text "II Dünya, 25% artım"   # prints the normalised text
 python say.py "Salam."               # end-to-end, writes out/01.wav
@@ -68,7 +68,7 @@ files; `README.md` there is ours). `aztts/en_voice.py` reads them but never
 imports the upstream package's Python: both packages ship modules named `inference`,
 `models` and `text`, so importing the second one in a live process silently
 returns the first. The English weights are loaded into `model/`'s runtime
-instead, and the English text is phonemised here and passed as `phonemes=`. `model/checksums.sha256` verifies 24 of those files and
+instead, and the English text is phonemised here and passed as `phonemes=`. `model/checksums.sha256` verifies 25 of those files and
 any edit breaks it. If the model needs different behaviour, wrap it in `aztts/`
 instead.
 
@@ -81,7 +81,7 @@ help, Markdown. Azerbaijani appears only as *language data*:
 
 - TTS example sentences (`say.py` `DEMO`, test inputs, doctests)
 - `LETTER_NAMES`, `MONTHS`, `ABBREVIATIONS`, `UNITS`, `CURRENCIES`,
-  `CURRENCY_SUBUNITS`, `SYMBOLS`, `ACRONYMS`, `ROMAN_NOUNS`, `ORDINAL_SUFFIXES` in
+  `CURRENCY_SUBUNITS`, `SYMBOLS`, `ACRONYMS`, `FOREIGN_WORDS`, `ROMAN_NOUNS`, `ORDINAL_SUFFIXES` in
   `az_tables.py` (and `web/js/text/az-tables.js`)
 - `_CONJUNCTIONS` in `az_chunk.py`
 - `CLITICS`, `WEAK_HEADS`, `_WIDE_WEAK`, `_PARTICIPLE_WORDS` in `az_prosody.py`
@@ -230,9 +230,10 @@ stylesheets of 640-800 lines loose at its top level, next to the page.
 
 | You want to | Go to |
 | --- | --- |
-| Fix how a number, date, unit or acronym is read | `aztts/az_text.py` (pipeline), `az_dates.py`, `az_amounts.py`, `az_tables.py` |
+| Fix how a number, date, unit, acronym or foreign word is read | `aztts/az_text.py` (pipeline), `az_dates.py`, `az_amounts.py`, `az_tables.py` |
 | Change where sentences are cut | `aztts/az_chunk.py` |
 | Change stress placement (`--prosody`) | `aztts/az_prosody.py` |
+| Change the v2 stress frontend (`model/frontend_hook.py`) | `training/stress_frontend/`, rebuilt with `make_hook.py`; reaches `model/` only through the next export |
 | Change which words are bleeped | `aztts/az_profanity.py`, then `web/js/text/az-censor.js` |
 | Change synthesis, chunk pauses, model loading | `aztts/engine.py` |
 | Add or change a CLI flag | `say.py` |
@@ -245,7 +246,10 @@ stylesheets of 640-800 lines loose at its top level, next to the page.
 | Change the playground's first-visit device check | `web/js/engine/{gpu-probe,calibrate,fingerprint,calibration-verdict}.js`, `web/js/page/calibration*.js` |
 | Regenerate the device check's reference after `web/onnx/` changes | `tools/calibration_reference.py` |
 | Change the self-hosted onnxruntime-web version | `tools/fetch_web_runtime.py` (`VERSION` + integrity) |
-| Anything about how the model was trained | `training/` (archive; the pod is gone) |
+| Anything about how the model was trained | `training/` (archive; the pod is gone); v2 in `training/v2/` |
+| Test a new checkpoint against v2 (Whisper, Praat, SQUIM, stress, seeds, hard texts) | `training/v2/pod/` (the battery) and `training/v2/README.md` |
+| Plan or build the next model | `training/v3/PLAN.md` |
+| Sentences for the next recording | `training/v2/dataset_v2/` |
 | Publish to GitHub / HF / Kaggle | `packaging/PUBLISHING.md` |
 
 `aztts/` is the library (about 1,700 lines with `en_voice.py`), `say.py` is the
@@ -271,14 +275,18 @@ CLI, and `app.py` plus `webui/` are the browser interface.
 
 ## Known limitations, so you do not chase them
 
-These are properties of a 9.36M model, not bugs:
+These are properties of a 9.36M model, not bugs (v2 measurements):
 
 - One voice, no emotion control, no cloning.
-- The vocoder leaves a metallic resonance on some sentences. Mitigate with
-  `tools/audio_postprocess.py`, do not try to fix it in the text layer.
-- eSpeak stresses 92.2% of words, which is why the reading is flat. `--prosody`
-  is the experimental attempt at this and does not improve every text.
+- Yes/no questions end with falling pitch (the teacher rises about +2.9
+  semitones; v2 falls about -1.2). Only 677 training clips are such questions
+  and the model has no explicit pitch predictor.
+- Consonant place confusions remain: m->n, b->d, q->k, most often on a
+  sentence's first and last word. A lower `variation` halves the random share.
+- Harmonic clarity at 2-4 kHz is below the teacher's (buzz score 8.8 vs 10.6).
+  The fixed 6 kHz ring of v1 is gone. `tools/audio_postprocess.py` still
+  applies to any leftover resonance; do not try to fix it in the text layer.
 - Intonation flattens over long sentences. That is why chunking exists at ~15
   words; the number is empirical, not arbitrary.
-- The training audio is most likely synthetic, so the quality ceiling is the
-  system that produced it. See `docs/MODEL.md`.
+- The training audio is synthetic (distilled from a teacher TTS), so the quality
+  ceiling is the teacher. See `training/v2/README.md`.
