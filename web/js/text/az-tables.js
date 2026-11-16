@@ -92,6 +92,26 @@ export const ACRONYMS = {
   SIM: "sim",
 };
 
+// Foreign names and words written in Latin spelling -> how Azerbaijani speakers
+// say them. Same entries, in the same order, as FOREIGN_WORDS in az_tables.py.
+export const FOREIGN_WORDS = {
+  microsoft: "maykrosoft", google: "qugl", gmail: "cimeyl",
+  youtube: "yutub", facebook: "feysbuk", instagram: "instaqram",
+  whatsapp: "vatsap", telegram: "teleqram", tiktok: "tiktok",
+  twitter: "tvitter", linkedin: "linkedin", github: "githab",
+  wikipedia: "vikipediya", netflix: "netfliks", spotify: "spotifay",
+  zoom: "zum", skype: "skayp", chatgpt: "çat ci pi ti",
+  openai: "open ey ay", iphone: "ayfon", ipad: "aypad",
+  apple: "eppl", samsung: "samsunq", windows: "vindovs",
+  linux: "linuks", excel: "eksel", photoshop: "fotoşop",
+  playstation: "pleysteyşn", paypal: "peypal",
+  mastercard: "masterkard", nike: "nayk", "coca-cola": "koka-kola",
+  wolt: "volt", "wi-fi": "vayfay", wifi: "vayfay",
+  bluetooth: "blutuz", "e-mail": "imeyl", email: "imeyl",
+  online: "onlayn", offline: "oflayn", hashtag: "heşteq",
+  selfie: "selfi", startup: "startap",
+};
+
 // Nouns after which a lone I, V or X is a numeral: "V əsr", "X sinif". A lone
 // letter is otherwise left alone -- it is far more often just a letter.
 export const ROMAN_NOUNS = [

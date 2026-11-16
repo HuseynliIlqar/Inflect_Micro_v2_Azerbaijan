@@ -51,7 +51,7 @@ entry point needs the same call.
 ## Azerbaijani strings in code are data
 
 `LETTER_NAMES`, `MONTHS`, `ABBREVIATIONS`, `UNITS`, `CURRENCIES`,
-`CURRENCY_SUBUNITS`, `SYMBOLS`, `ACRONYMS`, `ROMAN_NOUNS`, `ORDINAL_SUFFIXES`
+`CURRENCY_SUBUNITS`, `SYMBOLS`, `ACRONYMS`, `FOREIGN_WORDS`, `ROMAN_NOUNS`, `ORDINAL_SUFFIXES`
 (`az_tables.py`), `_CONJUNCTIONS` (`az_chunk.py`), `CLITICS`, `WEAK_HEADS`,
 `_WIDE_WEAK`, `_PARTICIPLE_WORDS` (`az_prosody.py`), `PROFANE_STEMS`,
 `CLEAN_PREFIXES`, `PROFANE_WORDS` (`az_profanity.py`), the `_AZ` table in

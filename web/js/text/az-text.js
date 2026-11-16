@@ -18,7 +18,7 @@
  */
 
 import { ordinalToWords } from "./num-az.js";
-import { ABBREVIATIONS, ACRONYMS, ROMAN_NOUNS, SYMBOLS } from "./az-tables.js";
+import { ABBREVIATIONS, ACRONYMS, FOREIGN_WORDS, ROMAN_NOUNS, SYMBOLS } from "./az-tables.js";
 import {
   B_END,
   B_START,
@@ -30,6 +30,7 @@ import {
   azCapitalise,
   azLower,
   escapeRegExp,
+  harmonise,
   romanToInt,
   spellAcronym,
 } from "./az-words.js";
@@ -63,6 +64,37 @@ function replaceAbbreviations(text) {
     text = text.replace(pattern, spoken);
   }
   return text;
+}
+
+/**
+ * `google` -> `[Gg][Oo][Oo][Gg][Ll][Ee]`: spelled out instead of the `i` flag so
+ * Python and JavaScript fold case identically (they treat ı and İ differently).
+ */
+const eitherCase = (word) =>
+  [...word]
+    .map((c) => (/\p{L}/u.test(c) ? `[${c.toUpperCase()}${c}]` : escapeRegExp(c)))
+    .join("");
+
+const FOREIGN_RE = new RegExp(
+  `(?<![${WORD}-])(${Object.keys(FOREIGN_WORDS)
+    .sort((a, b) => b.length - a.length)
+    .map(eitherCase)
+    .join("|")})(?:[-'](\\p{L}[${WORD}]*))?(?![${WORD}])`,
+  "gu",
+);
+
+/**
+ * `Google-da` -> `Quglda`: foreign words in Latin spelling, said the Azerbaijani
+ * way. The lookup lower-cases with English rules: "Instagram" must not become
+ * "ınstagram".
+ */
+function replaceForeignWords(text) {
+  return text.replace(FOREIGN_RE, (_match, written, suffix, offset, whole) => {
+    const key = written.replace(/[A-Z]/g, (c) => c.toLowerCase());
+    const spoken = harmonise(FOREIGN_WORDS[key], suffix);
+    const capital = /^\p{Lu}/u.test(written) || atSentenceStart(whole, offset);
+    return capital ? azCapitalise(spoken) : spoken;
+  });
 }
 
 /** `II` -> `ikinci`, capitalised only where a sentence starts. */
@@ -137,6 +169,7 @@ function tidy(text) {
 const STEPS = [
   tidy,
   replaceAbbreviations,
+  replaceForeignWords,
   replacePhoneNumbers,
   stripGroupSeparators,
   replaceDates,
@@ -160,7 +193,8 @@ const STEPS = [
  * Rewrite digits, numerals, units and abbreviations as spoken Azerbaijani.
  *
  * The order matters: abbreviations first so their full stops never look like
- * sentence ends, then the number forms from most specific (dates, times) to
+ * sentence ends, then foreign words (before any number, so `iPhone 15` keeps
+ * its number), then the number forms from most specific (dates, times) to
  * least (bare digits), and acronyms last so Roman numerals win the ambiguity.
  */
 export function normalizeAz(text) {

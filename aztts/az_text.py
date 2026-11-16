@@ -38,6 +38,7 @@ from .az_dates import (
 from .az_tables import (
     ABBREVIATIONS,
     ACRONYMS,
+    FOREIGN_WORDS,
     LETTER_NAMES,
     ORDINAL_SUFFIXES,
     ROMAN_NOUNS,
@@ -117,6 +118,41 @@ def _replace_abbreviations(text: str) -> str:
     for written, spoken in ABBREVIATIONS.items():
         text = re.sub(rf"(?<!\w){re.escape(written)}", spoken, text, flags=re.IGNORECASE)
     return text
+
+
+def _either_case(word: str) -> str:
+    """``google`` -> ``[Gg][Oo][Oo][Gg][Ll][Ee]``.
+
+    Spelled out instead of ``re.IGNORECASE`` so the JavaScript port matches
+    exactly: the two engines fold the Azerbaijani ı and İ differently.
+    """
+    return "".join(f"[{c.upper()}{c}]" if c.isalpha() else re.escape(c) for c in word)
+
+
+_FOREIGN_RE = re.compile(
+    r"(?<![\w-])("
+    + "|".join(_either_case(word) for word in sorted(FOREIGN_WORDS, key=len, reverse=True))
+    + r")(?:[-']([^\W\d_][\wəçğıöşü]*))?(?!\w)"
+)
+# English case rules on purpose: "Instagram" must look up "instagram", while the
+# Azerbaijani rule would turn its I into ı.
+_LATIN_LOWER = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz")
+
+
+def _replace_foreign_words(text: str) -> str:
+    """``Google-da`` -> ``Quglda``: foreign words in Latin spelling, said the Azerbaijani way.
+
+    A written suffix is re-harmonised onto the spoken word.  The result is
+    capitalised where the word was written with a capital or starts a sentence.
+    """
+
+    def speak(match: re.Match[str]) -> str:
+        written, suffix = match.group(1), match.group(2)
+        spoken = harmonise(FOREIGN_WORDS[written.translate(_LATIN_LOWER)], suffix)
+        capital = written[:1].isupper() or _at_sentence_start(match.string, match.start())
+        return az_capitalise(spoken) if capital else spoken
+
+    return _FOREIGN_RE.sub(speak, text)
 
 
 def _replace_operators(text: str) -> str:
@@ -216,7 +252,8 @@ def normalize_az(text: str) -> str:
     """Rewrite digits, numerals, units and abbreviations as spoken Azerbaijani.
 
     The order matters: abbreviations first so their full stops never look like
-    sentence ends, then the number forms from most specific (dates, times) to
+    sentence ends, then foreign words (before any number, so ``iPhone 15`` keeps
+    its number), then the number forms from most specific (dates, times) to
     least (bare digits), and acronyms last so Roman numerals win the ambiguity.
     """
     if not text or not text.strip():
@@ -224,6 +261,7 @@ def normalize_az(text: str) -> str:
     steps = (
         _tidy,
         _replace_abbreviations,
+        _replace_foreign_words,
         replace_phone_numbers,
         _strip_group_separators,
         replace_dates,
