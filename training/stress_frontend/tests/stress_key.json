@@ -1,0 +1,1172 @@
+{
+ "w001": {
+  "rule": "verb",
+  "word": "istəyirəm",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 131
+ },
+ "w002": {
+  "rule": "verb",
+  "word": "edirəm",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 129
+ },
+ "w003": {
+  "rule": "verb",
+  "word": "bilirəm",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 93
+ },
+ "w004": {
+  "rule": "verb",
+  "word": "unudulmaz",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 82
+ },
+ "w005": {
+  "rule": "verb",
+  "word": "olmasa",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 80
+ },
+ "w006": {
+  "rule": "verb",
+  "word": "olmuşdur",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 79
+ },
+ "w007": {
+  "rule": "verb",
+  "word": "bilmirəm",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 66
+ },
+ "w008": {
+  "rule": "verb",
+  "word": "edirlər",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 65
+ },
+ "w009": {
+  "rule": "verb",
+  "word": "etmişdir",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 63
+ },
+ "w010": {
+  "rule": "verb",
+  "word": "bilərmi",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 56
+ },
+ "w011": {
+  "rule": "verb",
+  "word": "yaşayıram",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 52
+ },
+ "w012": {
+  "rule": "verb",
+  "word": "edilmişdir",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 47
+ },
+ "w013": {
+  "rule": "verb",
+  "word": "edirdi",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 45
+ },
+ "w014": {
+  "rule": "verb",
+  "word": "bilərəm",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 45
+ },
+ "w015": {
+  "rule": "verb",
+  "word": "bilərik",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 43
+ },
+ "w016": {
+  "rule": "verb",
+  "word": "vermirsə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w017": {
+  "rule": "verb",
+  "word": "edərdiniz",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w018": {
+  "rule": "verb",
+  "word": "işləyirdim",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 2
+ },
+ "w019": {
+  "rule": "verb",
+  "word": "utanırdım",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w020": {
+  "rule": "verb",
+  "word": "keçmişdir",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 2
+ },
+ "w021": {
+  "rule": "verb",
+  "word": "qaynadırmış",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w022": {
+  "rule": "verb",
+  "word": "yapışmışdı",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w023": {
+  "rule": "verb",
+  "word": "yaratmırmı",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 2
+ },
+ "w024": {
+  "rule": "verb",
+  "word": "asırdı",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 3
+ },
+ "w025": {
+  "rule": "verb",
+  "word": "saxlayacağıq",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w026": {
+  "rule": "verb",
+  "word": "xışıldayırdı",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w027": {
+  "rule": "verb",
+  "word": "edəcəksinizmi",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w028": {
+  "rule": "verb",
+  "word": "inanılmaz",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 7
+ },
+ "w029": {
+  "rule": "verb",
+  "word": "böyümüşdü",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w030": {
+  "rule": "verb",
+  "word": "bilmirsiniz",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 2
+ },
+ "w031": {
+  "rule": "noun ending",
+  "word": "yoxdur",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 100
+ },
+ "w032": {
+  "rule": "noun ending",
+  "word": "onunla",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 92
+ },
+ "w033": {
+  "rule": "noun ending",
+  "word": "kilometrdir",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 76
+ },
+ "w034": {
+  "rule": "noun ending",
+  "word": "yaşındadır",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 61
+ },
+ "w035": {
+  "rule": "noun ending",
+  "word": "biridir",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 56
+ },
+ "w036": {
+  "rule": "noun ending",
+  "word": "lazımdır",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 55
+ },
+ "w037": {
+  "rule": "noun ending",
+  "word": "vacibdir",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 54
+ },
+ "w038": {
+  "rule": "noun ending",
+  "word": "malikdir",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 52
+ },
+ "w039": {
+  "rule": "noun ending",
+  "word": "bununla",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 49
+ },
+ "w040": {
+  "rule": "noun ending",
+  "word": "ibarətdir",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 40
+ },
+ "w041": {
+  "rule": "noun ending",
+  "word": "elmdir",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 35
+ },
+ "w042": {
+  "rule": "noun ending",
+  "word": "kiloqramdır",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 35
+ },
+ "w043": {
+  "rule": "noun ending",
+  "word": "fəslidir",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 33
+ },
+ "w044": {
+  "rule": "noun ending",
+  "word": "ölkədir",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 30
+ },
+ "w045": {
+  "rule": "noun ending",
+  "word": "paytaxtıdır",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 30
+ },
+ "w046": {
+  "rule": "noun ending",
+  "word": "hücumdur",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w047": {
+  "rule": "noun ending",
+  "word": "daşıyıcısıdır",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w048": {
+  "rule": "noun ending",
+  "word": "ideyalardır",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w049": {
+  "rule": "noun ending",
+  "word": "pişiksən",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w050": {
+  "rule": "noun ending",
+  "word": "çoxdandır",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 2
+ },
+ "w051": {
+  "rule": "noun ending",
+  "word": "dostlarındır",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w052": {
+  "rule": "noun ending",
+  "word": "dəlidirlər",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w053": {
+  "rule": "noun ending",
+  "word": "məmnundurlar",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w054": {
+  "rule": "noun ending",
+  "word": "vəziyyətdir",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w055": {
+  "rule": "noun ending",
+  "word": "pianoçudur",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w056": {
+  "rule": "noun ending",
+  "word": "doğrudumu",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w057": {
+  "rule": "noun ending",
+  "word": "sursatla",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w058": {
+  "rule": "noun ending",
+  "word": "həddədir",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 2
+ },
+ "w059": {
+  "rule": "noun ending",
+  "word": "xanla",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 3
+ },
+ "w060": {
+  "rule": "noun ending",
+  "word": "prosesindəyəm",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w061": {
+  "rule": "exception",
+  "word": "daha",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 485
+ },
+ "w062": {
+  "rule": "exception",
+  "word": "sonra",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 454
+ },
+ "w063": {
+  "rule": "exception",
+  "word": "deyil",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 186
+ },
+ "w064": {
+  "rule": "exception",
+  "word": "amma",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 170
+ },
+ "w065": {
+  "rule": "exception",
+  "word": "deyilmi",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 120
+ },
+ "w066": {
+  "rule": "exception",
+  "word": "lakin",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 119
+ },
+ "w067": {
+  "rule": "exception",
+  "word": "lənkəran",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 23
+ },
+ "w068": {
+  "rule": "exception",
+  "word": "yoxsa",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 65
+ },
+ "w069": {
+  "rule": "exception",
+  "word": "lənkərana",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w070": {
+  "rule": "exception",
+  "word": "çünki",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 102
+ },
+ "w071": {
+  "rule": "exception",
+  "word": "deyildir",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 16
+ },
+ "w072": {
+  "rule": "exception",
+  "word": "ankarada",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w073": {
+  "rule": "loan",
+  "word": "fizika",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 29
+ },
+ "w074": {
+  "rule": "loan",
+  "word": "afrika",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 23
+ },
+ "w075": {
+  "rule": "loan",
+  "word": "rusiyanın",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 19
+ },
+ "w076": {
+  "rule": "loan",
+  "word": "yaponiyaya",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 19
+ },
+ "w077": {
+  "rule": "loan",
+  "word": "texnologiyanın",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 17
+ },
+ "w078": {
+  "rule": "loan",
+  "word": "almaniyada",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 17
+ },
+ "w079": {
+  "rule": "loan",
+  "word": "belçikanın",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 7
+ },
+ "w080": {
+  "rule": "loan",
+  "word": "keramika",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 14
+ },
+ "w081": {
+  "rule": "loan",
+  "word": "urmiyalı",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w082": {
+  "rule": "loan",
+  "word": "frakiyadakı",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w083": {
+  "rule": "loan",
+  "word": "asiyanı",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 2
+ },
+ "w084": {
+  "rule": "loan",
+  "word": "almaniyadakı",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w085": {
+  "rule": "intensive",
+  "word": "qapqara",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 2
+ },
+ "w086": {
+  "rule": "intensive",
+  "word": "qupquru",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 2
+ },
+ "w087": {
+  "rule": "intensive",
+  "word": "yepyeni",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w088": {
+  "rule": "intensive",
+  "word": "bəmbəyaz",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 2
+ },
+ "w089": {
+  "rule": "final ə",
+  "word": "necə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 333
+ },
+ "w090": {
+  "rule": "final ə",
+  "word": "görə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 309
+ },
+ "w091": {
+  "rule": "final ə",
+  "word": "ildə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 264
+ },
+ "w092": {
+  "rule": "final ə",
+  "word": "belə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 238
+ },
+ "w093": {
+  "rule": "final ə",
+  "word": "mənə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 228
+ },
+ "w094": {
+  "rule": "final ə",
+  "word": "dəfə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 211
+ },
+ "w095": {
+  "rule": "final ə",
+  "word": "hələ",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 206
+ },
+ "w096": {
+  "rule": "final ə",
+  "word": "istifadə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 199
+ },
+ "w097": {
+  "rule": "final ə",
+  "word": "edə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 189
+ },
+ "w098": {
+  "rule": "final ə",
+  "word": "niyə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 152
+ },
+ "w099": {
+  "rule": "final ə",
+  "word": "neçə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 142
+ },
+ "w100": {
+  "rule": "final ə",
+  "word": "gecə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 115
+ },
+ "w101": {
+  "rule": "final ə",
+  "word": "bizə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 110
+ },
+ "w102": {
+  "rule": "final ə",
+  "word": "sizcə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 107
+ },
+ "w103": {
+  "rule": "final ə",
+  "word": "əlaqə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 106
+ },
+ "w104": {
+  "rule": "final ə",
+  "word": "evə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 103
+ },
+ "w105": {
+  "rule": "final ə",
+  "word": "birlikdə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 101
+ },
+ "w106": {
+  "rule": "final ə",
+  "word": "şəhərində",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 99
+ },
+ "w107": {
+  "rule": "final ə",
+  "word": "şəkildə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 96
+ },
+ "w108": {
+  "rule": "final ə",
+  "word": "sənə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 95
+ },
+ "w109": {
+  "rule": "final ə",
+  "word": "əlavə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 92
+ },
+ "w110": {
+  "rule": "final ə",
+  "word": "qitələrdə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 2
+ },
+ "w111": {
+  "rule": "final ə",
+  "word": "getməyinə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w112": {
+  "rule": "final ə",
+  "word": "könlümdə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w113": {
+  "rule": "final ə",
+  "word": "güllələnmə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w114": {
+  "rule": "final ə",
+  "word": "dövrlərdə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 13
+ },
+ "w115": {
+  "rule": "final ə",
+  "word": "ürəyincə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w116": {
+  "rule": "final ə",
+  "word": "təbəqələrə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w117": {
+  "rule": "final ə",
+  "word": "qüvvədə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w118": {
+  "rule": "final ə",
+  "word": "səhifə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 6
+ },
+ "w119": {
+  "rule": "final ə",
+  "word": "idarəetmə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 7
+ },
+ "w120": {
+  "rule": "final ə",
+  "word": "bölgə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 11
+ },
+ "w121": {
+  "rule": "final ə",
+  "word": "tərpətmə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w122": {
+  "rule": "final ə",
+  "word": "əhatə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 67
+ },
+ "w123": {
+  "rule": "final ə",
+  "word": "şənlikdə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w124": {
+  "rule": "final ə",
+  "word": "tövləyə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w125": {
+  "rule": "final ə",
+  "word": "məhəllədə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 2
+ },
+ "w126": {
+  "rule": "final ə",
+  "word": "xameneiyə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w127": {
+  "rule": "final ə",
+  "word": "təcrümə",
+  "order": [
+   "espeak",
+   "rule"
+  ],
+  "count": 1
+ },
+ "w128": {
+  "rule": "final ə",
+  "word": "keçməyimə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w129": {
+  "rule": "final ə",
+  "word": "dəhşətə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ },
+ "w130": {
+  "rule": "final ə",
+  "word": "ürəyinə",
+  "order": [
+   "rule",
+   "espeak"
+  ],
+  "count": 1
+ }
+}

@@ -158,6 +158,16 @@ records where the files came from and how to cite them.
 
 ---
 
+## Stress lexicon
+
+- Source: [`LocalDoc/azerbaijani_spelling_dictionary_2021`](https://huggingface.co/datasets/LocalDoc/azerbaijani_spelling_dictionary_2021), MIT.
+
+The stress frontend (`training/stress_frontend/`) derives its word lists from
+this dictionary. `training/stress_frontend/lexicon/` holds them, and
+`model/frontend_hook.py` embeds them in compressed form.
+
+---
+
 ## Training data
 
 - Dataset: [`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset)

@@ -48,3 +48,6 @@ web/onnx/
 # modules in a worker (27 MB). Fetch it with: python tools/fetch_web_runtime.py
 web/vendor/
 web/node_modules/
+
+# Built by training/stress_frontend/make_hook.py; model/frontend_hook.py is the vendored copy
+training/stress_frontend/dist/

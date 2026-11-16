@@ -1,0 +1,398 @@
+{
+ "w001": {
+  "word": "yenə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w002": {
+  "word": "deyə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w003": {
+  "word": "üzrə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w004": {
+  "word": "elə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w005": {
+  "word": "öncə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w006": {
+  "word": "nəsə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w007": {
+  "word": "kimsə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w008": {
+  "word": "üstə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w009": {
+  "word": "birgə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w010": {
+  "word": "əslində",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w011": {
+  "word": "eləcə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w012": {
+  "word": "sizə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w013": {
+  "word": "türkiyə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w014": {
+  "word": "gəncə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w015": {
+  "word": "isveçrə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w016": {
+  "word": "ona",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w017": {
+  "word": "onlara",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 2,
+  "espeak": 2
+ },
+ "w018": {
+  "word": "bura",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w019": {
+  "word": "ora",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w020": {
+  "word": "hara",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w021": {
+  "word": "tamamilə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 3,
+  "espeak": 2
+ },
+ "w022": {
+  "word": "xüsusilə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 2,
+  "espeak": 2
+ },
+ "w023": {
+  "word": "vasitəsilə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 3,
+  "espeak": 3
+ },
+ "w024": {
+  "word": "tezliklə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w025": {
+  "word": "sadəcə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w026": {
+  "word": "məncə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w027": {
+  "word": "təkcə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 0,
+  "espeak": 0
+ },
+ "w028": {
+  "word": "əvvəlcə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w029": {
+  "word": "getdikcə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 1
+ },
+ "w030": {
+  "word": "ingiliscə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 2,
+  "espeak": 2
+ },
+ "w031": {
+  "word": "barədə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 2,
+  "espeak": 1
+ },
+ "w032": {
+  "word": "nəticədə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 3,
+  "espeak": 2
+ },
+ "w033": {
+  "word": "türkiyədə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 2
+ },
+ "w034": {
+  "word": "gəncədə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 0,
+  "espeak": 1
+ },
+ "w035": {
+  "word": "verə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 0
+ },
+ "w036": {
+  "word": "özgə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 1,
+  "espeak": 0
+ },
+ "w037": {
+  "word": "oksigenə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 3,
+  "espeak": 2
+ },
+ "w038": {
+  "word": "ilə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 1,
+  "espeak": null
+ },
+ "w039": {
+  "word": "dəfə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 0
+ },
+ "w040": {
+  "word": "günə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 0
+ },
+ "w041": {
+  "word": "mətləbə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 2,
+  "espeak": 1
+ },
+ "w042": {
+  "word": "edə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 1,
+  "espeak": 0
+ },
+ "w043": {
+  "word": "evdə",
+  "order": [
+   "alternative",
+   "frontend"
+  ],
+  "frontend": 1,
+  "espeak": 0
+ },
+ "w044": {
+  "word": "üzümdə",
+  "order": [
+   "frontend",
+   "alternative"
+  ],
+  "frontend": 2,
+  "espeak": 1
+ }
+}

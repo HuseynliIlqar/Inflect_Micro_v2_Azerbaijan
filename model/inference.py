@@ -122,7 +122,7 @@ class InflectTTS:
         *,
         phonemes: str | None = None,
         speed: float = 1.0,
-        variation: float = 0.667,
+        variation: float = 0.3,
         seed: int = 0,
         speaker: int = 0,
     ) -> tuple[int, np.ndarray]:
@@ -197,7 +197,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--speed", type=float, default=1.0)
-    parser.add_argument("--variation", type=float, default=0.667)
+    parser.add_argument("--variation", type=float, default=0.3)
     parser.add_argument("--seed", type=int, default=0)
     args = parser.parse_args()
     engine = InflectTTS(args.model_dir, args.device)

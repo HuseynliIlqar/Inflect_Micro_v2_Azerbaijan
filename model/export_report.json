@@ -54,131 +54,17 @@
       "accepts_prephonemized_input": true,
       "language": "az",
       "message": "Deployment frontend is explicit and language-aware",
-      "mode": "espeak",
+      "mode": "custom",
       "ok": true,
       "release_compatibility": false
     },
     {
       "message": "Inference state contains no posterior encoder, discriminator, optimizer, scheduler, or scaler tensors",
       "ok": true,
-      "omitted_top_level_fields": [
-        "compatibility",
-        "discriminator",
-        "epoch",
-        "optimizer_d",
-        "optimizer_g",
-        "options",
-        "rng_state",
-        "scaler",
-        "scheduler_d",
-        "scheduler_g",
-        "stage",
-        "step"
-      ],
+      "omitted_top_level_fields": [],
       "remaining_training_only_keys": [],
-      "stripped_tensor_count": 100,
-      "stripped_tensor_keys": [
-        "enc_q.enc.in_layers.0.bias",
-        "enc_q.enc.in_layers.0.weight_g",
-        "enc_q.enc.in_layers.0.weight_v",
-        "enc_q.enc.in_layers.1.bias",
-        "enc_q.enc.in_layers.1.weight_g",
-        "enc_q.enc.in_layers.1.weight_v",
-        "enc_q.enc.in_layers.10.bias",
-        "enc_q.enc.in_layers.10.weight_g",
-        "enc_q.enc.in_layers.10.weight_v",
-        "enc_q.enc.in_layers.11.bias",
-        "enc_q.enc.in_layers.11.weight_g",
-        "enc_q.enc.in_layers.11.weight_v",
-        "enc_q.enc.in_layers.12.bias",
-        "enc_q.enc.in_layers.12.weight_g",
-        "enc_q.enc.in_layers.12.weight_v",
-        "enc_q.enc.in_layers.13.bias",
-        "enc_q.enc.in_layers.13.weight_g",
-        "enc_q.enc.in_layers.13.weight_v",
-        "enc_q.enc.in_layers.14.bias",
-        "enc_q.enc.in_layers.14.weight_g",
-        "enc_q.enc.in_layers.14.weight_v",
-        "enc_q.enc.in_layers.15.bias",
-        "enc_q.enc.in_layers.15.weight_g",
-        "enc_q.enc.in_layers.15.weight_v",
-        "enc_q.enc.in_layers.2.bias",
-        "enc_q.enc.in_layers.2.weight_g",
-        "enc_q.enc.in_layers.2.weight_v",
-        "enc_q.enc.in_layers.3.bias",
-        "enc_q.enc.in_layers.3.weight_g",
-        "enc_q.enc.in_layers.3.weight_v",
-        "enc_q.enc.in_layers.4.bias",
-        "enc_q.enc.in_layers.4.weight_g",
-        "enc_q.enc.in_layers.4.weight_v",
-        "enc_q.enc.in_layers.5.bias",
-        "enc_q.enc.in_layers.5.weight_g",
-        "enc_q.enc.in_layers.5.weight_v",
-        "enc_q.enc.in_layers.6.bias",
-        "enc_q.enc.in_layers.6.weight_g",
-        "enc_q.enc.in_layers.6.weight_v",
-        "enc_q.enc.in_layers.7.bias",
-        "enc_q.enc.in_layers.7.weight_g",
-        "enc_q.enc.in_layers.7.weight_v",
-        "enc_q.enc.in_layers.8.bias",
-        "enc_q.enc.in_layers.8.weight_g",
-        "enc_q.enc.in_layers.8.weight_v",
-        "enc_q.enc.in_layers.9.bias",
-        "enc_q.enc.in_layers.9.weight_g",
-        "enc_q.enc.in_layers.9.weight_v",
-        "enc_q.enc.res_skip_layers.0.bias",
-        "enc_q.enc.res_skip_layers.0.weight_g",
-        "enc_q.enc.res_skip_layers.0.weight_v",
-        "enc_q.enc.res_skip_layers.1.bias",
-        "enc_q.enc.res_skip_layers.1.weight_g",
-        "enc_q.enc.res_skip_layers.1.weight_v",
-        "enc_q.enc.res_skip_layers.10.bias",
-        "enc_q.enc.res_skip_layers.10.weight_g",
-        "enc_q.enc.res_skip_layers.10.weight_v",
-        "enc_q.enc.res_skip_layers.11.bias",
-        "enc_q.enc.res_skip_layers.11.weight_g",
-        "enc_q.enc.res_skip_layers.11.weight_v",
-        "enc_q.enc.res_skip_layers.12.bias",
-        "enc_q.enc.res_skip_layers.12.weight_g",
-        "enc_q.enc.res_skip_layers.12.weight_v",
-        "enc_q.enc.res_skip_layers.13.bias",
-        "enc_q.enc.res_skip_layers.13.weight_g",
-        "enc_q.enc.res_skip_layers.13.weight_v",
-        "enc_q.enc.res_skip_layers.14.bias",
-        "enc_q.enc.res_skip_layers.14.weight_g",
-        "enc_q.enc.res_skip_layers.14.weight_v",
-        "enc_q.enc.res_skip_layers.15.bias",
-        "enc_q.enc.res_skip_layers.15.weight_g",
-        "enc_q.enc.res_skip_layers.15.weight_v",
-        "enc_q.enc.res_skip_layers.2.bias",
-        "enc_q.enc.res_skip_layers.2.weight_g",
-        "enc_q.enc.res_skip_layers.2.weight_v",
-        "enc_q.enc.res_skip_layers.3.bias",
-        "enc_q.enc.res_skip_layers.3.weight_g",
-        "enc_q.enc.res_skip_layers.3.weight_v",
-        "enc_q.enc.res_skip_layers.4.bias",
-        "enc_q.enc.res_skip_layers.4.weight_g",
-        "enc_q.enc.res_skip_layers.4.weight_v",
-        "enc_q.enc.res_skip_layers.5.bias",
-        "enc_q.enc.res_skip_layers.5.weight_g",
-        "enc_q.enc.res_skip_layers.5.weight_v",
-        "enc_q.enc.res_skip_layers.6.bias",
-        "enc_q.enc.res_skip_layers.6.weight_g",
-        "enc_q.enc.res_skip_layers.6.weight_v",
-        "enc_q.enc.res_skip_layers.7.bias",
-        "enc_q.enc.res_skip_layers.7.weight_g",
-        "enc_q.enc.res_skip_layers.7.weight_v",
-        "enc_q.enc.res_skip_layers.8.bias",
-        "enc_q.enc.res_skip_layers.8.weight_g",
-        "enc_q.enc.res_skip_layers.8.weight_v",
-        "enc_q.enc.res_skip_layers.9.bias",
-        "enc_q.enc.res_skip_layers.9.weight_g",
-        "enc_q.enc.res_skip_layers.9.weight_v",
-        "enc_q.pre.bias",
-        "enc_q.pre.weight",
-        "enc_q.proj.bias",
-        "enc_q.proj.weight"
-      ]
+      "stripped_tensor_count": 0,
+      "stripped_tensor_keys": []
     },
     {
       "compiled_files": [
@@ -188,7 +74,7 @@
       ],
       "language": "az",
       "message": "Generated deployment runtime imports its language contract and accepts prephonemized input without invoking a text frontend",
-      "mode": "espeak",
+      "mode": "custom",
       "ok": true
     },
     {
@@ -306,31 +192,109 @@
       "unexpected_keys": []
     },
     {
+      "inputs": [
+        [
+          "tokens",
+          "lengths",
+          "length_scale"
+        ],
+        [
+          "m_p_exp",
+          "logs_p_exp",
+          "y_mask",
+          "zp_noise",
+          "noise_scale"
+        ]
+      ],
+      "message": "ONNX Runtime executed both graphs with PyTorch parity",
+      "ok": true,
+      "outputs": [
+        [
+          "m_p_exp",
+          "logs_p_exp",
+          "y_mask"
+        ],
+        [
+          "waveform"
+        ]
+      ],
+      "parity": {
+        "duration_mask_exact": true,
+        "duration_max_abs_error": [
+          1.430511474609375e-06,
+          2.086162567138672e-07
+        ],
+        "tolerances": {
+          "duration_max_abs_error": 0.0001,
+          "waveform_correlation_minimum": 0.9999,
+          "waveform_max_abs_error": 0.0005
+        },
+        "waveform_correlation": 0.9999999996736223,
+        "waveform_max_abs_error": 7.07223080098629e-09,
+        "waveform_mean_abs_error": 1.107846259174039e-09
+      }
+    },
+    {
       "message": "Saved inference checkpoint reloads with exact tensor parity",
       "ok": true,
       "tensor_count": 410,
       "training_only_tensors_after_reload": []
     }
   ],
-  "created_at": "2026-08-31T03:46:47Z",
+  "created_at": "2026-11-11T11:48:48Z",
   "deployable_parameters": 9356513,
   "deployment_frontend": {
     "accepts_prephonemized_input": true,
-    "custom_hook": null,
+    "custom_hook": {
+      "declared_metadata": {
+        "configuration": {
+          "espeak_language": "az",
+          "espeak_library": "espeakng-loader==0.2.4",
+          "lexicon_sha256": "3e273dcdaed910a283bc833587038498b5566932c1c3024f33d15cd73a73cdac",
+          "preserve_punctuation": true,
+          "with_stress": true
+        },
+        "language": "az",
+        "name": "az-espeak-stress",
+        "version": "1.0"
+      },
+      "factory": "create_frontend",
+      "metadata_sha256": "5f5ae8a0fd83beced8c04483740836ea62a74cc26771882c9dbf261255dd4242",
+      "path": "frontend_hook.py",
+      "source_sha256": "cf8ed6613a5982802e4b4bb438e34ff02adeec9f28ef7f0147c61091c47dbf27"
+    },
     "format": "inflect_deployment_frontend_v1",
     "language": "az",
-    "mode": "espeak",
+    "mode": "custom",
     "prepared_dataset": {
-      "dataset_json_sha256": "9e4f6274a0237d34a71f2b997e981607c104fa257c69f6b1ba4faeb6d94bc44b",
+      "dataset_json_sha256": "62bf8e7816cdb904e5c4dc412c89befbd3757523c61ed6ced2b16525c7d4b0da",
       "format": "inflect_prepared_dataset_v1",
       "release_compatibility": false,
-      "source_manifest_sha256": "ecbb1dfb71d107185753f4bb60878d8cf388c3121839b284637b8222291509ba"
+      "source_manifest_sha256": "37a265f8b7930f0dd29d6e6a20d5aefed7378b7d821167b359c5b04db18d4827"
     },
     "prepared_frontend": {
-      "custom_hook": null,
+      "custom_hook": {
+        "declared_metadata": {
+          "configuration": {
+            "espeak_language": "az",
+            "espeak_library": "espeakng-loader==0.2.4",
+            "lexicon_sha256": "3e273dcdaed910a283bc833587038498b5566932c1c3024f33d15cd73a73cdac",
+            "preserve_punctuation": true,
+            "with_stress": true
+          },
+          "language": "az",
+          "name": "az-espeak-stress",
+          "version": "1.0"
+        },
+        "declared_symbol_count": 177,
+        "factory_invocation": "factory(language=<configured language>)",
+        "metadata_sha256": "5f5ae8a0fd83beced8c04483740836ea62a74cc26771882c9dbf261255dd4242",
+        "source_kind": "file",
+        "source_sha256": "cf8ed6613a5982802e4b4bb438e34ff02adeec9f28ef7f0147c61091c47dbf27"
+      },
       "language": "az",
       "preserve_punctuation": true,
-      "type": "espeak",
+      "type": "custom",
       "with_stress": true
     },
     "preserve_punctuation": true,
@@ -338,14 +302,14 @@
   },
   "files": [
     {
-      "bytes": 37530699,
+      "bytes": 37532107,
       "path": "model.pth",
-      "sha256": "d591d70df01f51e57c3c8b5b9de9db6a2c584a77b97c7223e3362c0e565bc294"
+      "sha256": "5b73d6b8896da66a024583763551224f224cafa4aabe84e17278a62373febb58"
     },
     {
-      "bytes": 1874,
+      "bytes": 3324,
       "path": "config.json",
-      "sha256": "b70647e69c95c2cf8ce50447581aa73cca6fc66ec66e462cf0c30e0dda909d97"
+      "sha256": "700e05f2ddc99a422901a23399aabbec806325f96e26cf6ceeb30f5534ce1c7e"
     },
     {
       "bytes": 2262,
@@ -353,9 +317,14 @@
       "sha256": "69d6d41a0b4e0392f897d3a186f3059f498c0ac16b9b411ec6fd428fc16e0de3"
     },
     {
-      "bytes": 665,
+      "bytes": 2045,
       "path": "frontend.json",
-      "sha256": "8ea9d421b91d0b410ad4a2efab68464806a8c7b2203e12565220d10c94e94b89"
+      "sha256": "5fa0f9436234f68a1a105908c57a83e1c2c96b68424c216ae543246d397d684d"
+    },
+    {
+      "bytes": 11780,
+      "path": "runtime/attentions.py",
+      "sha256": "dc65085d0e5d67da9f7603c98efad1e27eaf42c572f632a58080a5cc0f577f92"
     },
     {
       "bytes": 4778,
@@ -368,9 +337,9 @@
       "sha256": "d2144153504a8986b737f2043468bf8bc73027ae8158cd1d8ca58ef54bf82ea7"
     },
     {
-      "bytes": 11780,
-      "path": "runtime/attentions.py",
-      "sha256": "dc65085d0e5d67da9f7603c98efad1e27eaf42c572f632a58080a5cc0f577f92"
+      "bytes": 22039,
+      "path": "runtime/models.py",
+      "sha256": "f47a50c3381e7022dbd263c489f3c6b8f6c6c7ebb192729584af0ce0596b7aff"
     },
     {
       "bytes": 13166,
@@ -383,11 +352,6 @@
       "sha256": "16ca4890f3e0107250b4a522c0127779994a5a2b99fc35d6a27f93496a72153a"
     },
     {
-      "bytes": 22039,
-      "path": "runtime/models.py",
-      "sha256": "f47a50c3381e7022dbd263c489f3c6b8f6c6c7ebb192729584af0ce0596b7aff"
-    },
-    {
       "bytes": 8490,
       "path": "runtime/transforms.py",
       "sha256": "9d95e518610c35581c4f1c3b4e8eeca91b7c3d6899e7f0ebb86a0387394d3046"
@@ -398,14 +362,14 @@
       "sha256": "db11ba9b5ffd342abffc59229de7575a7d9e23468f91c6398e70eb4e01636716"
     },
     {
+      "bytes": 1053,
+      "path": "runtime/text/LICENSE",
+      "sha256": "f89accd9d66f6a011f19997d7a21cf71a35ffe2e2d0911b5460cbd0cab52a581"
+    },
+    {
       "bytes": 1572,
       "path": "runtime/text/__init__.py",
       "sha256": "7f88b1aae463edcb42e1dce6f5c4227b167b3f5a40853bc644c73db015c1e471"
-    },
-    {
-      "bytes": 1143,
-      "path": "runtime/text/symbols.py",
-      "sha256": "ad1489a5dd24ac15750911cfd180812e387a4b78d1e9fde4ef5aa8c6a0947754"
     },
     {
       "bytes": 2880,
@@ -413,9 +377,9 @@
       "sha256": "11dc7325547290e529c597e620f3aaf8d0bd8a2a2987d48eb42d2289534e42d1"
     },
     {
-      "bytes": 1053,
-      "path": "runtime/text/LICENSE",
-      "sha256": "f89accd9d66f6a011f19997d7a21cf71a35ffe2e2d0911b5460cbd0cab52a581"
+      "bytes": 1143,
+      "path": "runtime/text/symbols.py",
+      "sha256": "ad1489a5dd24ac15750911cfd180812e387a4b78d1e9fde4ef5aa8c6a0947754"
     },
     {
       "bytes": 7538,
@@ -458,144 +422,101 @@
       "sha256": "08d25f92efcd73f59b9f5ee0ce525dc202b36c56556d8c9107d84ba5ee5779ee"
     },
     {
-      "bytes": 2063,
+      "bytes": 597131,
+      "path": "frontend_hook.py",
+      "sha256": "cf8ed6613a5982802e4b4bb438e34ff02adeec9f28ef7f0147c61091c47dbf27"
+    },
+    {
+      "bytes": 7321366,
+      "path": "onnx/duration.onnx",
+      "sha256": "8f31763e1c71d5c2afa3aaee5e267174dd8411bf5280d19b4e437a7697848587"
+    },
+    {
+      "bytes": 30423557,
+      "path": "onnx/decode.onnx",
+      "sha256": "d701ffc8e7f18e9a28d8aeee3bab5332b28b4e89dc9bec1bb1be9f1a51855f4b"
+    },
+    {
+      "bytes": 2314,
       "path": "checksums.sha256",
-      "sha256": "b6fe58497ef99a810c7ea647879801da8699693b6756be2367b482490d64650a"
+      "sha256": "5d19752ca38a857d0bfa38bf7352922ad9b5c179c5ff716b79a5e0a2db9c8c26"
     }
   ],
   "format": "inflect_adaptation_export_report_v1",
-  "model_name": null,
+  "model_name": "Avaz v2",
   "ok": true,
   "onnx": {
-    "requested": false
+    "files": [
+      {
+        "bytes": 7321366,
+        "path": "onnx/duration.onnx",
+        "sha256": "8f31763e1c71d5c2afa3aaee5e267174dd8411bf5280d19b4e437a7697848587"
+      },
+      {
+        "bytes": 30423557,
+        "path": "onnx/decode.onnx",
+        "sha256": "d701ffc8e7f18e9a28d8aeee3bab5332b28b4e89dc9bec1bb1be9f1a51855f4b"
+      }
+    ],
+    "opset": 17,
+    "requested": true,
+    "verification": {
+      "inputs": [
+        [
+          "tokens",
+          "lengths",
+          "length_scale"
+        ],
+        [
+          "m_p_exp",
+          "logs_p_exp",
+          "y_mask",
+          "zp_noise",
+          "noise_scale"
+        ]
+      ],
+      "message": "ONNX Runtime executed both graphs with PyTorch parity",
+      "ok": true,
+      "outputs": [
+        [
+          "m_p_exp",
+          "logs_p_exp",
+          "y_mask"
+        ],
+        [
+          "waveform"
+        ]
+      ],
+      "parity": {
+        "duration_mask_exact": true,
+        "duration_max_abs_error": [
+          1.430511474609375e-06,
+          2.086162567138672e-07
+        ],
+        "tolerances": {
+          "duration_max_abs_error": 0.0001,
+          "waveform_correlation_minimum": 0.9999,
+          "waveform_max_abs_error": 0.0005
+        },
+        "waveform_correlation": 0.9999999996736223,
+        "waveform_max_abs_error": 7.07223080098629e-09,
+        "waveform_mean_abs_error": 1.107846259174039e-09
+      }
+    }
   },
   "output_dir": ".",
   "sample_rate": 24000,
   "source": {
-    "checkpoint": "adaptation-final.pth",
-    "checkpoint_sha256": "ca9b32e1b4b4856962f90507ea88e361e2e1a68f3ad52489ec841ef045287e59",
+    "checkpoint": "model-step-00030000.pth",
+    "checkpoint_sha256": "2ec474045e433355a585a1efc64f80fe9d169ed5adf578bd10334771dcaabcc3",
     "config": "config.json",
-    "revision": null,
-    "symbols": "checkpoint_or_inline"
+    "revision": "inflect 6dad538 + avaz polish 30000",
+    "symbols": "symbols.json"
   },
   "stripped_training_tensors": {
-    "count": 100,
-    "keys": [
-      "enc_q.enc.in_layers.0.bias",
-      "enc_q.enc.in_layers.0.weight_g",
-      "enc_q.enc.in_layers.0.weight_v",
-      "enc_q.enc.in_layers.1.bias",
-      "enc_q.enc.in_layers.1.weight_g",
-      "enc_q.enc.in_layers.1.weight_v",
-      "enc_q.enc.in_layers.10.bias",
-      "enc_q.enc.in_layers.10.weight_g",
-      "enc_q.enc.in_layers.10.weight_v",
-      "enc_q.enc.in_layers.11.bias",
-      "enc_q.enc.in_layers.11.weight_g",
-      "enc_q.enc.in_layers.11.weight_v",
-      "enc_q.enc.in_layers.12.bias",
-      "enc_q.enc.in_layers.12.weight_g",
-      "enc_q.enc.in_layers.12.weight_v",
-      "enc_q.enc.in_layers.13.bias",
-      "enc_q.enc.in_layers.13.weight_g",
-      "enc_q.enc.in_layers.13.weight_v",
-      "enc_q.enc.in_layers.14.bias",
-      "enc_q.enc.in_layers.14.weight_g",
-      "enc_q.enc.in_layers.14.weight_v",
-      "enc_q.enc.in_layers.15.bias",
-      "enc_q.enc.in_layers.15.weight_g",
-      "enc_q.enc.in_layers.15.weight_v",
-      "enc_q.enc.in_layers.2.bias",
-      "enc_q.enc.in_layers.2.weight_g",
-      "enc_q.enc.in_layers.2.weight_v",
-      "enc_q.enc.in_layers.3.bias",
-      "enc_q.enc.in_layers.3.weight_g",
-      "enc_q.enc.in_layers.3.weight_v",
-      "enc_q.enc.in_layers.4.bias",
-      "enc_q.enc.in_layers.4.weight_g",
-      "enc_q.enc.in_layers.4.weight_v",
-      "enc_q.enc.in_layers.5.bias",
-      "enc_q.enc.in_layers.5.weight_g",
-      "enc_q.enc.in_layers.5.weight_v",
-      "enc_q.enc.in_layers.6.bias",
-      "enc_q.enc.in_layers.6.weight_g",
-      "enc_q.enc.in_layers.6.weight_v",
-      "enc_q.enc.in_layers.7.bias",
-      "enc_q.enc.in_layers.7.weight_g",
-      "enc_q.enc.in_layers.7.weight_v",
-      "enc_q.enc.in_layers.8.bias",
-      "enc_q.enc.in_layers.8.weight_g",
-      "enc_q.enc.in_layers.8.weight_v",
-      "enc_q.enc.in_layers.9.bias",
-      "enc_q.enc.in_layers.9.weight_g",
-      "enc_q.enc.in_layers.9.weight_v",
-      "enc_q.enc.res_skip_layers.0.bias",
-      "enc_q.enc.res_skip_layers.0.weight_g",
-      "enc_q.enc.res_skip_layers.0.weight_v",
-      "enc_q.enc.res_skip_layers.1.bias",
-      "enc_q.enc.res_skip_layers.1.weight_g",
-      "enc_q.enc.res_skip_layers.1.weight_v",
-      "enc_q.enc.res_skip_layers.10.bias",
-      "enc_q.enc.res_skip_layers.10.weight_g",
-      "enc_q.enc.res_skip_layers.10.weight_v",
-      "enc_q.enc.res_skip_layers.11.bias",
-      "enc_q.enc.res_skip_layers.11.weight_g",
-      "enc_q.enc.res_skip_layers.11.weight_v",
-      "enc_q.enc.res_skip_layers.12.bias",
-      "enc_q.enc.res_skip_layers.12.weight_g",
-      "enc_q.enc.res_skip_layers.12.weight_v",
-      "enc_q.enc.res_skip_layers.13.bias",
-      "enc_q.enc.res_skip_layers.13.weight_g",
-      "enc_q.enc.res_skip_layers.13.weight_v",
-      "enc_q.enc.res_skip_layers.14.bias",
-      "enc_q.enc.res_skip_layers.14.weight_g",
-      "enc_q.enc.res_skip_layers.14.weight_v",
-      "enc_q.enc.res_skip_layers.15.bias",
-      "enc_q.enc.res_skip_layers.15.weight_g",
-      "enc_q.enc.res_skip_layers.15.weight_v",
-      "enc_q.enc.res_skip_layers.2.bias",
-      "enc_q.enc.res_skip_layers.2.weight_g",
-      "enc_q.enc.res_skip_layers.2.weight_v",
-      "enc_q.enc.res_skip_layers.3.bias",
-      "enc_q.enc.res_skip_layers.3.weight_g",
-      "enc_q.enc.res_skip_layers.3.weight_v",
-      "enc_q.enc.res_skip_layers.4.bias",
-      "enc_q.enc.res_skip_layers.4.weight_g",
-      "enc_q.enc.res_skip_layers.4.weight_v",
-      "enc_q.enc.res_skip_layers.5.bias",
-      "enc_q.enc.res_skip_layers.5.weight_g",
-      "enc_q.enc.res_skip_layers.5.weight_v",
-      "enc_q.enc.res_skip_layers.6.bias",
-      "enc_q.enc.res_skip_layers.6.weight_g",
-      "enc_q.enc.res_skip_layers.6.weight_v",
-      "enc_q.enc.res_skip_layers.7.bias",
-      "enc_q.enc.res_skip_layers.7.weight_g",
-      "enc_q.enc.res_skip_layers.7.weight_v",
-      "enc_q.enc.res_skip_layers.8.bias",
-      "enc_q.enc.res_skip_layers.8.weight_g",
-      "enc_q.enc.res_skip_layers.8.weight_v",
-      "enc_q.enc.res_skip_layers.9.bias",
-      "enc_q.enc.res_skip_layers.9.weight_g",
-      "enc_q.enc.res_skip_layers.9.weight_v",
-      "enc_q.pre.bias",
-      "enc_q.pre.weight",
-      "enc_q.proj.bias",
-      "enc_q.proj.weight"
-    ],
-    "top_level_fields": [
-      "compatibility",
-      "discriminator",
-      "epoch",
-      "optimizer_d",
-      "optimizer_g",
-      "options",
-      "rng_state",
-      "scaler",
-      "scheduler_d",
-      "scheduler_g",
-      "stage",
-      "step"
-    ]
+    "count": 0,
+    "keys": [],
+    "top_level_fields": []
   },
   "symbol_count": 178
 }
