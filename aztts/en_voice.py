@@ -203,7 +203,7 @@ class EnVoice:
         text: str,
         *,
         speed: float = 1.0,
-        variation: float = 0.667,
+        variation: float = 0.3,
         seed: int = 7,
         max_words: int = DEFAULT_MAX_WORDS,
         censor: bool = True,

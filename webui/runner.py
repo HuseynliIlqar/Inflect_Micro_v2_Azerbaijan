@@ -59,7 +59,7 @@ SEED_LIMIT = 2**31 - 1
 
 # The CLI's own defaults, so the two front ends cannot drift apart.
 DEFAULT_SPEED = 1.0
-DEFAULT_VARIATION = 0.667
+DEFAULT_VARIATION = 0.3
 DEFAULT_SEED = 7
 
 

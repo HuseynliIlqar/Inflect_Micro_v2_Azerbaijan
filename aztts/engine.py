@@ -189,7 +189,7 @@ class AzTTS:
         text: str,
         *,
         speed: float = 1.0,
-        variation: float = 0.667,
+        variation: float = 0.3,
         seed: int = 7,
         normalize: bool = True,
         max_words: int = DEFAULT_MAX_WORDS,

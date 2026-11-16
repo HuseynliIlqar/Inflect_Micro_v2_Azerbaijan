@@ -131,7 +131,7 @@ python say.py --voice en "Hello there."           # ingilis baza modeli
 | Bayraq | Standart | Nə edir |
 | --- | ---: | --- |
 | `--speed` | `1.0` | 0.5–2.0. Aşağı dəyər daha yavaş |
-| `--variation` | `0.667` | 0.0–1.0. Aşağı daha sabit, yuxarı daha canlı |
+| `--variation` | `0.3` | 0.0–1.0. Aşağı daha sabit, yuxarı daha canlı |
 | `--seed` | `7` | Eyni seed eyni səsi verir. Bəyənmədiyiniz cümlə üçün dəyişin |
 | `--voice` | `az` | `en` ingilis baza modeli ilə danışır |
 | `--device` | `cpu` | `cpu` və ya `cuda` |

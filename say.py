@@ -68,7 +68,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--device", "-d", default="cpu", choices=("cpu", "cuda"))
     parser.add_argument("--speed", type=float, default=1.0, help="0.5-2.0; lower is slower.")
-    parser.add_argument("--variation", type=float, default=0.667, help="0.0-1.0; lower is steadier, higher is livelier.")
+    parser.add_argument("--variation", type=float, default=0.3, help="0.0-1.0; lower is steadier and pronounces more clearly, higher is livelier.")
     parser.add_argument("--seed", type=int, default=7, help="The same seed gives the same voice.")
     parser.add_argument("--raw", action="store_true", help="Turn normalisation off and pass the text through as written.")
     parser.add_argument(

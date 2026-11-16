@@ -67,7 +67,7 @@ _AZ: Mapping[str, str] = {
     "variation_label": "Dəyişkənlik",
     "variation_info": (
         "Aşağı dəyər daha sabit, yuxarı dəyər daha canlı oxunuş verir. "
-        "Standart: 0.667"
+        "Standart: 0.3"
     ),
     "seed_label": "Seed",
     "seed_info": "Eyni seed hər dəfə eyni oxunuşu verir.",
@@ -170,7 +170,7 @@ _EN: Mapping[str, str] = {
     "speed_label": "Speed",
     "speed_info": "Lower is slower. Default: 1.0",
     "variation_label": "Variation",
-    "variation_info": "Lower is steadier, higher is livelier. Default: 0.667",
+    "variation_info": "Lower is steadier, higher is livelier. Default: 0.3",
     "seed_label": "Seed",
     "seed_info": "The same seed gives the same reading every time.",
     "random_seed": "Random seed",

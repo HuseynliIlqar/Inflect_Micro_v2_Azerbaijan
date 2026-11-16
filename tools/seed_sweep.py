@@ -39,8 +39,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--variation",
         type=float,
         nargs="+",
-        default=[0.667],
-        help="One or more noise scales to try (default 0.667).",
+        default=[0.3],
+        help="One or more noise scales to try (default 0.3).",
     )
     parser.add_argument("--package", "-p", type=Path, default=DEFAULT_PACKAGE)
     parser.add_argument("--out", "-o", type=Path, default=DEFAULT_OUT)

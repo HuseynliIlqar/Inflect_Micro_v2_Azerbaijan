@@ -132,7 +132,7 @@ python say.py --voice en "Hello there."           # the English base model
 | Flag | Default | What it does |
 | --- | ---: | --- |
 | `--speed` | `1.0` | 0.5-2.0. Lower is slower |
-| `--variation` | `0.667` | 0.0-1.0. Lower is steadier, higher is livelier |
+| `--variation` | `0.3` | 0.0-1.0. Lower is steadier, higher is livelier |
 | `--seed` | `7` | The same seed gives the same voice. Change it for a sentence you do not like |
 | `--voice` | `az` | `en` speaks with the English base model |
 | `--device` | `cpu` | `cpu` or `cuda` |
