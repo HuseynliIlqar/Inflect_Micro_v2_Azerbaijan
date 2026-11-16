@@ -1,0 +1,1145 @@
+[
+ {
+  "cat": "rəqəm/tarix",
+  "text": "Görüş saat 15:30-da başlayacaq.",
+  "base": {
+   "hyp": "Görüş saat 15.30-na başlayacaq.",
+   "wer_vs_normalized": 0.167,
+   "normalized": "Görüş saat 15:30-da başlayacaq.",
+   "phonemes": "ɟœɾˈyʃ saˈat ˌonbˈeʃ:otˈuzda baʃɫajadʒˈax."
+  },
+  "new": {
+   "hyp": "Görüş saat 15. 30-da başlayacaq.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Görüş saat 15:30-da başlayacaq.",
+   "phonemes": "ɟœɾˈyʃ saˈat ˌonbˈeʃ:otˈuzda baʃɫajadʒˈax."
+  },
+  "new-var0.33": {
+   "hyp": "Görüş saat 15. 30-da başlayacaq.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Görüş saat 15:30-da başlayacaq.",
+   "phonemes": "ɟœɾˈyʃ saˈat ˌonbˈeʃ:otˈuzda baʃɫajadʒˈax."
+  }
+ },
+ {
+  "cat": "rəqəm/tarix",
+  "text": "2024-cü ildə şirkətin gəliri 12,5 faiz artıb.",
+  "base": {
+   "hyp": "2024-cü ildə şirkətin gəliri 12,5% artıb.",
+   "wer_vs_normalized": 0.111,
+   "normalized": "2024-cü ildə şirkətin gəliri 12,5 faiz artıb.",
+   "phonemes": "icˈi mˈin ijirmˌidˈœrddʒy ˈildæ ʃircætˈin ɟæliɾˈi ˌonicˈi tˌam bˈeʃ fˈaɪz artˈɯb."
+  },
+  "new": {
+   "hyp": "2024-cü ildə şirkətin gəliri 12,5% artıb.",
+   "wer_vs_normalized": 0.111,
+   "normalized": "2024-cü ildə şirkətin gəliri 12,5 faiz artıb.",
+   "phonemes": "icˈi mˈin ijirmˌidˈœrddʒy ˈildæ ʃircætˈin ɟæliɾˈi ˌonicˈi tˌam bˈeʃ fˈaɪz artˈɯb."
+  },
+  "new-var0.33": {
+   "hyp": "2024-cü ildə şirkətin gəliri 12,5% artıb.",
+   "wer_vs_normalized": 0.111,
+   "normalized": "2024-cü ildə şirkətin gəliri 12,5 faiz artıb.",
+   "phonemes": "icˈi mˈin ijirmˌidˈœrddʒy ˈildæ ʃircætˈin ɟæliɾˈi ˌonicˈi tˌam bˈeʃ fˈaɪz artˈɯb."
+  }
+ },
+ {
+  "cat": "rəqəm/tarix",
+  "text": "Qiyməti 349 manat 90 qəpikdir.",
+  "base": {
+   "hyp": "Qiyməti 349 manat 90 qəpikdir.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Qiyməti 349 manat 90 qəpikdir.",
+   "phonemes": "ɡijmætˈi ˈytʃjˈyz ɡˌɯrxdoɡɡˈuz manˈat doxsˈan ɡæpiçdˈir."
+  },
+  "new": {
+   "hyp": "Qiyməti 349 manat 90 qəpikdir.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Qiyməti 349 manat 90 qəpikdir.",
+   "phonemes": "ɡijmætˈi ˈytʃjˈyz ɡˌɯrxdoɡɡˈuz manˈat doxsˈan ɡæpiçdˈir."
+  },
+  "new-var0.33": {
+   "hyp": "Qiyməti 349 manat 90 qəpikdir.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Qiyməti 349 manat 90 qəpikdir.",
+   "phonemes": "ɡijmætˈi ˈytʃjˈyz ɡˌɯrxdoɡɡˈuz manˈat doxsˈan ɡæpiçdˈir."
+  }
+ },
+ {
+  "cat": "rəqəm/tarix",
+  "text": "Toplantı 5 mart 2025-ci il tarixində keçiriləcək.",
+  "base": {
+   "hyp": "Toplantı 5 mart 2025-ci il tarixində keçiriləcək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Toplantı 5 mart 2025-ci il tarixində keçiriləcək.",
+   "phonemes": "topɫantˈɯ bˈeʃ mˈart icˈi mˈin ijirmˌibˈeʃdʒi ˈil taɾixˈindæ cetʃiɾilædʒˈæç."
+  },
+  "new": {
+   "hyp": "Toplantı 5 mart 2025-ci il tarixində keçiriləcək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Toplantı 5 mart 2025-ci il tarixində keçiriləcək.",
+   "phonemes": "topɫantˈɯ bˈeʃ mˈart icˈi mˈin ijirmˌibˈeʃdʒi ˈil taɾixˈindæ cetʃiɾilædʒˈæç."
+  },
+  "new-var0.33": {
+   "hyp": "Toplantı 5 mart 2025-ci il tarixində keçiriləcək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Toplantı 5 mart 2025-ci il tarixində keçiriləcək.",
+   "phonemes": "topɫantˈɯ bˈeʃ mˈart icˈi mˈin ijirmˌibˈeʃdʒi ˈil taɾixˈindæ cetʃiɾilædʒˈæç."
+  }
+ },
+ {
+  "cat": "rəqəm/tarix",
+  "text": "Gecə temperatur -5 dərəcəyə qədər enəcək.",
+  "base": {
+   "hyp": "Gecə temperatur 5 dərəcəyə qədər inəcək.",
+   "wer_vs_normalized": 0.167,
+   "normalized": "Gecə temperatur -5 dərəcəyə qədər enəcək.",
+   "phonemes": "ɟˈedʒæ tempeɾatˈur bˈeʃ dæɾædʒˈæjæ ɡædˈær enædʒˈæç."
+  },
+  "new": {
+   "hyp": "Gecə temperatur 5 dərəcəyə qədər enəcək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Gecə temperatur -5 dərəcəyə qədər enəcək.",
+   "phonemes": "ɟedʒˈæ tempeɾatˈur bˈeʃ dæɾædʒæjˈæ ɡædˈær enædʒˈæç."
+  },
+  "new-var0.33": {
+   "hyp": "Gecə temperatur 5 dərəcəyə qədər enəcək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Gecə temperatur -5 dərəcəyə qədər enəcək.",
+   "phonemes": "ɟedʒˈæ tempeɾatˈur bˈeʃ dæɾædʒæjˈæ ɡædˈær enædʒˈæç."
+  }
+ },
+ {
+  "cat": "rəqəm/tarix",
+  "text": "XX əsrin əvvəllərində Bakıda neft bumu başladı.",
+  "base": {
+   "hyp": "20-ci əsrin əvvəllərində Bakıda neft bumu başladı.",
+   "wer_vs_normalized": 0.286,
+   "normalized": "XX əsrin əvvəllərində Bakıda neft bumu başladı.",
+   "phonemes": "xˌexˈe æsrˈin ævvællæɾˈindæ bacɯdˈa nˈeft bumˈu baʃɫadˈɯ."
+  },
+  "new": {
+   "hyp": "Hiss əsrin əvvəllərində Bakıda neft bunu başladı.",
+   "wer_vs_normalized": 0.286,
+   "normalized": "XX əsrin əvvəllərində Bakıda neft bumu başladı.",
+   "phonemes": "xˌexˈe æsrˈin ævvællæɾindˈæ bacɯdˈa nˈeft bumˈu baʃɫadˈɯ."
+  },
+  "new-var0.33": {
+   "hyp": "Hüff əsrin əvvəllərində Bakıda neft bunu başladı.",
+   "wer_vs_normalized": 0.286,
+   "normalized": "XX əsrin əvvəllərində Bakıda neft bumu başladı.",
+   "phonemes": "xˌexˈe æsrˈin ævvællæɾindˈæ bacɯdˈa nˈeft bumˈu baʃɫadˈɯ."
+  }
+ },
+ {
+  "cat": "rəqəm/tarix",
+  "text": "Kitabın 7-ci fəslini dünən oxudum.",
+  "base": {
+   "hyp": "Kitabın yeddinci fəslini dünən oxudum.",
+   "wer_vs_normalized": 0.333,
+   "normalized": "Kitabın 7-ci fəslini dünən oxudum.",
+   "phonemes": "citabˈɯn jeddˈidʒi fæslinˈi dynˈæn oxudˈum."
+  },
+  "new": {
+   "hyp": "Kitabın yeddi cifhəsini dünən oxudum.",
+   "wer_vs_normalized": 0.5,
+   "normalized": "Kitabın 7-ci fəslini dünən oxudum.",
+   "phonemes": "citabˈɯn jeddˈidʒi fæslinˈi dˈynæn oxudˈum."
+  },
+  "new-var0.33": {
+   "hyp": "Kitabın yeddi cifhəsini dünən oxudum.",
+   "wer_vs_normalized": 0.5,
+   "normalized": "Kitabın 7-ci fəslini dünən oxudum.",
+   "phonemes": "citabˈɯn jeddˈidʒi fæslinˈi dˈynæn oxudˈum."
+  }
+ },
+ {
+  "cat": "rəqəm/tarix",
+  "text": "Əhalinin 45%-i şəhərlərdə yaşayır.",
+  "base": {
+   "hyp": "Əhalinin 45 faizi şəhərlərdə yaşayır.",
+   "wer_vs_normalized": 0.2,
+   "normalized": "Əhalinin 45%-i şəhərlərdə yaşayır.",
+   "phonemes": "æhalinˈin ɡˌɯrxbˈeʃ fˈaɪzˈi ʃæhærlˈærdæ jaʃajˈɯr."
+  },
+  "new": {
+   "hyp": "Əhalinin 45%-i şəhərlərdə yaşayır.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Əhalinin 45%-i şəhərlərdə yaşayır.",
+   "phonemes": "æhalinˈin ɡˌɯrxbˈeʃ fˈaɪzˈi ʃæhærlˈærdæ jaʃajˈɯr."
+  },
+  "new-var0.33": {
+   "hyp": "Əhalinin 45 faizi şəhərlərdə yaşayır.",
+   "wer_vs_normalized": 0.2,
+   "normalized": "Əhalinin 45%-i şəhərlərdə yaşayır.",
+   "phonemes": "æhalinˈin ɡˌɯrxbˈeʃ fˈaɪzˈi ʃæhærlˈærdæ jaʃajˈɯr."
+  }
+ },
+ {
+  "cat": "rəqəm/tarix",
+  "text": "Məsafə təxminən 120 km-dir.",
+  "base": {
+   "hyp": "Məsafə təxminən 120 kilometrdir.",
+   "wer_vs_normalized": 0.4,
+   "normalized": "Məsafə təxminən 120 km-dir.",
+   "phonemes": "mæsˈafæ tæxminˈæn jˈyz ijirmˈi kˌaˈemdir."
+  },
+  "new": {
+   "hyp": "Məsafə təxminən 120 kmdir.",
+   "wer_vs_normalized": 0.4,
+   "normalized": "Məsafə təxminən 120 km-dir.",
+   "phonemes": "mæsˈafæ tæxminˈæn jˈyz ijirmˈi kˌaˈemdir."
+  },
+  "new-var0.33": {
+   "hyp": "Məsafə təxminən 120 kmdir.",
+   "wer_vs_normalized": 0.4,
+   "normalized": "Məsafə təxminən 120 km-dir.",
+   "phonemes": "mæsˈafæ tæxminˈæn jˈyz ijirmˈi kˌaˈemdir."
+  }
+ },
+ {
+  "cat": "rəqəm/tarix",
+  "text": "Bu layihə 2019-2023-cü illərdə həyata keçirilib.",
+  "base": {
+   "hyp": "Bu layihə 2019-2023-cü illərdə həyata keçirilib.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu layihə 2019-2023-cü illərdə həyata keçirilib.",
+   "phonemes": "bu ɫajˈihæ icˈi mˈin ˌondoɡɡˈuz icˈi mˈin ijirmˌiˈytʃdʒy illˈærdæ hæjatˈa cetʃiɾilˈib."
+  },
+  "new": {
+   "hyp": "Bu layihə 2019-2023-cü illərdə həyata keçirilib.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu layihə 2019-2023-cü illərdə həyata keçirilib.",
+   "phonemes": "bu ɫajˈihæ icˈi mˈin ˌondoɡɡˈuz icˈi mˈin ijirmˌiˈytʃdʒy illˈærdæ hæjatˈa cetʃiɾilˈib."
+  },
+  "new-var0.33": {
+   "hyp": "Bu layihə 2019-2023-cü illərdə həyata keçirilib.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu layihə 2019-2023-cü illərdə həyata keçirilib.",
+   "phonemes": "bu ɫajˈihæ icˈi mˈin ˌondoɡɡˈuz icˈi mˈin ijirmˌiˈytʃdʒy illˈærdæ hæjatˈa cetʃiɾilˈib."
+  }
+ },
+ {
+  "cat": "ixtisar",
+  "text": "ABŞ və Aİ arasında yeni razılaşma imzalandı.",
+  "base": {
+   "hyp": "ABŞ və AE arasında yeni razılaşma inzalandı.",
+   "wer_vs_normalized": 0.286,
+   "normalized": "ABŞ və Aİ arasında yeni razılaşma imzalandı.",
+   "phonemes": "ˌabˌeʃˈe væ ˌaˈi aɾasɯndˈa jenˈi razɯɫaʃmˈa imzaɫandˈɯ."
+  },
+  "new": {
+   "hyp": "ABŞ və AR arasında yeni razılaşma imzalandı.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "ABŞ və Aİ arasında yeni razılaşma imzalandı.",
+   "phonemes": "ˌabˌeʃˈe væ ˌaˈi aɾasˈɯnda jenˈi razɯɫaʃmˈa imzaɫandˈɯ."
+  },
+  "new-var0.33": {
+   "hyp": "ABŞ və AR arasında yeni razılaşma imzalandı.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "ABŞ və Aİ arasında yeni razılaşma imzalandı.",
+   "phonemes": "ˌabˌeʃˈe væ ˌaˈi aɾasˈɯnda jenˈi razɯɫaʃmˈa imzaɫandˈɯ."
+  }
+ },
+ {
+  "cat": "ixtisar",
+  "text": "Dr. Əliyev bu gün xəstələri qəbul etmir.",
+  "base": {
+   "hyp": "Dırğışqırır. Əliyev bu gün xəstələri qəbul etmir.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "Dr. Əliyev bu gün xəstələri qəbul etmir.",
+   "phonemes": "dˌeˈer. ælijˈev bu ɟˈyn xæstælæɾˈi ɡæbˈuɫ etmˈir."
+  },
+  "new": {
+   "hyp": "Getdilir. Əliyev bu gün xəstələri qəbul etmir.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "Dr. Əliyev bu gün xəstələri qəbul etmir.",
+   "phonemes": "dˌeˈer. ælijˈev bu ɟˈyn xæstælæɾˈi ɡæbˈuɫ ˈetmir."
+  },
+  "new-var0.33": {
+   "hyp": "Tvir. Əliyev bu gün xəstələri qəbul etmir.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "Dr. Əliyev bu gün xəstələri qəbul etmir.",
+   "phonemes": "dˌeˈer. ælijˈev bu ɟˈyn xæstælæɾˈi ɡæbˈuɫ ˈetmir."
+  }
+ },
+ {
+  "cat": "ixtisar",
+  "text": "Kitablar, dəftərlər, qələmlər və s. masanın üstündə idi.",
+  "base": {
+   "hyp": "Kitablar, dəftərlər, qələmlər və sair. Masanın üstündə idi.",
+   "wer_vs_normalized": 0.125,
+   "normalized": "Kitablar, dəftərlər, qələmlər və s. masanın üstündə idi.",
+   "phonemes": "citabɫˈar, dæftærlˈær, ɡælæmlˈær væ sˈe. masanˈɯn ystˈyndæ idˈi."
+  },
+  "new": {
+   "hyp": "Kitablar, dəftərlər, qələmlər və s. Masanın üstündə idi.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Kitablar, dəftərlər, qələmlər və s. masanın üstündə idi.",
+   "phonemes": "citabɫˈar, dæftærlˈær, ɡælæmlˈær væ sˈe. masanˈɯn ystˈyndæ idi."
+  },
+  "new-var0.33": {
+   "hyp": "Kitablar, dəftərlər, qələmlər və S. Masanın üstündə idi.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Kitablar, dəftərlər, qələmlər və s. masanın üstündə idi.",
+   "phonemes": "citabɫˈar, dæftærlˈær, ɡælæmlˈær væ sˈe. masanˈɯn ystˈyndæ idi."
+  }
+ },
+ {
+  "cat": "ixtisar",
+  "text": "BMT-nin baş katibi Bakıya səfər edəcək.",
+  "base": {
+   "hyp": "DNMT-nin baş katibi Bakıya səfər edəcək.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "BMT-nin baş katibi Bakıya səfər edəcək.",
+   "phonemes": "bˌeˌemtˈenˈin bˈaʃ catibˈi bacɯjˈa sæfˈær edædʒˈæç."
+  },
+  "new": {
+   "hyp": "MTMT-nin baş katibi Bakıya səfər edəcək.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "BMT-nin baş katibi Bakıya səfər edəcək.",
+   "phonemes": "bˌeˌemtˈenˈin bˈaʃ catibˈi bacɯjˈa sæfˈær edædʒˈæç."
+  },
+  "new-var0.33": {
+   "hyp": "FMT-nin baş katibi Bakıya səfər edəcək.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "BMT-nin baş katibi Bakıya səfər edəcək.",
+   "phonemes": "bˌeˌemtˈenˈin bˈaʃ catibˈi bacɯjˈa sæfˈær edædʒˈæç."
+  }
+ },
+ {
+  "cat": "ixtisar",
+  "text": "COVID-19 pandemiyası bir çox sahəyə təsir etdi.",
+  "base": {
+   "hyp": "Çovut 19 pandemiyası bir çox sahəyə təsir etdi.",
+   "wer_vs_normalized": 0.125,
+   "normalized": "COVID-19 pandemiyası bir çox sahəyə təsir etdi.",
+   "phonemes": "dʒovˈɯd ˌondoɡɡˈuz pandemijasˈɯ bˈir tʃˈox sahˈæjæ tæsˈir etdˈi."
+  },
+  "new": {
+   "hyp": "Covud-19 pandemiyası bir çox sahəyə təsir etdi.",
+   "wer_vs_normalized": 0.125,
+   "normalized": "COVID-19 pandemiyası bir çox sahəyə təsir etdi.",
+   "phonemes": "dʒovˈɯd ˌondoɡɡˈuz pandemijasˈɯ bˈir tʃˈox sahˈæjæ tæsˈir etdˈi."
+  },
+  "new-var0.33": {
+   "hyp": "Covud-19 pandemiyası bir çox sahəyə təsir etdi.",
+   "wer_vs_normalized": 0.125,
+   "normalized": "COVID-19 pandemiyası bir çox sahəyə təsir etdi.",
+   "phonemes": "dʒovˈɯd ˌondoɡɡˈuz pandemijasˈɯ bˈir tʃˈox sahˈæjæ tæsˈir etdˈi."
+  }
+ },
+ {
+  "cat": "xarici söz",
+  "text": "Microsoft və Google şirkətləri süni intellekt sahəsində rəqabət aparır.",
+  "base": {
+   "hyp": "Microsoft və Google şirkətləri süni intellekt sahəsində rəqabət aparır.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Microsoft və Google şirkətləri süni intellekt sahəsində rəqabət aparır.",
+   "phonemes": "midʒrosˈoft væ ɟooɟlˈe ʃircætlæɾˈi synˈi intellˈeçt sahæsˈindæ ræɡabˈæt apaɾˈɯr."
+  },
+  "new": {
+   "hyp": "Microsoft və Google şirkətləri süni intellekt sahəsində rəqabət aparır.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Microsoft və Google şirkətləri süni intellekt sahəsində rəqabət aparır.",
+   "phonemes": "midʒrosˈoft væ ɟooɟlˈe ʃircætlæɾˈi synˈi intellˈeçt sahæsindˈæ ræɡabˈæt apaɾˈɯr."
+  },
+  "new-var0.33": {
+   "hyp": "Microsoft və Google şirkətləri süni intellekt sahəsində rəqabət aparır.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Microsoft və Google şirkətləri süni intellekt sahəsində rəqabət aparır.",
+   "phonemes": "midʒrosˈoft væ ɟooɟlˈe ʃircætlæɾˈi synˈi intellˈeçt sahæsindˈæ ræɡabˈæt apaɾˈɯr."
+  }
+ },
+ {
+  "cat": "xarici söz",
+  "text": "Şekspirin Hamlet əsərini dostum Vilyam mənə tövsiyə etdi.",
+  "base": {
+   "hyp": "Şekspirin Hamlet əsərini dostum Vilyan mənə tövsiyə etdi.",
+   "wer_vs_normalized": 0.125,
+   "normalized": "Şekspirin Hamlet əsərini dostum Vilyam mənə tövsiyə etdi.",
+   "phonemes": "ʃeçspiɾˈin hamlˈet æsæɾinˈi dostˈum viljˈam mˈænæ tœvsˈijæ etdˈi."
+  },
+  "new": {
+   "hyp": "Şekspirin Hamiyet əsərini dostum Vilyan mənə tövsiyə etdi.",
+   "wer_vs_normalized": 0.25,
+   "normalized": "Şekspirin Hamlet əsərini dostum Vilyam mənə tövsiyə etdi.",
+   "phonemes": "ʃeçspiɾˈin hamlˈet æsæɾinˈi dostˈum viljˈam mˈænæ tœvsijˈæ etdˈi."
+  },
+  "new-var0.33": {
+   "hyp": "Şekspirin Hamlet əsərini dostum Vilyan mənə tövsiyə etdi.",
+   "wer_vs_normalized": 0.125,
+   "normalized": "Şekspirin Hamlet əsərini dostum Vilyam mənə tövsiyə etdi.",
+   "phonemes": "ʃeçspiɾˈin hamlˈet æsæɾinˈi dostˈum viljˈam mˈænæ tœvsijˈæ etdˈi."
+  }
+ },
+ {
+  "cat": "xarici söz",
+  "text": "Bu mahnını ilk dəfə Parisdə, kiçik bir kafedə eşitdim.",
+  "base": {
+   "hyp": "Bu mahnını ilk dəfə Parisdə kiçik bir kafedə eşitdim.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu mahnını ilk dəfə Parisdə, kiçik bir kafedə eşitdim.",
+   "phonemes": "bu mahnɯnˈɯ ˈilç dˈæfæ paɾˈisdæ, citʃˈiç bˈir cafˈedæ eʃitdˈim."
+  },
+  "new": {
+   "hyp": "Bu mahnını ilk dəfə Parisdə kiçik bir kafedə eşitdim.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu mahnını ilk dəfə Parisdə, kiçik bir kafedə eşitdim.",
+   "phonemes": "bu mahnɯnˈɯ ˈilç dæfˈæ paɾisdˈæ, citʃˈiç bˈir cafedˈæ eʃitdˈim."
+  },
+  "new-var0.33": {
+   "hyp": "Bu mahnını ilk dəfə Parisdə kiçik bir kafedə eşitdim.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu mahnını ilk dəfə Parisdə, kiçik bir kafedə eşitdim.",
+   "phonemes": "bu mahnɯnˈɯ ˈilç dæfˈæ paɾisdˈæ, citʃˈiç bˈir cafedˈæ eʃitdˈim."
+  }
+ },
+ {
+  "cat": "uzun söz",
+  "text": "Müvəffəqiyyətsizləşdirilənlərdənmişsinizmi?",
+  "base": {
+   "hyp": "Müvəffəqiyyəti izləşdirilənlərdənmişsinizmi?",
+   "wer_vs_normalized": 2.0,
+   "normalized": "Müvəffəqiyyətsizləşdirilənlərdənmişsinizmi?",
+   "phonemes": "myvæffæɡijjætsizlæʃdiɾilænlærdænmiʃsinizmˈi?"
+  },
+  "new": {
+   "hyp": "Müvəffəqiyyətsizləşdirilənlərdənmişsinizmi?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Müvəffəqiyyətsizləşdirilənlərdənmişsinizmi?",
+   "phonemes": "myvæffæɡijjætsizlæʃdiɾilænlærdænmiʃsinˈizmi?"
+  },
+  "new-var0.33": {
+   "hyp": "Müvəffəqiyyətsizləşdirilənlərdənmişsinizmi?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Müvəffəqiyyətsizləşdirilənlərdənmişsinizmi?",
+   "phonemes": "myvæffæɡijjætsizlæʃdiɾilænlærdænmiʃsinˈizmi?"
+  }
+ },
+ {
+  "cat": "uzun söz",
+  "text": "Universitetlərimizdəkilərdən biri bu layihəyə rəhbərlik edəcək.",
+  "base": {
+   "hyp": "Universitetlərimizdəkilərdən biri bu layihəyə rəhbərlik edəcək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Universitetlərimizdəkilərdən biri bu layihəyə rəhbərlik edəcək.",
+   "phonemes": "universitsetlæɾimizdæcilærdˈæn biɾˈi bu ɫajihˈæjæ ræhbærlˈiç edædʒˈæç."
+  },
+  "new": {
+   "hyp": "Universitetlərimizdəkilərdən biri bu layihəyə rəhbərlik edəcək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Universitetlərimizdəkilərdən biri bu layihəyə rəhbərlik edəcək.",
+   "phonemes": "universitsetlæɾimizdæcilærdˈæn biɾˈi bu ɫajihæjˈæ ræhbærlˈiç edædʒˈæç."
+  },
+  "new-var0.33": {
+   "hyp": "Universitetlərimizdəkilərdən biri bu layihəyə rəhbərlik edəcək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Universitetlərimizdəkilərdən biri bu layihəyə rəhbərlik edəcək.",
+   "phonemes": "universitsetlæɾimizdæcilærdˈæn biɾˈi bu ɫajihæjˈæ ræhbærlˈiç edædʒˈæç."
+  }
+ },
+ {
+  "cat": "uzun söz",
+  "text": "Qarşılaşdırılmalı olan məsələləri sonraya saxlamayaq.",
+  "base": {
+   "hyp": "Qarşılaşdırılmalı olan məsələləri sonraya saxlamayaq.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Qarşılaşdırılmalı olan məsələləri sonraya saxlamayaq.",
+   "phonemes": "ɡarʃɯɫaʃdɯɾɯɫmaɫˈɯ oɫˈan mæsælælæɾˈi sonrajˈa saxɫamajˈax."
+  },
+  "new": {
+   "hyp": "Qarşılaşdırılmalı olan məsələləri sonraya saxlamayaq.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Qarşılaşdırılmalı olan məsələləri sonraya saxlamayaq.",
+   "phonemes": "ɡarʃɯɫaʃdɯɾɯɫmaɫˈɯ oɫˈan mæsælælæɾˈi sonrajˈa saxɫamajˈax."
+  },
+  "new-var0.33": {
+   "hyp": "Qarşılaşdırılmalı olan məsələləri sonraya saxlamayaq.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Qarşılaşdırılmalı olan məsələləri sonraya saxlamayaq.",
+   "phonemes": "ɡarʃɯɫaʃdɯɾɯɫmaɫˈɯ oɫˈan mæsælælæɾˈi sonrajˈa saxɫamajˈax."
+  }
+ },
+ {
+  "cat": "uzun cümlə",
+  "text": "Səhər tezdən yola düşən karvan, dağların arasından keçən dar və daşlı cığırla irəliləyərək, günortaya yaxın kiçik bir kəndə çatdı, burada yorğun yolçular bir az dincəlib, kəndlilərin verdiyi isti çörəklə qarınlarını doyurdular və axşam düşməmiş yenidən yollarına davam etdilər.",
+  "base": {
+   "hyp": "Səhər tezdən yola düşən karvan dağların arasından keçən dar və daşlı cığırla irəliləyərək günortaya yaxın kiçik bir kəndə çatdı, burada yorğun yolçular bir az dincəlib kəndlilərin verdiyi isti çörəklə qarınlarını doyurdular və axşam düşməmiş yenidən yollarına davam etdilər.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Səhər tezdən yola düşən karvan, dağların arasından keçən dar və daşlı cığırla irəliləyərək, günortaya yaxın kiçik bir kəndə çatdı, burada yorğun yolçular bir az dincəlib, kəndlilərin verdiyi isti çörəklə qarınlarını doyurdular və axşam düşməmiş yenidən yollarına davam etdilər.",
+   "phonemes": "sæhˈær tezdˈæn joɫˈa dyʃˈæn carvˈan, daːɫaɾˈɯn aɾasɯndˈan cetʃˈæn dˈar væ daʃɫˈɯ dʒɯɯɯrɫˈa iɾælilæjæɾˈæç, ɟynortajˈa jaxˈɯn citʃˈiç bˈir cˈændæ tʃatdˈɯ, buɾadˈa jorɣˈun joɫtʃuɫˈar bˈir ˈaz dindʒælˈib, cændlilæɾˈin verdijˈi istˈi tʃœɾˈæçlæ ɡaɾɯnɫaɾɯnˈɯ dojurduɫˈar væ axʃˈam dyʃmæmˈiʃ jenidˈæn joɫɫaɾɯnˈa davˈam etdilˈær."
+  },
+  "new": {
+   "hyp": "Səhər tezdən yola düşən karvan dağların arasından keçən dar və daşlı cığırla irəliləyərək günortaya yaxın kiçik bir kəndə çatdı. Burada yorğun yolçular bir az dincəlib kəndlilərin verdiyi isti çörəklə qarınlarını doyurdular və axşam düşməmiş yenidən yollarına davam etdilər.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Səhər tezdən yola düşən karvan, dağların arasından keçən dar və daşlı cığırla irəliləyərək, günortaya yaxın kiçik bir kəndə çatdı, burada yorğun yolçular bir az dincəlib, kəndlilərin verdiyi isti çörəklə qarınlarını doyurdular və axşam düşməmiş yenidən yollarına davam etdilər.",
+   "phonemes": "sæhˈær tezdˈæn joɫˈa dyʃˈæn carvˈan, daːɫaɾˈɯn aɾasˈɯndan cetʃˈæn dˈar væ daʃɫˈɯ dʒɯɯɯrɫˈa iɾælilæjæɾˈæç, ɟynortajˈa jaxˈɯn citʃˈiç bˈir cændˈæ tʃatdˈɯ, bˈuɾada jorɣˈun joɫtʃuɫˈar bˈir ˈaz dindʒælˈib, cændlilæɾˈin verdijˈi istˈi tʃœɾˈæçlæ ɡaɾɯnɫaɾɯnˈɯ dojurduɫˈar væ axʃˈam dˈyʃmæmiʃ jenidˈæn joɫɫaɾɯnˈa davˈam etdilˈær."
+  },
+  "new-var0.33": {
+   "hyp": "Səhər tezdən yola düşən karvan dağların arasından keçən dar və daşlı cığırla irəliləyərək günortaya yaxın kiçik bir kəndə çatdı. Burada yorğun yolçular bir az dincəlib kəndlilərin verdiyi isti çörəklə qarınlarını doyurdular və axşam düşməmiş yenidən yollarına davam etdilər.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Səhər tezdən yola düşən karvan, dağların arasından keçən dar və daşlı cığırla irəliləyərək, günortaya yaxın kiçik bir kəndə çatdı, burada yorğun yolçular bir az dincəlib, kəndlilərin verdiyi isti çörəklə qarınlarını doyurdular və axşam düşməmiş yenidən yollarına davam etdilər.",
+   "phonemes": "sæhˈær tezdˈæn joɫˈa dyʃˈæn carvˈan, daːɫaɾˈɯn aɾasˈɯndan cetʃˈæn dˈar væ daʃɫˈɯ dʒɯɯɯrɫˈa iɾælilæjæɾˈæç, ɟynortajˈa jaxˈɯn citʃˈiç bˈir cændˈæ tʃatdˈɯ, bˈuɾada jorɣˈun joɫtʃuɫˈar bˈir ˈaz dindʒælˈib, cændlilæɾˈin verdijˈi istˈi tʃœɾˈæçlæ ɡaɾɯnɫaɾɯnˈɯ dojurduɫˈar væ axʃˈam dˈyʃmæmiʃ jenidˈæn joɫɫaɾɯnˈa davˈam etdilˈær."
+  }
+ },
+ {
+  "cat": "durğu",
+  "text": "O, «Sabah gələcəyəm» dedi və qapını örtdü.",
+  "base": {
+   "hyp": "O, sabah gələcəyəm, dedi və qatını örtdü.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "O, «Sabah gələcəyəm» dedi və qapını örtdü.",
+   "phonemes": "ˈo, «sabˈah ɟælædʒæjˈæm» dedˈi væ ɡapɯnˈɯ œrtdˈy."
+  },
+  "new": {
+   "hyp": "O, sabah gələcəyən, dedi və qapını örtdü.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "O, «Sabah gələcəyəm» dedi və qapını örtdü.",
+   "phonemes": "o, «sabˈah ɟælædʒˈæjæm» dedˈi væ ɡapɯnˈɯ œrtdˈy."
+  },
+  "new-var0.33": {
+   "hyp": "O, sabah gələcəyəm, dedi və qapını rırtdı.",
+   "wer_vs_normalized": 0.143,
+   "normalized": "O, «Sabah gələcəyəm» dedi və qapını örtdü.",
+   "phonemes": "o, «sabˈah ɟælædʒˈæjæm» dedˈi væ ɡapɯnˈɯ œrtdˈy."
+  }
+ },
+ {
+  "cat": "durğu",
+  "text": "Bakı — Azərbaycanın paytaxtı — Xəzər dənizinin sahilində yerləşir.",
+  "base": {
+   "hyp": "Bakı Azərbaycanın paytaxtı Xəzər dənizinin sahilində yerləşir.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bakı — Azərbaycanın paytaxtı — Xəzər dənizinin sahilində yerləşir.",
+   "phonemes": "bacˈɯ — azærbajdʒanˈɯn pajtaxtˈɯ — xæzˈær dænizinˈin sahilˈindæ jerlæʃˈir."
+  },
+  "new": {
+   "hyp": "Bakı, Azərbaycanın paytaxtı Xəzər dənizinin sahilində yerləşir.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bakı — Azərbaycanın paytaxtı — Xəzər dənizinin sahilində yerləşir.",
+   "phonemes": "bacˈɯ — azærbajdʒanˈɯn pajtaxtˈɯ — xæzˈær dænizinˈin sahilindˈæ jerlæʃˈir."
+  },
+  "new-var0.33": {
+   "hyp": "Bakı Azərbaycanın paytaxtı Xəzər dənizinin sahilində yerləşir.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bakı — Azərbaycanın paytaxtı — Xəzər dənizinin sahilində yerləşir.",
+   "phonemes": "bacˈɯ — azærbajdʒanˈɯn pajtaxtˈɯ — xæzˈær dænizinˈin sahilindˈæ jerlæʃˈir."
+  }
+ },
+ {
+  "cat": "durğu",
+  "text": "Siyahıda üç ad vardı: Aysel, Murad və Nərgiz.",
+  "base": {
+   "hyp": "Siyahıda üç fad vardır. Aysel, Murad və Nərgiz.",
+   "wer_vs_normalized": 0.25,
+   "normalized": "Siyahıda üç ad vardı: Aysel, Murad və Nərgiz.",
+   "phonemes": "sijahɯdˈa ˈytʃ ˈad vardˈɯ: ajsˈel, muɾˈad væ nærɟˈiz."
+  },
+  "new": {
+   "hyp": "Siyahıda üç ad vardı. Aysel, Murad və Nərgiz.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Siyahıda üç ad vardı: Aysel, Murad və Nərgiz.",
+   "phonemes": "sijahɯdˈa ˈytʃ ˈad vardˈɯ: ajsˈel, muɾˈad væ nærɟˈiz."
+  },
+  "new-var0.33": {
+   "hyp": "Siyahıda üç ad vardı. Aysen, Murad və Nərgiz.",
+   "wer_vs_normalized": 0.125,
+   "normalized": "Siyahıda üç ad vardı: Aysel, Murad və Nərgiz.",
+   "phonemes": "sijahɯdˈa ˈytʃ ˈad vardˈɯ: ajsˈel, muɾˈad væ nærɟˈiz."
+  }
+ },
+ {
+  "cat": "durğu",
+  "text": "Bu layihə (iki il çəkdi) uğurla başa çatdı.",
+  "base": {
+   "hyp": "",
+   "wer_vs_normalized": null,
+   "error": "DeploymentFrontendError: Phoneme input contains symbols absent from this checkpoint: '(', ')'"
+  },
+  "new": {
+   "hyp": "Bu layihə iki il çəkdi, uğurla başa çatdı.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu layihə (iki il çəkdi) uğurla başa çatdı.",
+   "phonemes": "bu ɫajihˈæ ,icˈi ˈil tʃæçdˈi, uːrɫˈa baʃˈa tʃatdˈɯ."
+  },
+  "new-var0.33": {
+   "hyp": "Bu layihə iki il çəkdi, uğurla başa çatdı.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu layihə (iki il çəkdi) uğurla başa çatdı.",
+   "phonemes": "bu ɫajihˈæ ,icˈi ˈil tʃæçdˈi, uːrɫˈa baʃˈa tʃatdˈɯ."
+  }
+ },
+ {
+  "cat": "durğu",
+  "text": "Gəl... yox, gəlmə.",
+  "base": {
+   "hyp": "Gərf. Pırıq. Pırıq. Yox, kərimə.",
+   "wer_vs_normalized": 1.333,
+   "normalized": "Gəl... yox, gəlmə.",
+   "phonemes": "ɟˈæl... jˈox, ɟˈælmæ."
+  },
+  "new": {
+   "hyp": "Gəl. Yox, gəlmə.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Gəl... yox, gəlmə.",
+   "phonemes": "ɟˈæl... jˈox, ɟˈælmæ."
+  },
+  "new-var0.33": {
+   "hyp": "Gəl. Yox, gəlmə.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Gəl... yox, gəlmə.",
+   "phonemes": "ɟˈæl... jˈox, ɟˈælmæ."
+  }
+ },
+ {
+  "cat": "sual/nida",
+  "text": "Nə? Doğrudanmı? Bunu sən etdin?!",
+  "base": {
+   "hyp": "Bir fərq. Və olur, öyrənmə. Bunu sən etdi.",
+   "wer_vs_normalized": 1.2,
+   "normalized": "Nə? Doğrudanmı? Bunu sən etdin?!",
+   "phonemes": "næ? doːɾudanmˈɯ? bunˈu sæn etdˈin?!"
+  },
+  "new": {
+   "hyp": "Nə? Nə? Doğrudanmı? Bunu sən etdin.",
+   "wer_vs_normalized": 0.2,
+   "normalized": "Nə? Doğrudanmı? Bunu sən etdin?!",
+   "phonemes": "næ? doːɾudanmˈɯ? bunˈu sæn etdˈin?!"
+  },
+  "new-var0.33": {
+   "hyp": "Nə? Nə? Doğrudanmı? Bunu sən etdin.",
+   "wer_vs_normalized": 0.2,
+   "normalized": "Nə? Doğrudanmı? Bunu sən etdin?!",
+   "phonemes": "næ? doːɾudanmˈɯ? bunˈu sæn etdˈin?!"
+  }
+ },
+ {
+  "cat": "sual/nida",
+  "text": "Ah, nə gözəl gündür!",
+  "base": {
+   "hyp": "Ah, nə gözəl gündür!",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Ah, nə gözəl gündür!",
+   "phonemes": "ˈah, næ ɟœzˈæl ɟyndˈyr!"
+  },
+  "new": {
+   "hyp": "Ah, nə gözəl gündür!",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Ah, nə gözəl gündür!",
+   "phonemes": "ˈah, næ ɟœzˈæl ɟˈyndyr!"
+  },
+  "new-var0.33": {
+   "hyp": "Ah, nə gözəl gündür!",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Ah, nə gözəl gündür!",
+   "phonemes": "ˈah, næ ɟœzˈæl ɟˈyndyr!"
+  }
+ },
+ {
+  "cat": "sual/nida",
+  "text": "Sən sabah işə gedəcəksənmi?",
+  "base": {
+   "hyp": "Sən sabah işə gedəcəksənmi?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Sən sabah işə gedəcəksənmi?",
+   "phonemes": "sæn sabˈah ˈiʃæ ɟedædʒæçsænmˈi?"
+  },
+  "new": {
+   "hyp": "Sən sabah işə gedəcəksənmi?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Sən sabah işə gedəcəksənmi?",
+   "phonemes": "sæn sabˈah iʃˈæ ɟedædʒˈæçsænmi?"
+  },
+  "new-var0.33": {
+   "hyp": "Sən sabah işə gedəcəksənmi?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Sən sabah işə gedəcəksənmi?",
+   "phonemes": "sæn sabˈah iʃˈæ ɟedædʒˈæçsænmi?"
+  }
+ },
+ {
+  "cat": "sual/nida",
+  "text": "Bu kitabı kim yazıb?",
+  "base": {
+   "hyp": "Bu kitabı kim yazıb?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu kitabı kim yazıb?",
+   "phonemes": "bu citabˈɯ cˈim jazˈɯb?"
+  },
+  "new": {
+   "hyp": "Bu kitabı kim yazıb?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu kitabı kim yazıb?",
+   "phonemes": "bu citabˈɯ cˈim jazˈɯb?"
+  },
+  "new-var0.33": {
+   "hyp": "Bu kitabı kim yazıb?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu kitabı kim yazıb?",
+   "phonemes": "bu citabˈɯ cˈim jazˈɯb?"
+  }
+ },
+ {
+  "cat": "sual/nida",
+  "text": "Çay istəyirsən, yoxsa qəhvə?",
+  "base": {
+   "hyp": "Çay istəyirsən, yoxsa qəhlə?",
+   "wer_vs_normalized": 0.25,
+   "normalized": "Çay istəyirsən, yoxsa qəhvə?",
+   "phonemes": "tʃˈaj istæjirsˈæn, joxsˈa ɡˈæhvæ?"
+  },
+  "new": {
+   "hyp": "Çay istəyirsən, yoxsa qəhvə?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Çay istəyirsən, yoxsa qəhvə?",
+   "phonemes": "tʃˈaj istæjˈirsæn, jˈoxsa ɡæhvˈæ?"
+  },
+  "new-var0.33": {
+   "hyp": "Çay istəyirsən, yoxsa qəhvə?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Çay istəyirsən, yoxsa qəhvə?",
+   "phonemes": "tʃˈaj istæjˈirsæn, jˈoxsa ɡæhvˈæ?"
+  }
+ },
+ {
+  "cat": "sual/nida",
+  "text": "Nə vaxt qayıdacaqsan?",
+  "base": {
+   "hyp": "Nə vaxt qayıdacaqsan?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Nə vaxt qayıdacaqsan?",
+   "phonemes": "næ vˈaxt ɡajɯdadʒaɡsˈan?"
+  },
+  "new": {
+   "hyp": "Nə vaxt qayıdacaqsan?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Nə vaxt qayıdacaqsan?",
+   "phonemes": "næ vˈaxt ɡajɯdadʒˈaɡsan?"
+  },
+  "new-var0.33": {
+   "hyp": "Nə vaxt qayıdacaqsan?",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Nə vaxt qayıdacaqsan?",
+   "phonemes": "næ vˈaxt ɡajɯdadʒˈaɡsan?"
+  }
+ },
+ {
+  "cat": "m/n cütü",
+  "text": "Mən dünən gəldim, sən isə bu gün gəldin.",
+  "base": {
+   "hyp": "Mən dünən gəldim, sən isə bu gün gəldin.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Mən dünən gəldim, sən isə bu gün gəldin.",
+   "phonemes": "mæn dynˈæn ɟældˈim, sæn ˌisæ bu ɟˈyn ɟældˈin."
+  },
+  "new": {
+   "hyp": "Mən dünən gəldim, sən isə bu gün gəldin.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Mən dünən gəldim, sən isə bu gün gəldin.",
+   "phonemes": "mæn dˈynæn ɟældˈim, sæn ˌisæ bu ɟˈyn ɟældˈin."
+  },
+  "new-var0.33": {
+   "hyp": "Mən dünən gəldim, sən isə bu gün gəldin.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Mən dünən gəldim, sən isə bu gün gəldin.",
+   "phonemes": "mæn dˈynæn ɟældˈim, sæn ˌisæ bu ɟˈyn ɟældˈin."
+  }
+ },
+ {
+  "cat": "m/n cütü",
+  "text": "Kitabım masadadır, kitabın isə çantadadır.",
+  "base": {
+   "hyp": "Kitabım masadadır, kitabım isə çantadadır.",
+   "wer_vs_normalized": 0.2,
+   "normalized": "Kitabım masadadır, kitabın isə çantadadır.",
+   "phonemes": "citabˈɯm masadadˈɯr, citabˈɯn ˌisæ tʃantadadˈɯr."
+  },
+  "new": {
+   "hyp": "Kitabın masadadır, kitabın isə çantadadır.",
+   "wer_vs_normalized": 0.2,
+   "normalized": "Kitabım masadadır, kitabın isə çantadadır.",
+   "phonemes": "citabˈɯm masadˈadɯr, citabˈɯn ˌisæ tʃantadˈadɯr."
+  },
+  "new-var0.33": {
+   "hyp": "Kitabın masadadır, kitabın isə çantadadır.",
+   "wer_vs_normalized": 0.2,
+   "normalized": "Kitabım masadadır, kitabın isə çantadadır.",
+   "phonemes": "citabˈɯm masadˈadɯr, citabˈɯn ˌisæ tʃantadˈadɯr."
+  }
+ },
+ {
+  "cat": "m/n cütü",
+  "text": "Mən yoruldum, sən yorulmadın.",
+  "base": {
+   "hyp": "Mən yoruldum, sən yorulmadın.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Mən yoruldum, sən yorulmadın.",
+   "phonemes": "mæn joɾuɫdˈum, sæn joɾuɫmadˈɯn."
+  },
+  "new": {
+   "hyp": "Mən yoruldum, sən yorulmadın.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Mən yoruldum, sən yorulmadın.",
+   "phonemes": "mæn joɾuɫdˈum, sæn joɾˈuɫmadɯn."
+  },
+  "new-var0.33": {
+   "hyp": "Mən yoruldum, sən yorulmadın.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Mən yoruldum, sən yorulmadın.",
+   "phonemes": "mæn joɾuɫdˈum, sæn joɾˈuɫmadɯn."
+  }
+ },
+ {
+  "cat": "m/n cütü",
+  "text": "Evimizə gəl, evinizə gedək.",
+  "base": {
+   "hyp": "Evimizə gəl, evinizə gedək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Evimizə gəl, evinizə gedək.",
+   "phonemes": "evimˈizæ ɟˈæl, evinˈizæ ɟedˈæç."
+  },
+  "new": {
+   "hyp": "Evimizə gəl, evinizə gedək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Evimizə gəl, evinizə gedək.",
+   "phonemes": "evimizˈæ ɟˈæl, evinizˈæ ɟedˈæç."
+  },
+  "new-var0.33": {
+   "hyp": "Evimizə gəl, evinizə gedək.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Evimizə gəl, evinizə gedək.",
+   "phonemes": "evimizˈæ ɟˈæl, evinizˈæ ɟedˈæç."
+  }
+ },
+ {
+  "cat": "samit",
+  "text": "Qırx qarğa qışda qaranlıq qayalıqda qaldı.",
+  "base": {
+   "hyp": "Qırx qarğa qışda karanlıq qayalıqda qaldı.",
+   "wer_vs_normalized": 0.167,
+   "normalized": "Qırx qarğa qışda qaranlıq qayalıqda qaldı.",
+   "phonemes": "ɡˈɯrx ɡarɣˈa ɡɯʃdˈa ɡaɾanɫˈɯx ɡajaɫɯɡdˈa ɡaɫdˈɯ."
+  },
+  "new": {
+   "hyp": "Qırx qarığa qışda qaranlıq qayalıqda qaldı.",
+   "wer_vs_normalized": 0.167,
+   "normalized": "Qırx qarğa qışda qaranlıq qayalıqda qaldı.",
+   "phonemes": "ɡˈɯrx ɡarɣˈa ɡɯʃdˈa ɡaɾanɫˈɯx ɡajaɫɯɡdˈa ɡaɫdˈɯ."
+  },
+  "new-var0.33": {
+   "hyp": "Qırx qarğa qışda qaranlıq qayalıqda qaldı.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Qırx qarğa qışda qaranlıq qayalıqda qaldı.",
+   "phonemes": "ɡˈɯrx ɡarɣˈa ɡɯʃdˈa ɡaɾanɫˈɯx ɡajaɫɯɡdˈa ɡaɫdˈɯ."
+  }
+ },
+ {
+  "cat": "samit",
+  "text": "Kəndin kənarındakı kiçik körpü köhnə idi.",
+  "base": {
+   "hyp": "Kəndin kənarındakı kiçik körpü köhnə idi.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Kəndin kənarındakı kiçik körpü köhnə idi.",
+   "phonemes": "cændˈin cænaɾɯndacˈɯ citʃˈiç cœrpˈy cˈœhnæ idˈi."
+  },
+  "new": {
+   "hyp": "Kəndin kənarındakı kiçik körpü köhnə idi.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Kəndin kənarındakı kiçik körpü köhnə idi.",
+   "phonemes": "cændˈin cænaɾɯndacˈɯ citʃˈiç cœrpˈy cœhnˈæ idi."
+  },
+  "new-var0.33": {
+   "hyp": "Kəndin kənarındakı kiçik körpü köhnə idi.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Kəndin kənarındakı kiçik körpü köhnə idi.",
+   "phonemes": "cændˈin cænaɾɯndacˈɯ citʃˈiç cœrpˈy cœhnˈæ idi."
+  }
+ },
+ {
+  "cat": "samit",
+  "text": "Babam bağda bir böyük budaq basdırdı.",
+  "base": {
+   "hyp": "Babam bağda bir böyük budaq basdırdı.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Babam bağda bir böyük budaq basdırdı.",
+   "phonemes": "babˈam baːdˈa bˈir bœjˈyç budˈax basdɯrdˈɯ."
+  },
+  "new": {
+   "hyp": "Babam bağda bir böyük budaq basdırdı.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Babam bağda bir böyük budaq basdırdı.",
+   "phonemes": "bˈabam baːdˈa bˈir bœjˈyç budˈax basdɯrdˈɯ."
+  },
+  "new-var0.33": {
+   "hyp": "Babam bağda bir böyük budaq basdırdı.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Babam bağda bir böyük budaq basdırdı.",
+   "phonemes": "bˈabam baːdˈa bˈir bœjˈyç budˈax basdɯrdˈɯ."
+  }
+ },
+ {
+  "cat": "samit",
+  "text": "Papaq pəncərənin pərdəsinə ilişdi.",
+  "base": {
+   "hyp": "Tapak pəncərənin pərdəsinə ilişdi.",
+   "wer_vs_normalized": 0.25,
+   "normalized": "Papaq pəncərənin pərdəsinə ilişdi.",
+   "phonemes": "papˈax pændʒæɾænˈin pærdæsˈinæ iliʃdˈi."
+  },
+  "new": {
+   "hyp": "Papaq pəncərənin dərdəsinə ilişdi.",
+   "wer_vs_normalized": 0.25,
+   "normalized": "Papaq pəncərənin pərdəsinə ilişdi.",
+   "phonemes": "papˈax pændʒæɾænˈin pærdæsinˈæ iliʃdˈi."
+  },
+  "new-var0.33": {
+   "hyp": "Papaq pəncərənin pərdəsinə ilişdi.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Papaq pəncərənin pərdəsinə ilişdi.",
+   "phonemes": "papˈax pændʒæɾænˈin pærdæsinˈæ iliʃdˈi."
+  }
+ },
+ {
+  "cat": "samit",
+  "text": "Ağdağ xalçaçıları haqqında hekayə həmişə həyəcanlıdır.",
+  "base": {
+   "hyp": "Ağda xalçaçıları haqqında hekayə həmişə həyəcanlıdır.",
+   "wer_vs_normalized": 0.167,
+   "normalized": "Ağdağ xalçaçıları haqqında hekayə həmişə həyəcanlıdır.",
+   "phonemes": "aːdˈaː xaɫtʃatʃɯɫaɾˈɯ haɡɡɯndˈa hecˈajæ hæmˈiʃæ hæjædʒanɫɯdˈɯr."
+  },
+  "new": {
+   "hyp": "Ağda xalçaçıları haqqında hekayə həmişə həyəcanlıdır.",
+   "wer_vs_normalized": 0.167,
+   "normalized": "Ağdağ xalçaçıları haqqında hekayə həmişə həyəcanlıdır.",
+   "phonemes": "aːdˈaː xaɫtʃatʃɯɫaɾˈɯ haɡɡˈɯnda hecajˈæ hæmˈiʃæ hæjædʒanɫˈɯdɯr."
+  },
+  "new-var0.33": {
+   "hyp": "Ağda xalçaçıları haqqında hekayə həmişə həyəcanlıdır.",
+   "wer_vs_normalized": 0.167,
+   "normalized": "Ağdağ xalçaçıları haqqında hekayə həmişə həyəcanlıdır.",
+   "phonemes": "aːdˈaː xaɫtʃatʃɯɫaɾˈɯ haɡɡˈɯnda hecajˈæ hæmˈiʃæ hæjædʒanɫˈɯdɯr."
+  }
+ },
+ {
+  "cat": "samit",
+  "text": "Şəhərdə şən şənlik şəkilləri şəbəkədə paylaşıldı.",
+  "base": {
+   "hyp": "Şəhər də şən-şənlik şəkilləri şəbəkədə paylaşıldı.",
+   "wer_vs_normalized": 0.333,
+   "normalized": "Şəhərdə şən şənlik şəkilləri şəbəkədə paylaşıldı.",
+   "phonemes": "ʃæhˈærdæ ʃˈæn ʃænlˈiç ʃæcillæɾˈi ʃæbæcˈædæ pajɫaʃɯɫdˈɯ."
+  },
+  "new": {
+   "hyp": "Şəhərdə şəlşənlik şəkilləri şəbəkədə paylaşıldı.",
+   "wer_vs_normalized": 0.333,
+   "normalized": "Şəhərdə şən şənlik şəkilləri şəbəkədə paylaşıldı.",
+   "phonemes": "ʃæhærdˈæ ʃˈæn ʃænlˈiç ʃæcillæɾˈi ʃæbæcædˈæ pajɫaʃɯɫdˈɯ."
+  },
+  "new-var0.33": {
+   "hyp": "Şəhərdə şəlşənlik şəkilləri şəbəkədə paylaşıldı.",
+   "wer_vs_normalized": 0.333,
+   "normalized": "Şəhərdə şən şənlik şəkilləri şəbəkədə paylaşıldı.",
+   "phonemes": "ʃæhærdˈæ ʃˈæn ʃænlˈiç ʃæcillæɾˈi ʃæbæcædˈæ pajɫaʃɯɫdˈɯ."
+  }
+ },
+ {
+  "cat": "qısa",
+  "text": "Bəli.",
+  "base": {
+   "hyp": "Bəli, Reyk.",
+   "wer_vs_normalized": 1.0,
+   "normalized": "Bəli.",
+   "phonemes": "bælˈi."
+  },
+  "new": {
+   "hyp": "Bəli.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bəli.",
+   "phonemes": "bˈæli."
+  },
+  "new-var0.33": {
+   "hyp": "Bəli.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bəli.",
+   "phonemes": "bˈæli."
+  }
+ },
+ {
+  "cat": "qısa",
+  "text": "Yox!",
+  "base": {
+   "hyp": "Yox.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Yox!",
+   "phonemes": "jˈox!"
+  },
+  "new": {
+   "hyp": "Yox.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Yox!",
+   "phonemes": "jˈox!"
+  },
+  "new-var0.33": {
+   "hyp": "Yox.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Yox!",
+   "phonemes": "jˈox!"
+  }
+ },
+ {
+  "cat": "qısa",
+  "text": "Təşəkkür edirəm.",
+  "base": {
+   "hyp": "Təşəkkür edirəm.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Təşəkkür edirəm.",
+   "phonemes": "tæʃæçcˈyr ediɾˈæm."
+  },
+  "new": {
+   "hyp": "Təşəkkür edirəm.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Təşəkkür edirəm.",
+   "phonemes": "tæʃæçcˈyr edˈiɾæm."
+  },
+  "new-var0.33": {
+   "hyp": "Təşəkkür edirəm.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Təşəkkür edirəm.",
+   "phonemes": "tæʃæçcˈyr edˈiɾæm."
+  }
+ },
+ {
+  "cat": "qısa",
+  "text": "Salam!",
+  "base": {
+   "hyp": "Salam.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Salam!",
+   "phonemes": "saɫˈam!"
+  },
+  "new": {
+   "hyp": "Salam.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Salam!",
+   "phonemes": "saɫˈam!"
+  },
+  "new-var0.33": {
+   "hyp": "Salam.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Salam!",
+   "phonemes": "saɫˈam!"
+  }
+ },
+ {
+  "cat": "qısa",
+  "text": "Tom gəldi.",
+  "base": {
+   "hyp": "Tom gəldir.",
+   "wer_vs_normalized": 0.5,
+   "normalized": "Tom gəldi.",
+   "phonemes": "tˈom ɟældˈi."
+  },
+  "new": {
+   "hyp": "Tom gəldi.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Tom gəldi.",
+   "phonemes": "tˈom ɟældˈi."
+  },
+  "new-var0.33": {
+   "hyp": "Tom gəldi.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Tom gəldi.",
+   "phonemes": "tˈom ɟældˈi."
+  }
+ },
+ {
+  "cat": "vurğu omonim",
+  "text": "Bağdan bir alma gətir.",
+  "base": {
+   "hyp": "Bağdan bir alma gətir.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bağdan bir alma gətir.",
+   "phonemes": "baːdˈan bˈir aɫmˈa ɟætˈir."
+  },
+  "new": {
+   "hyp": "Bağdan bir alma gətir.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bağdan bir alma gətir.",
+   "phonemes": "baːdˈan bˈir aɫmˈa ɟætˈir."
+  },
+  "new-var0.33": {
+   "hyp": "Bağdan bir alma gətir.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bağdan bir alma gətir.",
+   "phonemes": "baːdˈan bˈir aɫmˈa ɟætˈir."
+  }
+ },
+ {
+  "cat": "vurğu omonim",
+  "text": "Bu kitabı alma, o birini al.",
+  "base": {
+   "hyp": "Bu kitabı alma, o birini alt və vırıqlayır.",
+   "wer_vs_normalized": 0.5,
+   "normalized": "Bu kitabı alma, o birini al.",
+   "phonemes": "bu citabˈɯ aɫmˈa, o biɾinˈi ˈaɫ."
+  },
+  "new": {
+   "hyp": "Bu kitabı alma, o birini al.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu kitabı alma, o birini al.",
+   "phonemes": "bu citabˈɯ aɫmˈa, o biɾinˈi ˈaɫ."
+  },
+  "new-var0.33": {
+   "hyp": "Bu kitabı alma, o birini al.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Bu kitabı alma, o birini al.",
+   "phonemes": "bu citabˈɯ aɫmˈa, o biɾinˈi ˈaɫ."
+  }
+ },
+ {
+  "cat": "vurğu omonim",
+  "text": "Sabah bizə gəlmə.",
+  "base": {
+   "hyp": "Sabah bizə gəlinə.",
+   "wer_vs_normalized": 0.333,
+   "normalized": "Sabah bizə gəlmə.",
+   "phonemes": "sabˈah bˈizæ ɟˈælmæ."
+  },
+  "new": {
+   "hyp": "Sabah bizə gəlmə.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Sabah bizə gəlmə.",
+   "phonemes": "sabˈah bˈizæ ɟˈælmæ."
+  },
+  "new-var0.33": {
+   "hyp": "Sabah bizə gəlmə.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Sabah bizə gəlmə.",
+   "phonemes": "sabˈah bˈizæ ɟˈælmæ."
+  }
+ },
+ {
+  "cat": "vurğu omonim",
+  "text": "Onlar bu kəndə gəlmə adamlardır.",
+  "base": {
+   "hyp": "Onlar bu kəndə gəlmə adamlardır.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Onlar bu kəndə gəlmə adamlardır.",
+   "phonemes": "onɫˌar bu cˈændæ ɟˈælmæ adamɫardˈɯr."
+  },
+  "new": {
+   "hyp": "Onlar bu kəndə gəlmə adamlardır.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Onlar bu kəndə gəlmə adamlardır.",
+   "phonemes": "onɫˌar bu cændˈæ ɟælmˈæ adamɫˈardɯr."
+  },
+  "new-var0.33": {
+   "hyp": "Onlar bu kəndə gəlmə adamlardır.",
+   "wer_vs_normalized": 0.0,
+   "normalized": "Onlar bu kəndə gəlmə adamlardır.",
+   "phonemes": "onɫˌar bu cændˈæ ɟælmˈæ adamɫˈardɯr."
+  }
+ }
+]

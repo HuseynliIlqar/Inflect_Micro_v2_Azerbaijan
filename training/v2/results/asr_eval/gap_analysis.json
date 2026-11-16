@@ -1,0 +1,70 @@
+{
+ "position_wer": {
+  "dataset": {
+   "first": 0.024,
+   "middle": 0.019,
+   "last": 0.012
+  },
+  "base": {
+   "first": 0.0721,
+   "middle": 0.033,
+   "last": 0.0769
+  },
+  "step-00030000": {
+   "first": 0.0529,
+   "middle": 0.032,
+   "last": 0.0337
+  }
+ },
+ "silence": {
+  "training_clips": {
+   "lead_median_s": 0.23,
+   "tail_median_s": 0.32,
+   "lead_under_50ms": 0.0,
+   "tail_under_50ms": 0.0
+  },
+  "model_validation": {
+   "lead_median_s": 0.28,
+   "tail_median_s": 0.32,
+   "lead_under_50ms": 0.0,
+   "tail_under_50ms": 0.0
+  }
+ },
+ "training_set": {
+  "clips": 23088,
+  "hours": 34.27,
+  "types": {
+   "statement": 0.8638,
+   "question": 0.1218,
+   "exclamation": 0.0144
+  },
+  "length_clips": {
+   "1-5": 0.4393,
+   "11-15": 0.2103,
+   "16+": 0.1713,
+   "6-10": 0.1791
+  },
+  "length_hours": {
+   "1-5": 6.63,
+   "11-15": 11.01,
+   "16+": 11.83,
+   "6-10": 4.8
+  },
+  "duration_median_s": 3.68,
+  "duration_p90_s": 10.64,
+  "word_final_letters": {
+   "n": 0.1627,
+   "ə": 0.1418,
+   "r": 0.125,
+   "i": 0.1249,
+   "a": 0.0893,
+   "ı": 0.0626,
+   "m": 0.0398,
+   "z": 0.0321,
+   "u": 0.0308,
+   "k": 0.03,
+   "q": 0.0232,
+   "t": 0.0226
+  }
+ }
+}

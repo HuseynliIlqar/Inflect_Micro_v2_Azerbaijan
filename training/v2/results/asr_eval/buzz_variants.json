@@ -1,0 +1,22 @@
+{
+ "step-00030000": {
+  "h2_4k": 8.77,
+  "ring_share": 0.15,
+  "clips": 79
+ },
+ "exp-var-0.5": {
+  "h2_4k": 8.91,
+  "ring_share": 0.152,
+  "clips": 79
+ },
+ "exp-var-0.33": {
+  "h2_4k": 8.95,
+  "ring_share": 0.151,
+  "clips": 79
+ },
+ "exp-var-0.2": {
+  "h2_4k": 9.02,
+  "ring_share": 0.152,
+  "clips": 79
+ }
+}

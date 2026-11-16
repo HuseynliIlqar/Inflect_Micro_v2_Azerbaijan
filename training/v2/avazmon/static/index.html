@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="az">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1d2a2c">
+  <title>Avaz təlimi</title>
+  <link rel="stylesheet" href="monitor.css?v=7">
+  <script type="module" src="monitor.js?v=7"></script>
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>Avaz təlimi</h1>
+      <p class="muted" id="updated" aria-live="polite">Yüklənir…</p>
+    </div>
+    <span class="pill" id="alive">—</span>
+  </header>
+
+  <main>
+    <form id="token-form" class="card" hidden>
+      <label for="token">Giriş tokeni</label>
+      <div class="row">
+        <input id="token" name="token" type="password" autocomplete="current-password" required>
+        <button type="submit">Daxil ol</button>
+      </div>
+      <p class="error" id="token-error" role="alert"></p>
+    </form>
+
+    <section class="card" aria-labelledby="progress-title">
+      <div class="row spread">
+        <h2 id="progress-title">Gedişat</h2>
+        <select id="run" aria-label="Təlim" hidden></select>
+      </div>
+      <p class="big"><span id="step">0</span><span class="muted"> / <span id="max">0</span> addım</span></p>
+      <div class="bar" role="progressbar" aria-labelledby="progress-title" aria-valuemin="0" aria-valuemax="100"
+           aria-valuenow="0" id="bar"><span id="bar-fill"></span></div>
+      <dl class="facts">
+        <div><dt>Mərhələ</dt><dd id="stage">—</dd></div>
+        <div><dt>Epoch (bütün datanın keçidi)</dt><dd id="epoch">—</dd></div>
+        <div><dt>Qalıb</dt><dd id="eta">—</dd></div>
+        <div><dt>Bitəcək</dt><dd id="finish">—</dd></div>
+        <div><dt>Sürət</dt><dd id="speed">—</dd></div>
+        <div><dt>Təlim xərci</dt><dd id="cost">—</dd></div>
+        <div><dt>Balans</dt><dd id="balance">—</dd></div>
+      </dl>
+    </section>
+
+    <section class="tiles" aria-label="Son göstəricilər">
+      <div class="tile"><span>Mel itkisi</span><strong id="t-mel">—</strong></div>
+      <div class="tile"><span>KL</span><strong id="t-kl">—</strong></div>
+      <div class="tile"><span>Müddət</span><strong id="t-dur">—</strong></div>
+      <div class="tile"><span>VRAM</span><strong id="t-vram">—</strong></div>
+      <div class="tile"><span>GPU yükü</span><strong id="t-gpu">—</strong></div>
+      <div class="tile"><span>Temperatur</span><strong id="t-temp">—</strong></div>
+    </section>
+
+    <section class="card" aria-labelledby="charts-title">
+      <div class="row spread wrap">
+        <h2 id="charts-title">Qrafiklər</h2>
+        <div class="segmented" role="group" aria-label="Göstərilən addım aralığı">
+          <button type="button" data-range="0" aria-pressed="true">Hamısı</button>
+          <button type="button" data-range="20000" aria-pressed="false">Son 20k</button>
+          <button type="button" data-range="5000" aria-pressed="false">Son 5k</button>
+        </div>
+      </div>
+      <p class="muted">Qalın xətt meyldir (hamarlanmış), nazik xətt orta dəyər, açıq zolaq isə o hissədəki ən aşağı–ən
+        yuxarı dəyərlərdir (səs-küy). Qrafikə toxunun və ya üzərində gəzin: dəqiq rəqəm, addım və epoch görünəcək.
+        "Son 5k" kiçik dəyişiklikləri böyüdür; başlanğıcdakı çox yüksək dəyərlər qrafikin kənarında kəsilir.</p>
+      <div class="chart-grid">
+        <figure><figcaption>Mel itkisi · əsas keyfiyyət, aşağı yaxşıdır</figcaption><div id="c-mel" class="chart"></div></figure>
+        <figure><figcaption>KL · plan ilə səsin uyğunluğu, aşağı yaxşıdır</figcaption><div id="c-kl" class="chart"></div></figure>
+        <figure><figcaption>Müddət · ritm, aşağı yaxşıdır</figcaption><div id="c-dur" class="chart"></div></figure>
+        <figure><figcaption>Generator (saxtakar) · polis güclənəndə qalxır</figcaption><div id="c-g" class="chart"></div></figure>
+        <figure><figcaption>Diskriminator (polis) · çox düşməsə yaxşıdır</figcaption><div id="c-d" class="chart"></div></figure>
+        <figure><figcaption>Sürət · saniyə/addım, aşağı tezdir</figcaption><div id="c-speed" class="chart"></div></figure>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="police-title" id="police" hidden>
+      <h2 id="police-title">Polislər (yeni decoder train-i)</h2>
+      <p class="muted">Hər polis ayrıca. Hər birində bir neçə yoxlayıcı var: dövr 5, spektr 3, ton 3. Polis heç nə
+        tuta bilmədikdə itkisi yoxlayıcı sayının yarısına yaxın olur (dövr ~2.5, spektr və ton ~1.5); bundan bir az aşağı
+        olması sağlamdır, 0-a yaxınlaşması isə polisin tam qalib gəldiyini göstərir. "Spektr" metal zili, "ton" isə
+        cızırtını tutan polisdir.</p>
+      <div class="chart-grid">
+        <figure><figcaption>Dövr polisi (MPD) · səs tellərinin titrəyişi</figcaption><div id="c-dmpd" class="chart"></div></figure>
+        <figure><figcaption>Spektr polisi (MRD) · metal zil, küy</figcaption><div id="c-dmrd" class="chart"></div></figure>
+        <figure><figcaption>Ton polisi (CQT) · cızırtı, harmonikalar</figcaption><div id="c-dcqtd" class="chart"></div></figure>
+        <figure><figcaption>Çoxdəqiqlikli mel itkisi · aşağı yaxşıdır</figcaption><div id="c-melms" class="chart"></div></figure>
+        <figure><figcaption>Xətti spektr itkisi · yüksək tonlar, aşağı yaxşıdır</figcaption><div id="c-stft" class="chart"></div></figure>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="val-title">
+      <h2 id="val-title">Validasiya səsləri</h2>
+      <div id="validation"></div>
+    </section>
+
+    <section class="card" aria-labelledby="listen-title">
+      <h2 id="listen-title">Dinlə: train-dən əvvəl və sonra</h2>
+      <p class="muted">Hər 5,000 addımda eyni 8 cümlə yeni modellə oxunur (heç biri təlim datasında yoxdur). "Train-dən
+        əvvəl" indiki Avaz-dır: hər cümləni onunla müqayisə edin — vurğu, cızırtı, intonasiya.</p>
+      <div class="table-wrap"><table id="measure-table" hidden>
+        <caption class="muted">Avtomatik ölçmə (8 cümlənin medianı). Cızırtı balı: yuxarı daha təmiz. Metal zil: səsin
+          neçə faizində 5–12 kHz-də sabit ton var, aşağı yaxşıdır.</caption>
+        <thead><tr><th scope="col">Versiya</th><th scope="col">Cızırtı balı ↑</th><th scope="col">Metal zil ↓</th>
+          <th scope="col">Zil tezliyi</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+      <label class="field" for="listen-version">Versiya</label>
+      <select id="listen-version"></select>
+      <ol id="listen" class="listen-list"></ol>
+    </section>
+  </main>
+</body>
+</html>

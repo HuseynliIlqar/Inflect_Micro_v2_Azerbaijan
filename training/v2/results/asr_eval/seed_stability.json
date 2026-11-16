@@ -1,0 +1,30 @@
+{
+ "0.667": {
+  "sentences": 139,
+  "never_fail": 0.518,
+  "sometimes_fail": 0.403,
+  "always_fail": 0.079,
+  "always_fail_but_dataset_ok": [
+   "Artur Doyl tələsik yan cibindən bir fotoşəkili çıxarıb Brikiyə göstərdi.",
+   "Tom ağır xəstədir.",
+   "O nitq söylədi.",
+   "Karxanadan çıxan pəzəvəng adam sex işçisi qadının qıçına yarağını qoydu.",
+   "Onlar məəttəl qalıblar."
+  ],
+  "clip_error_rate": 0.232
+ },
+ "0.333": {
+  "sentences": 139,
+  "never_fail": 0.734,
+  "sometimes_fail": 0.187,
+  "always_fail": 0.079,
+  "always_fail_but_dataset_ok": [
+   "Artur Doyl tələsik yan cibindən bir fotoşəkili çıxarıb Brikiyə göstərdi.",
+   "Tom ağır xəstədir.",
+   "O nitq söylədi.",
+   "Karxanadan çıxan pəzəvəng adam sex işçisi qadının qıçına yarağını qoydu.",
+   "Bu gün harda nahar edəcəksiniz?"
+  ],
+  "clip_error_rate": 0.147
+ }
+}

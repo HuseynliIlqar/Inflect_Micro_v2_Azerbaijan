@@ -1,0 +1,69 @@
+{
+ "categories": {
+  "A1": {
+   "lines": 1000,
+   "hours": 0.72
+  },
+  "A2": {
+   "lines": 998,
+   "hours": 0.76
+  },
+  "A3": {
+   "lines": 800,
+   "hours": 1.37
+  },
+  "B": {
+   "lines": 1500,
+   "hours": 1.04
+  },
+  "C": {
+   "lines": 1199,
+   "hours": 0.85
+  },
+  "D1": {
+   "lines": 1250,
+   "hours": 0.84
+  },
+  "D2": {
+   "lines": 1248,
+   "hours": 0.99
+  },
+  "E": {
+   "lines": 1500,
+   "hours": 1.0
+  },
+  "F": {
+   "lines": 1197,
+   "hours": 0.99
+  },
+  "G1": {
+   "lines": 400,
+   "hours": 1.74
+  },
+  "G2": {
+   "lines": 400,
+   "hours": 1.87
+  },
+  "H": {
+   "lines": 361,
+   "hours": 0.34
+  },
+  "I": {
+   "lines": 300,
+   "hours": 0.26
+  },
+  "J": {
+   "lines": 1500,
+   "hours": 1.93
+  },
+  "L": {
+   "lines": 1200,
+   "hours": 3.32
+  }
+ },
+ "total_lines": 14853,
+ "total_hours": 18.02,
+ "dropped": {
+  "duplicate": 8
+ }
+}

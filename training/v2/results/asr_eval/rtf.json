@@ -1,0 +1,7 @@
+{
+ "pytorch_1_thread": 0.4351,
+ "pytorch_4_threads": 0.1528,
+ "onnx_1_thread": 0.2486,
+ "onnx_4_threads": 0.0815,
+ "params_millions": 9.36
+}

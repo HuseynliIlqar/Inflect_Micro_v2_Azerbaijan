@@ -1,0 +1,75 @@
+{
+ "base (eSpeak marks)": {
+  "length": 0.619,
+  "loudness": 0.351,
+  "pitch": 0.476,
+  "combined": 0.574,
+  "loud_pitch": 0.364,
+  "chance": 0.37,
+  "stressed_minus_others_length_ms": 26.67,
+  "stressed_minus_others_loudness_db": 0.29,
+  "stressed_minus_others_pitch_st": 0.75,
+  "words": 2963,
+  "combined_final_syllable": 0.603,
+  "combined_earlier_syllable": 0.417,
+  "words_final_syllable": 2507,
+  "words_earlier_syllable": 456
+ },
+ "new 30k, variation 0.667": {
+  "length": 0.633,
+  "loudness": 0.475,
+  "pitch": 0.456,
+  "combined": 0.593,
+  "loud_pitch": 0.45,
+  "chance": 0.37,
+  "stressed_minus_others_length_ms": 26.67,
+  "stressed_minus_others_loudness_db": 1.39,
+  "stressed_minus_others_pitch_st": 0.63,
+  "words": 2961,
+  "combined_final_syllable": 0.612,
+  "combined_earlier_syllable": 0.45,
+  "words_final_syllable": 2612,
+  "words_earlier_syllable": 349
+ },
+ "new 30k, variation 0.667: eSpeak vs stress frontend disagreements": {
+  "words": 439,
+  "follows_new_marks": 194,
+  "follows_espeak_marks": 138,
+  "elsewhere": 107
+ },
+ "new 30k, variation 0.667: disagreements, loudness+pitch only": {
+  "words": 439,
+  "follows_new_marks": 148,
+  "follows_espeak_marks": 154,
+  "elsewhere": 137
+ },
+ "new 30k, variation 0.333": {
+  "length": 0.633,
+  "loudness": 0.483,
+  "pitch": 0.484,
+  "combined": 0.614,
+  "loud_pitch": 0.471,
+  "chance": 0.37,
+  "stressed_minus_others_length_ms": 26.67,
+  "stressed_minus_others_loudness_db": 1.44,
+  "stressed_minus_others_pitch_st": 0.79,
+  "words": 2961,
+  "combined_final_syllable": 0.637,
+  "combined_earlier_syllable": 0.441,
+  "words_final_syllable": 2612,
+  "words_earlier_syllable": 349
+ },
+ "new 30k, variation 0.333: eSpeak vs stress frontend disagreements": {
+  "words": 439,
+  "follows_new_marks": 196,
+  "follows_espeak_marks": 132,
+  "elsewhere": 111
+ },
+ "new 30k, variation 0.333: disagreements, loudness+pitch only": {
+  "words": 439,
+  "follows_new_marks": 159,
+  "follows_espeak_marks": 148,
+  "elsewhere": 132
+ },
+ "stress frontend: share of multi-vowel words stressed before the last syllable": 0.164
+}

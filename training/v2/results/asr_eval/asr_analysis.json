@@ -1,0 +1,804 @@
+{
+ "rows": 471,
+ "clean_rows": 416,
+ "overall_clean": {
+  "dataset": {
+   "clips": 416,
+   "wer": 0.0207
+  },
+  "base": {
+   "clips": 416,
+   "wer": 0.0484
+  },
+  "step-00025000": {
+   "clips": 416,
+   "wer": 0.0406
+  },
+  "step-00030000": {
+   "clips": 416,
+   "wer": 0.0365
+  }
+ },
+ "by_type": {
+  "exclamation": {
+   "dataset": {
+    "clips": 5,
+    "wer": 0.0
+   },
+   "base": {
+    "clips": 5,
+    "wer": 0.0909
+   },
+   "step-00025000": {
+    "clips": 5,
+    "wer": 0.0
+   },
+   "step-00030000": {
+    "clips": 5,
+    "wer": 0.0
+   }
+  },
+  "question": {
+   "dataset": {
+    "clips": 57,
+    "wer": 0.0151
+   },
+   "base": {
+    "clips": 57,
+    "wer": 0.0352
+   },
+   "step-00025000": {
+    "clips": 57,
+    "wer": 0.0268
+   },
+   "step-00030000": {
+    "clips": 57,
+    "wer": 0.0185
+   }
+  },
+  "statement": {
+   "dataset": {
+    "clips": 354,
+    "wer": 0.0219
+   },
+   "base": {
+    "clips": 354,
+    "wer": 0.0508
+   },
+   "step-00025000": {
+    "clips": 354,
+    "wer": 0.0435
+   },
+   "step-00030000": {
+    "clips": 354,
+    "wer": 0.0402
+   }
+  }
+ },
+ "by_length": {
+  "1-5": {
+   "dataset": {
+    "clips": 202,
+    "wer": 0.0083
+   },
+   "base": {
+    "clips": 202,
+    "wer": 0.0918
+   },
+   "step-00025000": {
+    "clips": 202,
+    "wer": 0.0695
+   },
+   "step-00030000": {
+    "clips": 202,
+    "wer": 0.057
+   }
+  },
+  "11-15": {
+   "dataset": {
+    "clips": 99,
+    "wer": 0.0261
+   },
+   "base": {
+    "clips": 99,
+    "wer": 0.0284
+   },
+   "step-00025000": {
+    "clips": 99,
+    "wer": 0.0276
+   },
+   "step-00030000": {
+    "clips": 99,
+    "wer": 0.0224
+   }
+  },
+  "16+": {
+   "dataset": {
+    "clips": 64,
+    "wer": 0.0199
+   },
+   "base": {
+    "clips": 64,
+    "wer": 0.0372
+   },
+   "step-00025000": {
+    "clips": 64,
+    "wer": 0.0363
+   },
+   "step-00030000": {
+    "clips": 64,
+    "wer": 0.0355
+   }
+  },
+  "6-10": {
+   "dataset": {
+    "clips": 51,
+    "wer": 0.0273
+   },
+   "base": {
+    "clips": 51,
+    "wer": 0.0695
+   },
+   "step-00025000": {
+    "clips": 51,
+    "wer": 0.0447
+   },
+   "step-00030000": {
+    "clips": 51,
+    "wer": 0.0496
+   }
+  }
+ },
+ "letters": [
+  {
+   "letter": "p",
+   "count": 105,
+   "model": 0.0286,
+   "dataset": 0.0095,
+   "base": 0.0476,
+   "excess": 0.019
+  },
+  {
+   "letter": "q",
+   "count": 394,
+   "model": 0.0228,
+   "dataset": 0.0051,
+   "base": 0.0279,
+   "excess": 0.0178
+  },
+  {
+   "letter": "m",
+   "count": 869,
+   "model": 0.0173,
+   "dataset": 0.0,
+   "base": 0.015,
+   "excess": 0.0173
+  },
+  {
+   "letter": "h",
+   "count": 327,
+   "model": 0.0153,
+   "dataset": 0.0,
+   "base": 0.0183,
+   "excess": 0.0153
+  },
+  {
+   "letter": "ö",
+   "count": 179,
+   "model": 0.0112,
+   "dataset": 0.0,
+   "base": 0.0056,
+   "excess": 0.0112
+  },
+  {
+   "letter": "o",
+   "count": 497,
+   "model": 0.0121,
+   "dataset": 0.002,
+   "base": 0.0141,
+   "excess": 0.0101
+  },
+  {
+   "letter": "v",
+   "count": 324,
+   "model": 0.0062,
+   "dataset": 0.0,
+   "base": 0.0123,
+   "excess": 0.0062
+  },
+  {
+   "letter": "e",
+   "count": 515,
+   "model": 0.0078,
+   "dataset": 0.0019,
+   "base": 0.0194,
+   "excess": 0.0058
+  },
+  {
+   "letter": "b",
+   "count": 541,
+   "model": 0.0055,
+   "dataset": 0.0,
+   "base": 0.0074,
+   "excess": 0.0055
+  },
+  {
+   "letter": "ü",
+   "count": 429,
+   "model": 0.0047,
+   "dataset": 0.0,
+   "base": 0.0,
+   "excess": 0.0047
+  },
+  {
+   "letter": "x",
+   "count": 230,
+   "model": 0.0043,
+   "dataset": 0.0,
+   "base": 0.0174,
+   "excess": 0.0043
+  },
+  {
+   "letter": "r",
+   "count": 1607,
+   "model": 0.0062,
+   "dataset": 0.0031,
+   "base": 0.0075,
+   "excess": 0.0031
+  },
+  {
+   "letter": "z",
+   "count": 337,
+   "model": 0.0059,
+   "dataset": 0.003,
+   "base": 0.0148,
+   "excess": 0.003
+  },
+  {
+   "letter": "ş",
+   "count": 361,
+   "model": 0.0028,
+   "dataset": 0.0,
+   "base": 0.0055,
+   "excess": 0.0028
+  },
+  {
+   "letter": "d",
+   "count": 1166,
+   "model": 0.0043,
+   "dataset": 0.0026,
+   "base": 0.0034,
+   "excess": 0.0017
+  },
+  {
+   "letter": "t",
+   "count": 774,
+   "model": 0.0052,
+   "dataset": 0.0039,
+   "base": 0.0039,
+   "excess": 0.0013
+  },
+  {
+   "letter": "a",
+   "count": 2312,
+   "model": 0.0039,
+   "dataset": 0.003,
+   "base": 0.003,
+   "excess": 0.0009
+  },
+  {
+   "letter": "l",
+   "count": 1330,
+   "model": 0.003,
+   "dataset": 0.0023,
+   "base": 0.0038,
+   "excess": 0.0008
+  },
+  {
+   "letter": "n",
+   "count": 1703,
+   "model": 0.0018,
+   "dataset": 0.0012,
+   "base": 0.0041,
+   "excess": 0.0006
+  },
+  {
+   "letter": "ə",
+   "count": 2187,
+   "model": 0.0018,
+   "dataset": 0.0014,
+   "base": 0.0018,
+   "excess": 0.0005
+  },
+  {
+   "letter": "g",
+   "count": 189,
+   "model": 0.0,
+   "dataset": 0.0,
+   "base": 0.0106,
+   "excess": 0.0
+  },
+  {
+   "letter": "y",
+   "count": 705,
+   "model": 0.0057,
+   "dataset": 0.0057,
+   "base": 0.0028,
+   "excess": 0.0
+  },
+  {
+   "letter": "ç",
+   "count": 174,
+   "model": 0.0,
+   "dataset": 0.0,
+   "base": 0.0,
+   "excess": 0.0
+  },
+  {
+   "letter": "f",
+   "count": 138,
+   "model": 0.0072,
+   "dataset": 0.0072,
+   "base": 0.0072,
+   "excess": 0.0
+  },
+  {
+   "letter": "ğ",
+   "count": 125,
+   "model": 0.016,
+   "dataset": 0.016,
+   "base": 0.024,
+   "excess": 0.0
+  },
+  {
+   "letter": "i",
+   "count": 2200,
+   "model": 0.0023,
+   "dataset": 0.0032,
+   "base": 0.0023,
+   "excess": -0.0009
+  },
+  {
+   "letter": "ı",
+   "count": 891,
+   "model": 0.0022,
+   "dataset": 0.0034,
+   "base": 0.0079,
+   "excess": -0.0011
+  },
+  {
+   "letter": "s",
+   "count": 756,
+   "model": 0.0013,
+   "dataset": 0.0026,
+   "base": 0.0013,
+   "excess": -0.0013
+  },
+  {
+   "letter": "k",
+   "count": 469,
+   "model": 0.0043,
+   "dataset": 0.0064,
+   "base": 0.0043,
+   "excess": -0.0021
+  },
+  {
+   "letter": "u",
+   "count": 489,
+   "model": 0.0,
+   "dataset": 0.0041,
+   "base": 0.0041,
+   "excess": -0.0041
+  },
+  {
+   "letter": "c",
+   "count": 187,
+   "model": 0.0,
+   "dataset": 0.0053,
+   "base": 0.0053,
+   "excess": -0.0053
+  }
+ ],
+ "model_swaps": [
+  [
+   "m>n",
+   11
+  ],
+  [
+   "r>∅",
+   7
+  ],
+  [
+   "q>k",
+   5
+  ],
+  [
+   "b>d",
+   3
+  ],
+  [
+   "a>∅",
+   3
+  ],
+  [
+   "r>l",
+   3
+  ],
+  [
+   "o>a",
+   3
+  ],
+  [
+   "a>ı",
+   2
+  ],
+  [
+   "n>m",
+   2
+  ],
+  [
+   "k>q",
+   2
+  ],
+  [
+   "h>v",
+   2
+  ],
+  [
+   "i>ə",
+   2
+  ],
+  [
+   "i>ı",
+   2
+  ],
+  [
+   "e>i",
+   2
+  ],
+  [
+   "ö>ü",
+   2
+  ],
+  [
+   "d>g",
+   2
+  ],
+  [
+   "a>ə",
+   2
+  ],
+  [
+   "l>∅",
+   2
+  ],
+  [
+   "ə>∅",
+   2
+  ],
+  [
+   "y>∅",
+   2
+  ],
+  [
+   "t>d",
+   2
+  ],
+  [
+   "m>l",
+   2
+  ],
+  [
+   "a>e",
+   2
+  ],
+  [
+   "ü>∅",
+   1
+  ],
+  [
+   "y>l",
+   1
+  ]
+ ],
+ "dataset_swaps": [
+  [
+   "a>∅",
+   3
+  ],
+  [
+   "y>∅",
+   3
+  ],
+  [
+   "r>i",
+   2
+  ],
+  [
+   "a>ə",
+   2
+  ],
+  [
+   "r>s",
+   2
+  ],
+  [
+   "ə>∅",
+   2
+  ],
+  [
+   "u>∅",
+   2
+  ],
+  [
+   "i>∅",
+   2
+  ],
+  [
+   "i>ı",
+   2
+  ],
+  [
+   "l>∅",
+   2
+  ],
+  [
+   "q>g",
+   2
+  ],
+  [
+   "k>q",
+   2
+  ],
+  [
+   "t>d",
+   2
+  ],
+  [
+   "i>d",
+   1
+  ],
+  [
+   "p>b",
+   1
+  ]
+ ],
+ "model_only_words": [
+  {
+   "word": "tom",
+   "count": 6,
+   "heard_as": "tol"
+  },
+  {
+   "word": "də",
+   "count": 2,
+   "heard_as": "dillərdə"
+  },
+  {
+   "word": "sağaldarsan",
+   "count": 1,
+   "heard_as": "sağıldarsan"
+  },
+  {
+   "word": "fotoşəkili",
+   "count": 1,
+   "heard_as": "şəkili"
+  },
+  {
+   "word": "bəzi",
+   "count": 1,
+   "heard_as": "dəzi"
+  },
+  {
+   "word": "sümüyünü",
+   "count": 1,
+   "heard_as": "sümlünü"
+  },
+  {
+   "word": "qondu",
+   "count": 1,
+   "heard_as": "kondu"
+  },
+  {
+   "word": "eyvanıma",
+   "count": 1,
+   "heard_as": "eyvanuma"
+  },
+  {
+   "word": "qaranquş",
+   "count": 1,
+   "heard_as": "karanquş"
+  },
+  {
+   "word": "verdinmi",
+   "count": 1,
+   "heard_as": "verdimmi"
+  },
+  {
+   "word": "saata",
+   "count": 1,
+   "heard_as": "sata"
+  },
+  {
+   "word": "oldum",
+   "count": 1,
+   "heard_as": "oldun"
+  },
+  {
+   "word": "taparam",
+   "count": 1,
+   "heard_as": "taparan"
+  },
+  {
+   "word": "quruda",
+   "count": 1,
+   "heard_as": "da"
+  },
+  {
+   "word": "fok",
+   "count": 1,
+   "heard_as": "foq"
+  },
+  {
+   "word": "əhəmiyyətli",
+   "count": 1,
+   "heard_as": "əhəniyyətli"
+  },
+  {
+   "word": "rəqəmsal",
+   "count": 1,
+   "heard_as": "ləqəmsal"
+  },
+  {
+   "word": "astrofiziklər",
+   "count": 1,
+   "heard_as": "astrafiziklər"
+  },
+  {
+   "word": "mühitə",
+   "count": 1,
+   "heard_as": "müvitə"
+  },
+  {
+   "word": "addımları",
+   "count": 1,
+   "heard_as": "addımlara"
+  },
+  {
+   "word": "dram",
+   "count": 1,
+   "heard_as": "drant"
+  },
+  {
+   "word": "təqdim",
+   "count": 1,
+   "heard_as": "təddim"
+  },
+  {
+   "word": "kənar",
+   "count": 1,
+   "heard_as": "kəna"
+  },
+  {
+   "word": "süfrə",
+   "count": 1,
+   "heard_as": "süfə"
+  },
+  {
+   "word": "adət",
+   "count": 1,
+   "heard_as": "∅"
+  },
+  {
+   "word": "ənənələri",
+   "count": 1,
+   "heard_as": "adətənənələri"
+  },
+  {
+   "word": "işdirmi",
+   "count": 1,
+   "heard_as": "işdirmə"
+  },
+  {
+   "word": "nəslə",
+   "count": 1,
+   "heard_as": "nəsrlər"
+  },
+  {
+   "word": "qalaktikaların",
+   "count": 1,
+   "heard_as": "kalaktikaların"
+  },
+  {
+   "word": "ensiz",
+   "count": 1,
+   "heard_as": "insiz"
+  },
+  {
+   "word": "aşşur",
+   "count": 1,
+   "heard_as": "aşhur"
+  },
+  {
+   "word": "mövsüm",
+   "count": 1,
+   "heard_as": "müvsüm"
+  },
+  {
+   "word": "monoteist",
+   "count": 1,
+   "heard_as": "moneteist"
+  },
+  {
+   "word": "qaraşam",
+   "count": 1,
+   "heard_as": "şam"
+  },
+  {
+   "word": "düzənlik",
+   "count": 1,
+   "heard_as": "güzənlik"
+  },
+  {
+   "word": "qəbul",
+   "count": 1,
+   "heard_as": "təbul"
+  },
+  {
+   "word": "alicah",
+   "count": 1,
+   "heard_as": "alicəx"
+  },
+  {
+   "word": "avşar",
+   "count": 1,
+   "heard_as": "afşar"
+  },
+  {
+   "word": "dillər",
+   "count": 1,
+   "heard_as": "∅"
+  },
+  {
+   "word": "islandlara",
+   "count": 1,
+   "heard_as": "islandlılara"
+  }
+ ],
+ "long_texts": {
+  "base": [
+   {
+    "title": "Hekayə",
+    "hyp": "Payızın son günləri idi. Səhər tezdən kəndin üstünə qatı duman çökmüşdü, uzaqdan yalnız xoruzların səsi eşidilirdi. Nənəm həmişəki kimi hamıdan tez oyanmış, ocağı qalayıb çaydanı odun üstünə qoymuşdu. Mən pəncərənin qabağında oturub dumanın arasından görünən qoca tut ağacına baxırdım. Birdən həyət qapısı cırıldadı. Kimsə yavaş addımlarla içəri girib eyvanın qabağında dayandı. Başını qaldırıb təəccüblə soruşdu. Bu vaxt kim ola bilər? Qonaq papağını çıxarıb gülümsədi. Bu illərdir görmədiyimiz əmimi idi.",
+    "wer": 0.0286
+   },
+   {
+    "title": "Məlumat mətni",
+    "hyp": "Xəzər dənizi dünyanın ən böyük qapalı su hövzəsidir. Onun sahillərində müxtəlif xalqlar yaşayır və hər birinin dənizlə bağlı öz rəvayətləri var. Alimlərin fikrincə, milyonlarla il əvvəl bu ərazi daha böyük bir dənizin parçası olub. Zaman keçdikcə su çəkilib, dəniz isə indiki formasını alıb. Bu gün Xəzərdə nadir balıq növləri və suitilər yaşayır, payızda isə buraya minlərlə köçəri quş gəlir. Lakin son illərdə suyun səviyyəsi nəzərə çarpacaq dərəcədə azalır. Mütəxəssislər bunun səbəblərini araşdırır və dənizi qorumaq üçün birgə tədbirlər görülməsini tövsiyə edirlər.",
+    "wer": 0.025
+   },
+   {
+    "title": "Dialoq",
+    "hyp": "Leyla kitabı görəndə maraqla soruşdu. Sən bunu haradan tapmısan? Elçin gülümsəyib cavab verdi. Köhnə bazarda bir qocanın piştaxtasında. Əvvəlcə almaq istəmirdim, amma vərəqləri çevirəndə gözümə tanış bir ad sataşdı. Hansı ad? Babamın adı. Təsəvvür edirsən. Kitabın ilk səhifəsində onun əl yazısı ilə bir neçə sətr yazılıb. Leyla bir anlıq susdu, sonra kitabı ehtiyatla əlinə aldı. Bəlkə də bu sadəcə təsadüf deyildi.",
+    "wer": 0.0164
+   }
+  ],
+  "step-00030000": [
+   {
+    "title": "Hekayə",
+    "hyp": "Payızın son günləri idi. Səhər tezdən kəndin üstünə qatı duman çökmüşdü, uzaqdan yalnız xoruzların səsi eşidilirdi. Nənəm həmişəki kimi hamıdan tez oyanmış, ocağı qalıyıb çaydanı odun üstünə qoymuşdu. Mən pəncərənin qabağında oturub dumanın arasından görünən qoca tut ağacına baxırdım. Birdən həyət qaksısı cırıldadı. Kimsə yavaş addımlarla içəri girib eyvanın qabağında dayandı. Nənəm başını qaldırıb təəccüblə soruşdu. Bu vaxt kim ola bilər? Qonaq papağını çıxarıb gülümsədi. Bu illərdir görmədiyimiz əmim idi.",
+    "wer": 0.0286
+   },
+   {
+    "title": "Məlumat mətni",
+    "hyp": "Xəzər dənizi dünyanın ən böyük qapalı su hövzəsidir. Onun sahillərində müxtəlif xalqlar yaşayır və hər birinin dənizlə bağlı öz rəvayətləri var. Alimlərin fikrincə, milyonlarlar il əvvəl bu ərazi daha böyük bir dənizin parçası olub. Zaman keçdikcə su çəkilib, dəniz isə indiki formasını alıb. Bu gün Xəzərdə nadir balıq növləri və su itilər yaşayır, payızda isə buraya minlərlə köçəri quş gəlir. Lakin son illərdə suyun səviyyəsi məzərə çarpacaq dərəcədə azalır. Mütəxəssislər bunun səbəblərini araşdırır və dənizi qorumaq üçün birgə tədbirlər görülməsini tövsiyə edirlər.",
+    "wer": 0.0625
+   },
+   {
+    "title": "Dialoq",
+    "hyp": "Leyla kitabı görəndə maraqla soruşdu. Sən bunu haradan tapmısan? Elçin gülümsəyib cavab verdi. Köhnə bazarda bir qocanın piştaxtasında. Əvvəlcə almaq istəmirdim, amma vərəqləri çevirəndə gözümə tanış bir ad sataşdı. Hansı ad? Abamın adı. Təsəvvür edirsən. Kitabın ilk səhifəsində onun əlyazısı ilə bir neçə sətr yazılıb. Leyla bir anlıq susdu, sonra kitabı ehtiyatla əlinə aldı. Bəlkə də bu sadəcə təsadüf deyildi.",
+    "wer": 0.0656
+   }
+  ]
+ }
+}

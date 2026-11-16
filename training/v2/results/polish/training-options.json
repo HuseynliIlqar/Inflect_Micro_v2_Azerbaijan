@@ -1,0 +1,17 @@
+{
+  "max_steps": 40000,
+  "start_step": 20000,
+  "warmup_steps": 2500,
+  "end_step": 40000,
+  "mel_ms_weight": 9.533925098563984,
+  "stft_weight": 3.885070056110846,
+  "adv_scale": 0.5454545454545454,
+  "families": [
+    "mpd",
+    "mrd",
+    "cqtd"
+  ],
+  "batch_size": 64,
+  "disc_batch": 12,
+  "gradient_accumulation_steps": 1
+}
