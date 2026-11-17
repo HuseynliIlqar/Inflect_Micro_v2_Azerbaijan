@@ -32,6 +32,7 @@
 // `python tools/fetch_web_runtime.py`; they are not in the repository.
 import * as ort from "../vendor/onnxruntime-web/ort.webgpu.min.mjs";
 import { phonemize, loadPhonemizer } from "./engine/phonemize.js";
+import { loadLexicon, stressPhonemizer } from "./engine/stress.js";
 import { CancelledError, Engine } from "./engine/engine.js";
 import { fetchModels } from "./engine/fetch-model.js";
 import { knownSteps, planOptionsFromQuery, thisIsPhone } from "./engine/backend-plan.js";
@@ -59,7 +60,9 @@ const ENGINES = {
     decodePath: "../onnx/decode.onnx",
     // The CPU step of the fallback chain; see js/engine/backend-plan.js.
     int8DecodePath: "../onnx/decode.int8.onnx",
-    phonemize: (text) => phonemize(text, "az"),
+    // eSpeak NG plus the stress frontend the checkpoint was trained with
+    // (model/frontend_hook.py, ported in js/engine/stress.js).
+    phonemize: stressPhonemizer((text) => phonemize(text, "az")),
     // On for both voices (the Engine default), and no request option can turn
     // it off: the playground is public. Only a clone, with say.py, can.
     censor: true,
@@ -124,7 +127,8 @@ async function handle({ id, kind, voice, text, options }) {
   });
 
   post({ type: "progress", stage: "phonemes" });
-  await loadPhonemizer();
+  // English has no stress frontend, so it never fetches the word lists.
+  await Promise.all([loadPhonemizer(), voice === "en" ? null : loadLexicon()]);
   checkpoint();
 
   if (!engine.decode) {

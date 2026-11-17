@@ -61,7 +61,7 @@ python -c "from aztts.console import use_utf8; use_utf8(); from aztts import nor
 
 ## Hard rules
 
-**Never edit `model/`, `model-en/` or `training/base-model/`.** They are
+**Never edit `model/` or `model-en/`.** They are
 vendored upstream exports, not our code. `model-en/` holds the English weights
 this repository ships (`model-en/checksums.sha256` verifies its six vendored
 files; `README.md` there is ours). `aztts/en_voice.py` reads them but never
@@ -143,7 +143,7 @@ that into "free for commercial use".
   Currently: `say.py`, `app.py`, `tools/seed_sweep.py`,
   `tools/audio_postprocess.py`, `tools/fetch_web_runtime.py`,
   `tools/quantize_decoder.py`, `tools/calibration_reference.py`,
-  `training/scripts/compare_checkpoints.py`.
+  `tools/build_web_frontend.py`.
 - **Step order in `normalize_az()` is load-bearing.** Abbreviations run first so
   their full stops are not mistaken for sentence ends; acronyms run last so
   Roman numerals win the `II`-style ambiguity. Adding a step means choosing its
@@ -190,6 +190,14 @@ that into "free for commercial use".
   (`for f in web/tests/*.mjs; do node "$f" || break; done`); the snippet that
   writes them is in `packaging/PUBLISHING.md`. A change to the text layer that
   does not reach `web/` makes the page and the CLI say different things.
+  The checkpoint's frontend is ported too: `web/js/engine/punctuation.js`
+  (phonemizer's `preserve_punctuation`) and `stress*.js`
+  (`model/frontend_hook.py`). After a new export or a phonemizer upgrade, run
+  `python tools/build_web_frontend.py`; `test_stress.mjs` and
+  `test_punctuation.mjs` then hold the port to the Python output. In a real
+  browser the WebAssembly eSpeak NG gives the same phonemes as the Python one
+  on every chunk of `web/tests/golden/stress.json`; check that again after
+  changing `web/js/engine/phonemize.js`.
 - **Interface logic belongs in `webui/`, not in `app.py`.** That is what keeps
   `tests/test_webui_runner.py` able to run against a stand-in engine instead of
   loading the model.
@@ -239,6 +247,7 @@ stylesheets of 640-800 lines loose at its top level, next to the page.
 | Add or change a CLI flag | `say.py` |
 | Change the browser interface, its labels or parameters | `app.py`, `webui/` |
 | Change the browser playground (the static Space) | `web/` (its layout is in `web/README.md`) |
+| Bring a new export's frontend (stress lexicon, golden files) to the playground | `tools/build_web_frontend.py` |
 | Change what search engines and AI crawlers read | `web/index.html` `<head>`, `web/about.html` + `about-en.html`, `web/{robots.txt,sitemap.xml,llms.txt}`, `packaging/huggingface/STATIC_SPACE_README.md` (the Hub page's title and tags); `web/tests/test_seo.mjs` checks them |
 | Change how the English base model is spoken | `aztts/en_voice.py` |
 | Audio cleanup, seed selection | `tools/` |
@@ -246,7 +255,7 @@ stylesheets of 640-800 lines loose at its top level, next to the page.
 | Change the playground's first-visit device check | `web/js/engine/{gpu-probe,calibrate,fingerprint,calibration-verdict}.js`, `web/js/page/calibration*.js` |
 | Regenerate the device check's reference after `web/onnx/` changes | `tools/calibration_reference.py` |
 | Change the self-hosted onnxruntime-web version | `tools/fetch_web_runtime.py` (`VERSION` + integrity) |
-| Anything about how the model was trained | `training/` (archive; the pod is gone); v2 in `training/v2/` |
+| Anything about how the model was trained | `training/v2/` (archive; the pod is gone) |
 | Test a new checkpoint against v2 (Whisper, Praat, SQUIM, stress, seeds, hard texts) | `training/v2/pod/` (the battery) and `training/v2/README.md` |
 | Plan or build the next model | `training/v3/PLAN.md` |
 | Sentences for the next recording | `training/v2/dataset_v2/` |
@@ -269,9 +278,6 @@ CLI, and `app.py` plus `webui/` are the browser interface.
 - `web/onnx/` (the graphs, 38 MB plus the int8 decoder) and `web/vendor/`
   (onnxruntime-web, 27 MB, fetched by `python tools/fetch_web_runtime.py`) are
   git-ignored; see `web/README.md`.
-- `training/base-model/` is not tracked. It is the complete 38 MB upstream
-  package, only needed for training work; fetch it with
-  `python training/scripts/download_model.py`.
 
 ## Known limitations, so you do not chase them
 

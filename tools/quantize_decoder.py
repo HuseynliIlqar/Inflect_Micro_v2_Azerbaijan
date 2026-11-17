@@ -9,14 +9,18 @@ speed:
 
 - the flow (its layers are cheap; its error feeds everything after it)
 - the vocoder's first and last convolutions
-- the vocoder's last upsampling stage and its three resblocks: the largest
-  tensors with the fewest channels, where int8 is both the least accurate and,
-  with the quantise/dequantise overhead, not even faster
+- the vocoder's last two upsampling stages and their resblocks: the largest
+  tensors with the fewest channels, where int8 is the least accurate and, with
+  the quantise/dequantise overhead, barely faster
 
-Measured against fp32 on the five demo sentences (same noise): a mean
-log-spectral distance of 0.53, below the 0.73 between two fp32 seeds, and
-about 1.5x faster in onnxruntime-web's wasm backend (1 and 4 threads). Dynamic
-quantisation was slower than fp32 on this model and is not offered.
+The rule is that int8 must change the audio less than a new seed does.
+Measured on v2.1 against fp32 on the five demo sentences (same noise,
+variation 0.3), as the mean log-spectral distance: 5.8 dB, below the 6.6 dB
+between two fp32 seeds, and 1.5x faster than fp32 in onnxruntime-web's wasm
+backend on one thread. Keeping only the last stage in fp32, which was enough
+for v1, is 1.6x faster but 9.0 dB from fp32 -- more than a new seed -- so the
+v2 decoder needs one stage more. Dynamic quantisation was slower than fp32 on
+this model and is not offered.
 
 Needs `onnx` besides onnxruntime (`pip install onnx`); it is a publishing
 tool, not a runtime dependency. Memory is the constraint, not CPU: the
@@ -44,7 +48,8 @@ from aztts.console import use_utf8  # noqa: E402
 
 use_utf8()
 
-LAST_STAGE = 3          # the vocoder has four upsampling stages, 0..3
+STAGES = 4              # the vocoder's upsampling stages, 0..3
+FIRST_FP32_STAGE = 2    # stages from this one on stay in fp32
 RESBLOCKS_PER_STAGE = 3
 
 # Calibration text: varied length, questions, numbers, lists. Language data.
@@ -84,16 +89,18 @@ CALIBRATION = (
 
 def nodes_kept_in_fp32(conv_names: Iterable[str]) -> list[str]:
     """The convolutions left unquantised, by node name (see the module docstring)."""
-    last_blocks = tuple(
-        f"/decoder/resblocks.{LAST_STAGE * RESBLOCKS_PER_STAGE + k}/" for k in range(RESBLOCKS_PER_STAGE)
+    stages = range(FIRST_FP32_STAGE, STAGES)
+    kept_ups = tuple(f"/decoder/ups.{stage}/" for stage in stages)
+    kept_blocks = tuple(
+        f"/decoder/resblocks.{stage * RESBLOCKS_PER_STAGE + k}/" for stage in stages for k in range(RESBLOCKS_PER_STAGE)
     )
     return [
         name
         for name in conv_names
         if name.startswith("/flow/")
         or name.endswith(("/decoder/conv_pre/Conv", "/decoder/conv_post/Conv"))
-        or name.startswith(f"/decoder/ups.{LAST_STAGE}/")
-        or name.startswith(last_blocks)
+        or name.startswith(kept_ups)
+        or name.startswith(kept_blocks)
     ]
 
 

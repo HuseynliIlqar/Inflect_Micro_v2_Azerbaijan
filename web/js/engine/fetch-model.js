@@ -11,7 +11,7 @@
  * deleted on the next load.
  */
 
-export const CACHE_NAME = "aztts-onnx-v1";
+export const CACHE_NAME = "aztts-onnx-v2";
 
 // A 37 MB stream arrives in hundreds of reads; the page needs a few a second.
 const REPORT_EVERY_MS = 200;

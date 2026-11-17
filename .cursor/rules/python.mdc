@@ -45,7 +45,8 @@ Every CLI entry point calls `use_utf8()` from `aztts/console.py` before printing
 anything. Without it, printing `ə` on a Windows console raises
 `UnicodeEncodeError`. Current callers: `say.py`, `app.py`,
 `tools/seed_sweep.py`, `tools/audio_postprocess.py`, `tools/fetch_web_runtime.py`,
-`tools/quantize_decoder.py`, `training/scripts/compare_checkpoints.py`. Any new
+`tools/quantize_decoder.py`, `tools/calibration_reference.py`,
+`tools/build_web_frontend.py`. Any new
 entry point needs the same call.
 
 ## Azerbaijani strings in code are data

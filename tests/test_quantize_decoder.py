@@ -28,20 +28,21 @@ def test_vocoder_edges_stay_fp32() -> None:
     assert {"/decoder/conv_pre/Conv", "/decoder/conv_post/Conv"} <= set(kept(VOCODER))
 
 
-def test_last_stage_stays_fp32() -> None:
+def test_last_two_stages_stay_fp32() -> None:
+    # The v2 decoder drifts past a new seed's difference with only the last stage kept.
     names = set(kept(VOCODER))
-    assert "/decoder/ups.3/ConvTranspose" in names
-    assert all(f"/decoder/resblocks.{b}/convs1.0/Conv" in names for b in (9, 10, 11))
+    assert {"/decoder/ups.2/ConvTranspose", "/decoder/ups.3/ConvTranspose"} <= names
+    assert all(f"/decoder/resblocks.{b}/convs1.0/Conv" in names for b in range(6, 12))
 
 
 def test_earlier_stages_are_quantised() -> None:
     names = set(kept(VOCODER))
-    assert not any(f"/decoder/ups.{s}/ConvTranspose" in names for s in (0, 1, 2))
-    assert not any(f"/decoder/resblocks.{b}/convs1.0/Conv" in names for b in range(9))
+    assert not any(f"/decoder/ups.{s}/ConvTranspose" in names for s in (0, 1))
+    assert not any(f"/decoder/resblocks.{b}/convs1.0/Conv" in names for b in range(6))
 
 
 def test_resblock_1_is_not_mistaken_for_10_or_11() -> None:
-    # "/decoder/resblocks.1/" must not match the last stage's prefixes.
+    # "/decoder/resblocks.1/" must not match the kept stages' prefixes.
     assert "/decoder/resblocks.1/convs1.0/Conv" not in kept(VOCODER)
 
 

@@ -52,7 +52,10 @@ limit: anything more in its `<head>` needs a split first.
 
 | Piece | What it does |
 | --- | --- |
-| `js/engine/phonemize.js` | eSpeak NG compiled to WebAssembly, the same phonemiser the Python frontend calls |
+| `js/engine/phonemize.js` | eSpeak NG compiled to WebAssembly, the same phonemiser the Python frontend calls; a fresh instance every 64 calls, because this build aborts after about 150 |
+| `js/engine/punctuation.js` | Punctuation as `phonemizer` handles it (`preserve_punctuation=True`): eSpeak sees the pieces between the marks, and the marks are put back. Without it, brackets and quotes were dropped and the stress beside them moved |
+| `js/engine/stress.js`, `stress-rules.js` | The checkpoint's stress frontend (`model/frontend_hook.py`), ported: eSpeak's stress marks moved to where v2.1 learned them |
+| `js/engine/stress-lexicon.js` | The hook's word lists (600 kB), written by `tools/build_web_frontend.py`; fetched only when Azerbaijani is first spoken |
 | `js/text/az-text.js` | `normalize_az` ported from `aztts/az_text.py`: the step order |
 | `js/text/az-dates.js`, `az-amounts.js` | Its rules: phones, dates and times; money, percent, units, fractions, ranges (`az_dates.py`, `az_amounts.py`) |
 | `js/text/az-tables.js`, `az-words.js` | Its word tables and shared helpers: casing, vowel harmony, numbers as words (`az_tables.py`, `az_words.py`) |
@@ -228,14 +231,15 @@ With a device check, its plan replaces the "When" column below:
 Every failed step is kept with its reason (`engine.failures`, sent to the page
 as `fallbacks`), so a tester's report says what was tried and why it failed.
 
-**The int8 decoder** (14.8 MB, built by `tools/quantize_decoder.py`) is static
+**The int8 decoder** (15.4 MB, built by `tools/quantize_decoder.py`) is static
 QDQ int8 with the flow, the vocoder's first and last convolutions and its last
-upsampling stage kept in fp32. Measured against fp32 on the five demo sentences
-with the same noise: a mean log-spectral distance of 0.53, below the 0.73
-between two fp32 seeds -- the change is smaller than the model's own variation
-between takes -- and about 1.5x faster in onnxruntime-web's wasm backend on
-1 and 4 threads. Dynamic quantisation was slower than fp32 on this model;
-quantising the last stage cost quality without gaining speed.
+two upsampling stages kept in fp32. Measured on v2.1 against fp32 on the five
+demo sentences with the same noise, at variation 0.3: a mean log-spectral
+distance of 5.8 dB, below the 6.6 dB between two fp32 seeds -- the change is
+smaller than the model's own variation between takes -- and 1.5x faster in
+onnxruntime-web's wasm backend on one thread. Keeping only the last stage, as
+for v1, is 1.6x faster but 9.0 dB from fp32, more than a new seed. Dynamic
+quantisation was slower than fp32 on this model.
 
 Tester switches: `?precision=fp32` skips the int8 step, and a request with
 `options.fullQuality` does the same for one synthesis. English has no int8
@@ -292,8 +296,10 @@ original rather than against expectations:
 
 ```bash
 node tests/test_num_az.mjs      # 24,022 checks against num2words
-node tests/test_az_text.mjs     # 655 cases against normalize_az
-node tests/test_az_chunk.mjs    # the same 655 against chunk_text
+node tests/test_az_text.mjs     # 669 cases against normalize_az
+node tests/test_az_chunk.mjs    # the same 669 against chunk_text
+node tests/test_stress.mjs      # 1,871 chunks and 4,740 words against model/frontend_hook.py
+node tests/test_punctuation.mjs # 1,880 lines against phonemizer's Punctuation
 node tests/test_progress.mjs    # the progress bar and the cached download
 node tests/test_backend_plan.mjs    # the order of the fallback chain
 node tests/test_engine_fallback.mjs # Engine walking it, against a stand-in onnxruntime
@@ -330,8 +336,10 @@ path was verified end to end.
 ## Running it locally
 
 `web/onnx/` is not tracked -- the exports are 76 MB and the repository already
-carries two checkpoints. Put the Azerbaijani graphs in `web/onnx/` and fetch the
-English ones into `web/onnx/en/`:
+carries two checkpoints. Put the Azerbaijani graphs in `web/onnx/` -- v2.1's
+`decode.onnx` and `duration.onnx`, from the `onnx/` folder of its export (see
+`packaging/PUBLISHING.md`), then build `decode.int8.onnx` with
+`tools/quantize_decoder.py` -- and fetch the English ones into `web/onnx/en/`:
 
 ```bash
 python -c "

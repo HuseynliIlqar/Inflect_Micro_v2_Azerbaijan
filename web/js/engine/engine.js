@@ -331,7 +331,7 @@ export class Engine {
   async speak(text, options = {}) {
     const {
       speed = 1.0,
-      variation = 0.667,
+      variation = 0.3,
       seed = 7,
       normalize = true,
       maxWords = DEFAULT_MAX_WORDS,

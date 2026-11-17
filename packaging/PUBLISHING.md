@@ -14,7 +14,7 @@ before publishing there.
 
 ```bash
 git lfs install          # required: both model.pth files and the samples
-python -m pytest         # 443 tests, three seconds, no model load
+python -m pytest         # 465 tests, three seconds, no model load
 ```
 
 The repository carries two checkpoints -- `model/` (Azerbaijani, 37 MB) and
@@ -22,8 +22,7 @@ The repository carries two checkpoints -- `model/` (Azerbaijani, 37 MB) and
 LFS objects. GitHub's free tier gives 1 GB of LFS storage and 1 GB of bandwidth
 a month, which is roughly thirteen clones. If the project gets popular enough
 for that to bite, the English weights are the part to drop: they are a copy of
-`owensong/Inflect-Micro-v2`, still downloadable with
-`python training/scripts/download_model.py`.
+`owensong/Inflect-Micro-v2`, still on the Hub.
 
 Check that nothing large slipped in:
 
@@ -31,10 +30,6 @@ Check that nothing large slipped in:
 git ls-files -s | wc -l
 du -sh .git 2>/dev/null
 ```
-
-`training/base-model/` is deliberately not tracked -- it is the complete 38 MB
-upstream package, needed only for training work. Fetch it locally with
-`python training/scripts/download_model.py`.
 
 ---
 
@@ -178,7 +173,17 @@ Azerbaijani, `about-en.html` in English, each with a FAQ and matching
 
 The ONNX export is not in this repository (`web/onnx/` is ignored): the
 repository already carries two checkpoints, and the Space is where the graphs
-belong. Copy them in from the training workspace when working on the page.
+belong. Copy them in from the training workspace when working on the page:
+`decode.onnx` and `duration.onnx` from the `onnx/` folder of the exported
+package (v2.1: `D:\ktts\avaz-train\results\final\avaz-v2.1\onnx`, checked by
+that package's `checksums.sha256`).
+
+A new export usually brings a new frontend as well. The playground runs a
+port of it, so bring that across too, then run every web suite:
+
+```bash
+python tools/build_web_frontend.py     # stress lexicon + stress and punctuation golden files
+```
 
 `onnx/decode.int8.onnx` is the CPU step of the fallback chain. Rebuild it
 whenever `decode.onnx` changes, then bump `CACHE_NAME` in `web/js/engine/fetch-model.js`:
@@ -261,7 +266,13 @@ node web/tests/test_seo.mjs
 node web/tests/test_orb_motion.mjs
 node web/tests/test_player.mjs
 node web/tests/test_diff_words.mjs
+node web/tests/test_stress.mjs
+node web/tests/test_punctuation.mjs
 ```
+
+`stress.json` and `punctuation.json` are not written by the snippet above:
+they come from `python tools/build_web_frontend.py` (see the playground
+section).
 
 ### The Gradio Space (needs Pro)
 
