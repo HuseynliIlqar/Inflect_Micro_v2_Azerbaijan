@@ -34,9 +34,8 @@ names as the ones in `model/`, and importing both in one process returns
 whichever was imported first. `aztts/en_voice.py` therefore loads these weights
 into `model/`'s runtime and phonemises English text itself.
 
-The complete package is still available for training work, and
-`training/scripts/download_model.py` fetches it into `training/base-model/`,
-which this repository does not track.
+The complete package, for training work, is on the Hub as
+[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2).
 
 ## Citing it
 

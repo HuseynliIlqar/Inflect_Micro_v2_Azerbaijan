@@ -70,8 +70,8 @@ qualified look at it.
 
 ## Model architecture and runtime
 
-The following are vendored inside `model/` (and inside `training/base-model/`
-once it is downloaded), as part of the upstream Inflect v2 export. Their licences
+The following are vendored inside `model/`, as part of the upstream Inflect v2
+export. Their licences
 apply to the corresponding portions; the rest of that package is Apache-2.0.
 
 ### VITS

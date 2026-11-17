@@ -20,13 +20,6 @@ htmlcov/
 out/*
 !out/.gitkeep
 
-# --- Downloaded artefacts ---------------------------------------------------
-# The full English upstream package is only needed for training work. The
-# weights themselves are tracked, in model-en/, so a clone speaks both
-# languages; this is the complete 38 MB package on top of that. Fetch it with:
-#     python training/scripts/download_model.py
-training/base-model/
-
 # Hugging Face download bookkeeping, wherever it appears.
 .cache/huggingface/
 

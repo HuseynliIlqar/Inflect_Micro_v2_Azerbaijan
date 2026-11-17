@@ -46,8 +46,9 @@ _AZ: Mapping[str, str] = {
     "voice_az": "Azərbaycanca",
     "voice_en": "İngiliscə (baza model)",
     "voice_en_missing": (
-        "İngiliscə baza model yüklənməyib (38 MB). Terminalda işlədin:\n"
-        "    python training/scripts/download_model.py"
+        "İngiliscə baza modelin çəkiləri yoxdur (37 MB). Onlar repozitoriya ilə "
+        "gəlir; model-en qovluğu silinibsə, terminalda işlədin:\n"
+        "    git checkout model-en"
     ),
     "voice_en_pointer": (
         "İngiliscə çəkilər Git LFS göstəricisidir, faylın özü deyil. "
@@ -95,7 +96,7 @@ _AZ: Mapping[str, str] = {
     "prosody_drop_info": "Vurğunu zəiflətmək əvəzinə büsbütün çıxarır.",
     "cleanup_label": "Səsi təmizlə",
     "cleanup_info": (
-        "Vokoderin metal rezonansını süzür və səviyyəni bərabərləşdirir. "
+        "Vokoderdən qalan rezonansı süzür və səviyyəni bərabərləşdirir. "
         "Nitqin özünə də toxuna bilər -- müqayisə edin."
     ),
     "device_label": "Cihaz",
@@ -151,8 +152,9 @@ _EN: Mapping[str, str] = {
     "voice_az": "Azerbaijani",
     "voice_en": "English (base model)",
     "voice_en_missing": (
-        "The English base model has not been downloaded (38 MB). Run:\n"
-        "    python training/scripts/download_model.py"
+        "The English base model's weights are missing (37 MB). They ship with "
+        "the repository; if the model-en folder is gone, run:\n"
+        "    git checkout model-en"
     ),
     "voice_en_pointer": (
         "The English weights are a Git LFS pointer, not the file itself. "
@@ -197,7 +199,7 @@ _EN: Mapping[str, str] = {
     "prosody_drop_info": "Removes the accent instead of demoting it.",
     "cleanup_label": "Clean up the audio",
     "cleanup_info": (
-        "Filters out the vocoder's metallic resonance and evens out the level. "
+        "Filters out what is left of the vocoder's resonance and evens out the level. "
         "It can touch the speech as well -- compare before deciding."
     ),
     "device_label": "Device",

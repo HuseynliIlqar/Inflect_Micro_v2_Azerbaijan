@@ -32,4 +32,3 @@ model-en/**    -text
 # should stay collapsed in pull request diffs.
 model/**       linguist-vendored
 model-en/**    linguist-vendored
-training/patches/*.patch linguist-generated

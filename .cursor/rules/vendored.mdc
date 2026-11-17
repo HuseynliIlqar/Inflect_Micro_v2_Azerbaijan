@@ -1,16 +1,15 @@
 ---
-description: model/, model-en/ and training/base-model/ are vendored upstream exports and must not be edited
-globs: ["model/**", "model-en/**", "training/base-model/**"]
+description: model/ and model-en/ are vendored upstream exports and must not be edited
+globs: ["model/**", "model-en/**"]
 alwaysApply: false
 ---
 
 # This file is vendored. Do not edit it.
 
-`model/`, `model-en/` and `training/base-model/` come from
+`model/` and `model-en/` come from
 [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2),
 not from us. `model/` is the Azerbaijani adaptation's full export package;
-`training/base-model/` is the complete English package, untracked; `model-en/`
-is the English weights alone, tracked through Git LFS so a clone speaks both
+`model-en/` is the English weights alone, tracked through Git LFS so a clone speaks both
 languages.
 
 - **`model/checksums.sha256` verifies 25 files in that directory.** Any edit
@@ -19,9 +18,6 @@ languages.
   there is ours and is deliberately outside the checksum list.
 - `.gitattributes` marks `model/**` and `model-en/**` as `linguist-vendored` so
   they stay out of our language statistics and collapsed in diffs.
-- `training/base-model/` is not tracked at all — it is the complete 38 MB
-  package fetched by `python training/scripts/download_model.py`, needed only
-  for training work. Editing it edits a download.
 
 ## The characters here are IPA, not Azerbaijani
 

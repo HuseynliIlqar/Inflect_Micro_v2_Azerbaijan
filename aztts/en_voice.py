@@ -66,9 +66,7 @@ _POINTER_LIMIT = 4096
 _MISSING = (
     "The English weights are not in {path}.\n"
     "They ship with this repository; if the directory is gone, restore it with "
-    "`git checkout model-en`, or fetch the full upstream package with "
-    "`python training/scripts/download_model.py` and point EnVoice at "
-    "training/base-model."
+    "`git checkout model-en`."
 )
 _POINTER = (
     "{path} is a Git LFS pointer, not the weights.\n"

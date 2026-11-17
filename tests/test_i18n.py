@@ -106,8 +106,8 @@ def test_a_missing_english_model_is_said_out_loud(language: str) -> None:
 
 
 @pytest.mark.parametrize("language", ("az", "en"))
-def test_the_download_instruction_is_a_runnable_command(language: str) -> None:
-    assert "training/scripts/download_model.py" in i18n.label(
+def test_the_restore_instruction_is_a_runnable_command(language: str) -> None:
+    assert "git checkout model-en" in i18n.label(
         language, "voice_en_missing"
     )
 
