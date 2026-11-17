@@ -45,11 +45,11 @@
         { "@type": "Question", "name": "Does it work on a phone?",
           "acceptedAnswer": { "@type": "Answer", "text": "It works, but slowly. In a phone browser the model usually runs on the processor (WebAssembly, with an int8 decoder), and one sentence can take up to a minute. Chrome or Edge on a computer is fastest: there the model runs on the GPU through WebGPU, faster than real time. Speed on phones and natural intonation are our main work." } },
         { "@type": "Question", "name": "Can I use it commercially?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Yes: the code and the model weights are Apache-2.0, and running them is unrestricted. There is one condition, and it comes from the phonemiser, not the model: eSpeak NG, and phonemizer on the Python side, are GPL-3.0-or-later. Redistributing a combined work — a desktop app, a container image, a binary handed to customers — brings GPL-3.0 obligations. The way out: the model accepts pre-phonemised input (accepts_prephonemized_input), so a product can use its own phonemiser. The Azerbaijani training data is used with its author's permission, on condition of attribution. The English voice is synthetic and Apache-2.0, but the release is open-weight, not open-data. Impersonating a real person or producing deceptive content is not permitted. This is not legal advice." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes: the code and the model weights are Apache-2.0, and running them is unrestricted. There is one condition, and it comes from the phonemiser, not the model: eSpeak NG, and phonemizer on the Python side, are GPL-3.0-or-later. Redistributing a combined work — a desktop app, a container image, a binary handed to customers — brings GPL-3.0 obligations. The way out: the model accepts pre-phonemised input (accepts_prephonemized_input), so a product can use its own phonemiser. The Azerbaijani dataset the model was first trained on is used with its author's permission, on condition of attribution. The English voice is synthetic and Apache-2.0, but the release is open-weight, not open-data. Impersonating a real person or producing deceptive content is not permitted. This is not legal advice." } },
         { "@type": "Question", "name": "How do I run the model on my own computer?",
           "acceptedAnswer": { "@type": "Answer", "text": "The code is on GitHub: clone the repository, run pip install -r requirements.txt and then python say.py \"Salam.\". On an ordinary laptop processor the model runs 2-4x faster than real time and needs no internet. The weights are also on Hugging Face, in PyTorch and ONNX." } },
         { "@type": "Question", "name": "How was the model made?",
-          "acceptedAnswer": { "@type": "Answer", "text": "The Azerbaijani model, Inflect-Micro-v2 Azerbaijani, was adapted from Owen Song's English Inflect-Micro-v2 model (Apache-2.0): 200,000 training steps on 25.07 hours of Azerbaijani speech. The training data is ughurabbasov/azerbaijani-tts-dataset; its author permits use and asks to be credited. The English voice on the page is the base model itself, so you can hear where the Azerbaijani one started." } }
+          "acceptedAnswer": { "@type": "Answer", "text": "The Azerbaijani model, Inflect-Micro-v2 Azerbaijani, started from Owen Song's English Inflect-Micro-v2 model (Apache-2.0). The first version was trained on ughurabbasov/azerbaijani-tts-dataset, whose author permits use and asks to be credited. The current version, v2.1, continues from the first on audio distilled from a teacher TTS, with a stress frontend on top of eSpeak NG and a polished decoder. The English voice on the page is the base model itself, so you can hear where the Azerbaijani one started." } }
       ] }
     </script>
   </head>
@@ -126,16 +126,24 @@
             the problem; it does not remove it.
           </li>
           <li>
-            <strong>The reading is flat.</strong> eSpeak NG, which turns the letters into
-            phonemes, puts a stress on 92.2% of words, so few of them stand out. The
-            command line has an experimental stress layer
-            (<code translate="no">--prosody</code>); it does not improve every text, so
-            it stays optional.
+            <strong>Yes/no questions end falling.</strong> Where a question should rise
+            at the end, the voice still falls. Only 677 of the training clips are such
+            questions, and the model has no separate pitch part yet.
           </li>
           <li>
-            <strong>Some sentences carry a metallic resonance.</strong> It comes from the
-            vocoder, the part of the model that makes the sound. A cleanup tool in the
-            repository reduces it in saved audio; the playground does not apply it.
+            <strong>Stress is carried by length, not yet by pitch.</strong> eSpeak NG,
+            which turns the letters into phonemes, puts a stress on nearly every word. A
+            stress frontend now corrects those marks with rules checked by a native
+            speaker, but the model makes a stressed syllable longer rather than higher.
+          </li>
+          <li>
+            <strong>Some consonants get confused.</strong> m can come out as n, b as d
+            and q as k, most often in the first and last word of a sentence.
+          </li>
+          <li>
+            <strong>The sound is not yet as clear as its source.</strong> The fixed
+            6&nbsp;kHz ring of the first version is gone, but the harmonics between 2
+            and 4&nbsp;kHz are weaker than in the recordings the model learnt from.
           </li>
           <li>
             <strong>It is slow in a phone browser.</strong> There the model usually runs
@@ -147,9 +155,9 @@
             <strong>One voice.</strong> There is no emotion control and no voice cloning.
           </li>
           <li>
-            <strong>The training audio is most likely synthetic.</strong> It was probably
-            made by another TTS system, so this voice cannot sound better than that
-            system. A better voice needs better recordings.
+            <strong>The training audio is synthetic.</strong> v2.1 learnt from recordings
+            made by a teacher TTS, so this voice cannot sound better than that teacher.
+            A better voice needs better recordings.
           </li>
         </ul>
         <p>
@@ -162,7 +170,8 @@
       <section aria-labelledby="how">
         <h2 id="how">How it works</h2>
         <p>
-          The model is a 9.36-million-parameter VITS network that produces 24&nbsp;kHz audio.
+          The model is a 9.36-million-parameter VITS network, in its second version
+          (v2.1), that produces 24&nbsp;kHz audio.
           It runs in the browser through ONNX Runtime Web: faster than real time where
           the browser has WebGPU, and on the processor, more slowly, where it does not.
           The first visit downloads about 37&nbsp;MB; after that the browser keeps it.
@@ -173,8 +182,9 @@
           faiz», «01/09/1939» becomes «bir sentyabr min doqquz yüz otuz doqquzuncu il»,
           and «19,99 AZN» becomes «on doqquz manat doxsan doqquz qəpik». Long text is cut
           into chunks of about 15 words, because intonation flattens over a long
-          sentence. eSpeak NG turns the letters into phonemes, and its WebAssembly build
-          runs in the browser too.
+          sentence. eSpeak NG turns the letters into phonemes and a stress frontend
+          corrects where the stress falls; both run in the browser too, eSpeak NG as a
+          WebAssembly build.
         </p>
       </section>
 
@@ -231,8 +241,9 @@
           image, a binary handed to customers — brings GPL-3.0 obligations. The way
           out: the model accepts pre-phonemised input
           (<code translate="no">accepts_prephonemized_input</code>), so a product can use its own
-          phonemiser. The Azerbaijani training data is used with its author's
-          permission, on condition of attribution. The English voice is synthetic and
+          phonemiser. The Azerbaijani dataset the model was first trained on is used
+          with its author's permission, on condition of attribution. The English voice
+          is synthetic and
           Apache-2.0, but the release is open-weight, not open-data. Impersonating a
           real person or producing deceptive content is not permitted. This is not
           legal advice.
@@ -249,12 +260,13 @@
 
         <h3>How was the model made?</h3>
         <p>
-          The Azerbaijani model, Inflect-Micro-v2 Azerbaijani, was adapted from Owen
-          Song's English Inflect-Micro-v2 model (Apache-2.0): 200,000 training steps on
-          25.07 hours of Azerbaijani speech. The training data is
-          ughurabbasov/azerbaijani-tts-dataset; its author permits use and asks to be
-          credited. The English voice on the page is the base model itself, so you can
-          hear where the Azerbaijani one started.
+          The Azerbaijani model, Inflect-Micro-v2 Azerbaijani, started from Owen Song's
+          English Inflect-Micro-v2 model (Apache-2.0). The first version was trained on
+          ughurabbasov/azerbaijani-tts-dataset, whose author permits use and asks to be
+          credited. The current version, v2.1, continues from the first on audio
+          distilled from a teacher TTS, with a stress frontend on top of eSpeak NG and
+          a polished decoder. The English voice on the page is the base model itself,
+          so you can hear where the Azerbaijani one started.
         </p>
       </section>
 

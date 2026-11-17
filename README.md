@@ -7,12 +7,13 @@ on phones.** No API key, no account, and the text never leaves the device.
 **Languages.** Azerbaijani and English today; Turkish and Russian are next
 (planned, no dates yet). The Azerbaijani voice is this repository's model,
 Inflect-Micro-v2 Azerbaijani: 9.36M parameters, 24 kHz mono, **2-4x faster
-than real time** on an ordinary laptop CPU, and fully offline. It is a
+than real time** on an ordinary laptop CPU, and fully offline. It started as a
 fine-tune of
 **[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)**
-by Owen Song (Apache-2.0) --- 200,000 steps on 25.07 hours of Azerbaijani
-speech, 409 of its 410 tensors carried over bit-identically. The English voice
-is that base model, unmodified.
+by Owen Song (Apache-2.0). The checkpoint shipped now is the second one,
+**v2.1**: it continues from the first on audio distilled from a teacher TTS,
+reads stress from a stress frontend on top of eSpeak NG, and has a polished
+decoder. The English voice is that base model, unmodified.
 
 **We are not there yet.** The current 9.36M-parameter model is small and fast,
 but its intonation is still flat, especially over long sentences, and phone
@@ -23,13 +24,23 @@ release.
 
 - **Intonation over long sentences.** It flattens, so for now the text is cut
   into chunks of about 15 words.
-- **Stress.** eSpeak NG stresses 92.2% of words, so the reading is flat. The
-  experimental `--prosody` layer does not improve every text.
+- **Questions.** Yes/no questions end with falling pitch, where the teacher's
+  questions rise. Only 677 training clips are such questions, and the model has
+  no explicit pitch predictor.
+- **Stress.** The stress frontend fixes where eSpeak NG puts the stress, but
+  the model carries a corrected stress through length, not yet through pitch.
+- **Consonants.** m->n, b->d and q->k confusions remain, most often on a
+  sentence's first and last word.
+- **The sound.** The fixed 6 kHz ring of the first checkpoint is gone, but
+  harmonic clarity at 2-4 kHz is still below the teacher's (buzz score 8.9
+  against 10.6). The training audio is synthetic, so the teacher is the quality
+  ceiling.
 - **Speed on phones.** A phone browser usually runs the model on the CPU
   (WebAssembly, int8 decoder), and a sentence can take up to a minute.
-- **The sound.** The vocoder leaves a metallic resonance on some sentences, and
-  the training audio is most likely synthetic, which caps the quality.
 - **One voice.** No emotion control, no voice cloning.
+
+The next model, v3, is planned to address the questions and the intonation
+with an explicit pitch part ([training/v3/PLAN.md](training/v3/PLAN.md)).
 
 > Azərbaycanca oxumaq üçün: **[README.az.md](README.az.md)**
 
@@ -184,7 +195,8 @@ The model also runs **entirely in a browser**, both voices, with nothing sent
 anywhere. Once the page has loaded it works with the network switched off.
 
 - ONNX Runtime Web on WebGPU --- roughly 8x real time on a laptop
-- eSpeak NG compiled to WebAssembly for phonemisation
+- eSpeak NG compiled to WebAssembly for phonemisation, followed by the
+  stress frontend ported to JavaScript
 - the Azerbaijani text layer ported to JavaScript
 - synthesis in a Web Worker, so the page never freezes, with a progress bar
 
@@ -214,8 +226,9 @@ first visit downloads 37 MB; after that the graphs
 stay on the device.
 
 The port is not trusted on faith: it is checked against the Python original
-over golden files generated from it --- 24,022 number-word comparisons, 655
-normalisation cases, 655 chunkings --- and the ONNX path is checked against
+over golden files generated from it --- 24,022 number-word comparisons, 669
+normalisation cases, 669 chunkings, 1,871 chunks through the stress frontend
+--- and the ONNX path is checked against
 onnxruntime in Python (same sample count, same RMS to seven decimals).
 [web/README.md](web/README.md) has the details.
 
@@ -235,8 +248,8 @@ as a library should not pay for a web stack.
 The page shows two things the command line hides: the normalised text that
 actually reaches the model, and the `say.py` command matching the settings you
 picked, so it doubles as a way to learn the CLI. `Clean up the audio` filters
-the vocoder's metallic resonance out of the finished clip, needs no ffmpeg, and
-reports which frequencies it removed.
+leftover resonance out of the finished clip, needs no ffmpeg, and reports which
+frequencies it removed.
 
 ## The two voices
 
@@ -253,9 +266,9 @@ would rewrite numbers into Azerbaijani words, so it and the stress layer are
 switched off there and greyed out in the interface. English text is phonemised
 with eSpeak's `en-us` voice and handed to the runtime as phonemes.
 
-**This project's own model does not speak English.** It was adapted over
-200,000 steps on a single Azerbaijani voice; English text pushed through it is
-that voice reading phonemes it never heard. `model-en/README.md` says where the
+**This project's own model does not speak English.** It was trained only on a
+single Azerbaijani voice; English text pushed through it is that voice reading
+phonemes it never heard. `model-en/README.md` says where the
 English weights came from and how to cite them.
 
 ## What the text layer does
@@ -301,7 +314,7 @@ spelled out letter by letter (`s i k`) still gets through.
 ## Working on the code
 
 ```bash
-python -m pytest        # 443 tests, three seconds, never loads the model
+python -m pytest        # 465 tests, three seconds, never loads the model
 ```
 
 <details>
@@ -318,10 +331,11 @@ python -m pytest        # 443 tests, three seconds, never loads the model
 The browser port has its own, run with Node:
 
 ```bash
-for f in web/tests/*.mjs; do node "$f" || break; done   # all 16 suites
+for f in web/tests/*.mjs; do node "$f" || break; done   # all 28 suites
 node web/tests/test_num_az.mjs      # 24,022 checks against num2words
-node web/tests/test_az_text.mjs     # 655 cases against normalize_az
-node web/tests/test_az_chunk.mjs    # the same 655 against chunk_text
+node web/tests/test_az_text.mjs     # 669 cases against normalize_az
+node web/tests/test_az_chunk.mjs    # the same 669 against chunk_text
+node web/tests/test_stress.mjs      # 1,871 chunks against model/frontend_hook.py
 node web/tests/test_progress.mjs    # the progress bar and the cached model download
 ```
 
@@ -357,7 +371,7 @@ tools/            seed_sweep, audio_postprocess -- quality tools;
 training/         How the model was made (the base model is downloaded)
 packaging/        Publishing to GitHub / Hugging Face / Kaggle
 samples/          Example audio
-tests/            443 tests
+tests/            465 tests
 out/              The WAV files you generate
 ```
 
@@ -374,7 +388,7 @@ out/              The WAV files you generate
 # Render one line under 10 different seeds and pick the best
 python tools/seed_sweep.py --seeds 10 "Xoş gəlmisiniz."
 
-# Find the vocoder's metallic resonance, then clean it with ffmpeg
+# Find leftover resonance, then clean it with ffmpeg
 python tools/audio_postprocess.py analyze samples
 python tools/audio_postprocess.py clean out --lowpass 11000
 ```
@@ -394,27 +408,43 @@ Cursor picks the same rules up from `.cursor/rules/`. Publishing steps are in
 | | |
 | --- | --- |
 | Base | [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2) |
+| Checkpoint | v2.1, the second Azerbaijani checkpoint: step 30,000 of the decoder polish run |
 | Parameters | 9.36M |
 | Voice | 24 kHz mono, single speaker |
-| Training | 200,000 steps = 1,343 epochs, 25.07 hours of Azerbaijani audio |
+| Training data | 23,088 clips distilled from a teacher TTS, starting from the first checkpoint's weights |
+| Phonemes | eSpeak NG, then the stress frontend (`model/frontend_hook.py`) |
 | Speed | 2-4x real time on CPU |
 
-[docs/MODEL.md](docs/MODEL.md) has the measurements, the dataset evidence and
-the limitations in full. [`training/`](training/README.md) holds the process:
-the patch applied to the official toolkit, the presets, the results and the
-loss history.
+Measured on 471 validation sentences the model never trained on. "Teacher" is
+the original recording.
 
-One part of that is worth repeating here. The toolkit's `maximum_path` was a
-pure Python loop eating 8.7 seconds of every step; a vectorised torch version
-does it in **1.395 seconds**. Twenty days became 3.2 days, ~$213 became ~$34,
-and 25 tests prove the result **bit-identical** to the original.
+| | Teacher | v1 | v2.1, variation 0.3 (default) |
+| --- | ---: | ---: | ---: |
+| Whisper word error, 416 number-free sentences | 2.07% | 4.84% | ~2.65% (at 0.333) |
+| Word error, 1-5 word sentences | 0.8% | 9.2% | 3.2% |
+| Harmonic clarity 2-4 kHz (buzz score, higher is better) | 10.6 | 6.4 | 8.9 |
+| Pitch range (semitones) | 16.8 | 13.0 | 15.0 |
+| Yes/no question ending (semitones) | +2.9 | -3.0 | -1.8 |
+
+[docs/MODEL.md](docs/MODEL.md) has the measurements, the data and the
+limitations in full. [`training/`](training/README.md) holds how each
+checkpoint was made; the second round, with its test battery, is in
+[training/v2/README.md](training/v2/README.md).
+
+One part of the first round is worth repeating here. The toolkit's
+`maximum_path` was a pure Python loop eating 8.7 seconds of every step; a
+vectorised torch version does it in **1.395 seconds**. Twenty days became 3.2
+days, ~$213 became ~$34, and 25 tests prove the result **bit-identical** to
+the original. The second round's toolkit patch carries the vectorised
+alignment too.
 
 ## Limitations
 
 - **One voice.** No voice cloning, no multi-speaker support.
 - **No emotion control.** The reading is calm and neutral.
 - At 9.36M parameters the speech is clear and intelligible but not fully
-  natural, and the vocoder sometimes leaves a metallic resonance.
+  natural: yes/no questions end falling, some consonants are confused at the
+  edges of a sentence, and the 2-4 kHz range is less clear than the teacher's.
 - Rare names, foreign words and unusual spellings are at the mercy of the
   phoneme frontend.
 - Normalisation runs automatically inside `say.py` and `AzTTS`. Calling the
@@ -451,13 +481,14 @@ every third-party component.
 
 ### Where the voices came from
 
-**Azerbaijani.** Trained on
+**Azerbaijani.** The first checkpoint was trained on
 [`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset).
 The repository declares no licence file; asked directly in the Hugging Face
 community tab, the author confirmed free use and asked to be credited.
-**Attribution is the condition of use.** The audio is most likely synthetic,
-produced by another TTS system whose terms are not known ---
-[docs/MODEL.md](docs/MODEL.md).
+**Attribution is the condition of use.** That audio is most likely synthetic,
+produced by another TTS system whose terms are not known. v2.1 starts from the
+first checkpoint's weights and was trained further on audio distilled from a
+teacher TTS --- [docs/MODEL.md](docs/MODEL.md).
 
 **English.** `owensong/Inflect-Micro-v2`, redistributed unmodified. Three facts
 from its model card matter for a commercial decision:
@@ -488,14 +519,15 @@ This model exists because two people published their work openly.
 
 **[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)**
 by Owen Song, Apache-2.0. Every weight here started as one of his: 409 of the
-410 tensors were carried over bit-identically, and the Azerbaijani phonemes were
-already in his symbol set. Without that checkpoint this would have been months
-of training instead of days.
+410 tensors were carried over bit-identically into the first checkpoint, and the
+Azerbaijani phonemes were already in his symbol set. Without that checkpoint
+this would have been months of training instead of days.
 
 **[`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset)**
-by `ughurabbasov`. 25.07 hours of single-speaker Azerbaijani audio, used with
-the author's permission on condition of attribution. **If you build on this
-model, credit the dataset too.**
+by `ughurabbasov`. The single-speaker Azerbaijani audio the first checkpoint
+was trained on, and v2.1 starts from that checkpoint. Used with the author's
+permission on condition of attribution. **If you build on this model, credit
+the dataset too.**
 
 Please cite the project and both sources --- see [CITATION.cff](CITATION.cff):
 
@@ -506,7 +538,8 @@ Please cite the project and both sources --- see [CITATION.cff](CITATION.cff):
   year   = {2026},
   url    = {https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan},
   note   = {Adapted from owensong/Inflect-Micro-v2 (Apache-2.0);
-            trained on ughurabbasov/azerbaijani-tts-dataset,
-            used with the author's permission}
+            first trained on ughurabbasov/azerbaijani-tts-dataset,
+            used with the author's permission; v2.1 continued on
+            audio distilled from a teacher TTS}
 }
 ```

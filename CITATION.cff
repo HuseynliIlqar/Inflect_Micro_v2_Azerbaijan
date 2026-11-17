@@ -6,14 +6,15 @@ title: 'Azerbaijani TTS: an offline 9.36M-parameter VITS model'
 abstract: >-
   A fully offline text-to-speech model for Azerbaijani. 9.36M parameters,
   24 kHz mono, single speaker, 2-4x faster than real time on a laptop CPU.
-  Adapted from the English Inflect-Micro-v2 checkpoint over 200,000 steps on
-  25.07 hours of Azerbaijani audio, and shipped with an Azerbaijani text
-  normalisation and chunking layer.
+  Adapted from the English Inflect-Micro-v2 checkpoint; the shipped
+  checkpoint, v2.1, continues from the first Azerbaijani one on audio
+  distilled from a teacher TTS, with a stress frontend on top of eSpeak NG.
+  Shipped with an Azerbaijani text normalisation and chunking layer.
 type: software
 authors:
   - family-names: Huseynli
     given-names: Ilqar
-version: 1.0.0
+version: 2.1.0
 license: Apache-2.0
 repository-code: 'https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan'
 keywords:
@@ -41,7 +42,7 @@ references:
   - type: data
     title: 'azerbaijani-tts-dataset'
     abstract: >-
-      The Azerbaijani speech corpus this model was trained on: 9,674 clips used
+      The Azerbaijani speech corpus the first checkpoint was trained on: 9,674 clips used
       out of 10,088, 25.07 hours, single speaker. The repository declares no
       licence file; the author confirmed in the Hugging Face community tab that
       the dataset may be used freely, with attribution requested.

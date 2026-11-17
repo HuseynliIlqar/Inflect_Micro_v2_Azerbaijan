@@ -8,11 +8,13 @@ qururuq.** API açarı və qeydiyyat lazım deyil, mətn cihazdan çıxmır.
 ruscadır (planlaşdırılıb, hələ tarix yoxdur). Azərbaycan səsi bu reponun
 modelidir, Inflect-Micro-v2 Azerbaijani: 9.36M parametr, 24 kHz mono, adi
 noutbukun prosessorunda **real vaxtdan 2–4 dəfə sürətli** işləyir və tam
-oflayndır. Bu model Owen Song-un
+oflayndır. O, Owen Song-un
 **[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)**
-checkpoint-inin fine-tune-udur (Apache-2.0) — 25.07 saatlıq azərbaycanca nitq
-üzərində 200.000 addım, 410 tensordan 409-u bit-bit köçürülüb. İngilis səsi isə
-həmin baza modelin özüdür, dəyişiklik edilmədən.
+checkpoint-inin fine-tune-u kimi başlayıb (Apache-2.0). İndi paylaşılan
+checkpoint ikincisidir, **v2.1**: birincinin davamı olaraq müəllim TTS-dən
+distillə edilmiş səs yazıları üzərində öyrədilib, vurğunu eSpeak NG-nin üstündə
+işləyən vurğu frontend-indən alır və dekoderi cilalanıb. İngilis səsi isə həmin
+baza modelin özüdür, dəyişiklik edilmədən.
 
 **Hədəfə hələ çatmamışıq.** İndiki 9.36M parametrli model kiçik və sürətlidir,
 amma intonasiyası hələ yeknəsəqdir, xüsusən uzun cümlələrdə, telefon
@@ -23,13 +25,23 @@ versiyadan versiyaya düzəldirik.
 
 - **Uzun cümlələrdə intonasiya.** Yeknəsəqləşir, ona görə hələlik mətn təxminən
   15 sözlük hissələrə bölünür.
-- **Vurğu.** eSpeak NG sözlərin 92.2 faizinə vurğu qoyur, ona görə oxunuş
-  monotondur. Eksperimental `--prosody` qatı hər mətni yaxşılaşdırmır.
+- **Suallar.** Cavabı «hə» və ya «yox» olan suallar enən tonla bitir, müəllimin
+  suallarında isə ton qalxır. Təlim datasında belə suallardan cəmi 677 klip var,
+  modeldə isə ayrıca ton (pitch) proqnozlaşdırıcısı yoxdur.
+- **Vurğu.** Vurğu frontend-i eSpeak NG-nin vurğunu hara qoyduğunu düzəldir,
+  amma model düzəldilmiş vurğunu hələ tonla yox, yalnız uzunluqla verir.
+- **Samitlər.** m->n, b->d və q->k qarışıqlığı qalır, ən çox cümlənin ilk və son
+  sözündə.
+- **Səs.** Birinci checkpoint-in sabit 6 kHz cingiltisi aradan qalxıb, amma
+  2–4 kHz aralığında harmonik aydınlıq hələ müəllimdən aşağıdır (buzz göstəricisi
+  8.9, müəllimdə 10.6). Təlim səs yazıları sintetikdir, ona görə keyfiyyətin
+  tavanı müəllimdir.
 - **Telefonda sürət.** Telefon brauzeri modeli adətən prosessorda işlədir
   (WebAssembly, int8 dekoder) və bir cümlə bir dəqiqəyə qədər çəkə bilər.
-- **Səs.** Vokoder bəzi cümlələrdə metal tembr yaradır, təlim səs yazıları isə
-  çox güman ki, sintetikdir və bu, keyfiyyətə tavan qoyur.
 - **Bir səs.** Emosiya idarəsi və səs klonlama yoxdur.
+
+Növbəti model, v3, sualları və intonasiyanı ayrıca ton (pitch) hissəsi ilə həll
+etmək üçün planlaşdırılıb ([training/v3/PLAN.md](training/v3/PLAN.md)).
 
 > For the English documentation: **[README.md](README.md)**
 
@@ -183,7 +195,8 @@ Model **tamamilə brauzerdə** də işləyir, hər iki səslə, heç nə heç ye
 göndərilmir. Səhifə yükləndikdən sonra internetsiz də işləyir.
 
 - ONNX Runtime Web, WebGPU üzərində — noutbukda təxminən 8x real vaxt
-- Fonemləşdirmə üçün WebAssembly-yə kompilyasiya edilmiş eSpeak NG
+- Fonemləşdirmə üçün WebAssembly-yə kompilyasiya edilmiş eSpeak NG, ardınca
+  JavaScript-ə portlanmış vurğu frontend-i
 - JavaScript-ə portlanmış azərbaycanca mətn qatı
 - Sintez Web Worker-də gedir, ona görə səhifə donmur və irəliləyiş zolağı göstərilir
 
@@ -213,7 +226,8 @@ Eyni model komanda sətrindən real vaxtdan 2–4 dəfə sürətli işləyir. İ
 37 MB yüklənir, sonra model cihazda saxlanılır.
 
 Port sözə görə qəbul edilmir: Python orijinalından yaradılmış qızıl fayllarla
-yoxlanılır — 24 022 rəqəm müqayisəsi, 655 normallaşdırma nümunəsi, 655 bölgü — və
+yoxlanılır — 24 022 rəqəm müqayisəsi, 669 normallaşdırma nümunəsi, 669 bölgü,
+vurğu frontend-indən keçən 1 871 hissə — və
 ONNX yolu Python-dakı onnxruntime ilə tutuşdurulur (eyni sample sayı, yeddi
 onluq dəqiqliklə eyni RMS). Təfərrüat: [web/README.md](web/README.md).
 
@@ -232,8 +246,8 @@ adam veb yığını üçün ödəməməlidir.
 
 Səhifə komanda sətrinin gizlətdiyi iki şeyi göstərir: modelə həqiqətən çatan
 normallaşdırılmış mətni və seçdiyiniz ayarlara uyğun `say.py` əmrini — yəni həm
-də CLI-ni öyrənmək üçün işləyir. `Səsi təmizlə` vokoderin metal rezonansını
-hazır kliplə süzür, ffmpeg tələb etmir və hansı tezlikləri sildiyini bildirir.
+də CLI-ni öyrənmək üçün işləyir. `Səsi təmizlə` hazır klipdəki qalıq rezonansı
+süzür, ffmpeg tələb etmir və hansı tezlikləri sildiyini bildirir.
 
 ## Hər iki səs
 
@@ -250,9 +264,9 @@ azərbaycanca sözlərə çevirərdi, ona görə o da, vurğu qatı da orada sö
 interfeysdə passivləşir. İngilis mətni eSpeak-in `en-us` səsi ilə fonemlərə
 çevrilib runtime-a verilir.
 
-**Bu layihənin öz modeli ingiliscə danışmır.** O, 200.000 addım boyu tək bir
-azərbaycanca səslə uyğunlaşdırılıb; ingilis mətni ona verilsə, çıxan şey həmin
-səsin heç vaxt eşitmədiyi fonemləri oxumasıdır. İngilis çəkilərinin haradan
+**Bu layihənin öz modeli ingiliscə danışmır.** O, yalnız tək bir azərbaycanca
+səs üzərində öyrədilib; ingilis mətni ona verilsə, çıxan şey həmin səsin heç
+vaxt eşitmədiyi fonemləri oxumasıdır. İngilis çəkilərinin haradan
 gəldiyi və necə istinad ediləcəyi `model-en/README.md`-dədir.
 
 ## Mətn qatı nə edir
@@ -298,7 +312,7 @@ filtrdir, zəmanət deyil: hərf-hərf ayrı yazılmış söz (`s i k`) keçir.
 ## Kod üzərində işləmək
 
 ```bash
-python -m pytest        # 443 test, üç saniyə, modeli heç vaxt yükləmir
+python -m pytest        # 465 test, üç saniyə, modeli heç vaxt yükləmir
 ```
 
 <details>
@@ -315,10 +329,11 @@ python -m pytest        # 443 test, üç saniyə, modeli heç vaxt yükləmir
 Brauzer portunun öz testləri var, Node ilə işləyir:
 
 ```bash
-for f in web/tests/*.mjs; do node "$f" || break; done   # 16 dəstin hamısı
+for f in web/tests/*.mjs; do node "$f" || break; done   # 28 dəstin hamısı
 node web/tests/test_num_az.mjs      # num2words ilə 24 022 yoxlama
-node web/tests/test_az_text.mjs     # normalize_az ilə 655 nümunə
-node web/tests/test_az_chunk.mjs    # chunk_text ilə eyni 655 nümunə
+node web/tests/test_az_text.mjs     # normalize_az ilə 669 nümunə
+node web/tests/test_az_chunk.mjs    # chunk_text ilə eyni 669 nümunə
+node web/tests/test_stress.mjs      # model/frontend_hook.py ilə 1 871 hissə
 node web/tests/test_progress.mjs    # irəliləyiş zolağı və keşlənən model yükləməsi
 ```
 
@@ -354,7 +369,7 @@ tools/            seed_sweep, audio_postprocess — keyfiyyət alətləri;
 training/         Modelin necə hazırlandığı (baza model yüklənir)
 packaging/        GitHub / Hugging Face / Kaggle yayımı
 samples/          Nümunə səslər
-tests/            443 test
+tests/            465 test
 out/              Yaratdığınız WAV faylları
 ```
 
@@ -371,7 +386,7 @@ gətirir (çəkilər, fonem frontend-i, VITS runtime-ı). Bizim bütün kodumuz
 # Bir cümləni 10 fərqli seed ilə səsləndir, ən yaxşısını seç
 python tools/seed_sweep.py --seeds 10 "Xoş gəlmisiniz."
 
-# Vokoderin metal rezonansını tap, sonra ffmpeg ilə təmizlə
+# Qalıq rezonansı tap, sonra ffmpeg ilə təmizlə
 python tools/audio_postprocess.py analyze samples
 python tools/audio_postprocess.py clean out --lowpass 11000
 ```
@@ -391,28 +406,43 @@ eyni qaydaları `.cursor/rules/` qovluğundan götürür. Yayım addımları:
 | | |
 | --- | --- |
 | Baza | [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2) |
+| Checkpoint | v2.1, ikinci Azərbaycan checkpoint-i: dekoderi cilalayan mərhələnin 30 000-ci addımı |
 | Parametr | 9.36M |
 | Səs | 24 kHz mono, tək danışan |
-| Təlim | 200.000 addım = 1.343 epoxa, 25.07 saat azərbaycanca audio |
+| Təlim datası | müəllim TTS-dən distillə edilmiş 23 088 klip, birinci checkpoint-in çəkilərindən başlayaraq |
+| Fonemlər | eSpeak NG, ardınca vurğu frontend-i (`model/frontend_hook.py`) |
 | Sürət | Prosessorda 2–4x real vaxt |
 
-Ölçmələr, dataset haqqında dəlillər və məhdudiyyətlər tam şəkildə
-[docs/MODEL.md](docs/MODEL.md) faylındadır. [`training/`](training/README.md)
-bütün prosesi saxlayır: rəsmi toolkit-ə tətbiq edilmiş yamaq, preset-lər,
-nəticələr və loss tarixçəsi.
+Modelin heç vaxt öyrənmədiyi 471 yoxlama cümləsi üzərində ölçülüb. «Müəllim»
+orijinal səs yazısıdır.
 
-Onun bir hissəsini burada təkrarlamağa dəyər. Toolkit-in `maximum_path`
-funksiyası hər addımın 8.7 saniyəsini yeyən təmiz Python dövrü idi; vektorlaşmış
-torch versiyası bunu **1.395 saniyəyə** endirdi. İyirmi gün 3.2 günə, ~$213
-~$34-a düşdü, və 25 test nəticənin orijinalla **bit-bit eyni** olduğunu sübut
-edir.
+| | Müəllim | v1 | v2.1, variation 0.3 (standart) |
+| --- | ---: | ---: | ---: |
+| Whisper söz xətası, rəqəmsiz 416 cümlə | 2.07% | 4.84% | ~2.65% (0.333-də) |
+| Söz xətası, 1–5 sözlük cümlələr | 0.8% | 9.2% | 3.2% |
+| 2–4 kHz harmonik aydınlıq (buzz göstəricisi, çox olması yaxşıdır) | 10.6 | 6.4 | 8.9 |
+| Ton diapazonu (semiton) | 16.8 | 13.0 | 15.0 |
+| «Hə/yox» sualının sonu (semiton) | +2.9 | -3.0 | -1.8 |
+
+Ölçmələr, data və məhdudiyyətlər tam şəkildə [docs/MODEL.md](docs/MODEL.md)
+faylındadır. [`training/`](training/README.md) hər checkpoint-in necə
+hazırlandığını saxlayır; ikinci mərhələ, test dəsti ilə birlikdə,
+[training/v2/README.md](training/v2/README.md) faylındadır.
+
+Birinci mərhələnin bir hissəsini burada təkrarlamağa dəyər. Toolkit-in
+`maximum_path` funksiyası hər addımın 8.7 saniyəsini yeyən təmiz Python dövrü
+idi; vektorlaşmış torch versiyası bunu **1.395 saniyəyə** endirdi. İyirmi gün
+3.2 günə, ~$213 ~$34-a düşdü, və 25 test nəticənin orijinalla **bit-bit eyni**
+olduğunu sübut edir. İkinci mərhələnin toolkit yamağında da bu vektorlaşmış
+alignment var.
 
 ## Məhdudiyyətlər
 
 - **Bir səs.** Səs klonlama və çoxdanışanlı dəstək yoxdur.
 - **Emosiya idarəsi yoxdur.** Oxunuş sakit və neytraldır.
-- 9.36M parametrdə nitq aydın və anlaşıqlıdır, amma tam təbii deyil; vokoder
-  bəzən metal rezonans buraxır.
+- 9.36M parametrdə nitq aydın və anlaşıqlıdır, amma tam təbii deyil: «hə/yox»
+  sualları enən tonla bitir, cümlənin kənarlarında bəzi samitlər qarışır,
+  2–4 kHz aralığı isə müəllimdəkindən az aydındır.
 - Nadir adlar, əcnəbi sözlər və qeyri-adi yazılışlar fonem frontend-inin
   mərhəmətindədir.
 - Normallaşdırma `say.py` və `AzTTS` daxilində avtomatik işləyir. `model/`
@@ -449,13 +479,14 @@ məhsul mətni öz aləti ilə fonemlərə çevirib modelə verə bilər.
 
 ### Səslər haradan gəlir
 
-**Azərbaycanca.**
+**Azərbaycanca.** Birinci checkpoint
 [`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset)
 üzərində öyrədilib. Repozitoriyada lisenziya faylı yoxdur; Hugging Face icma
 tabında birbaşa soruşulanda müəllif sərbəst istifadəyə icazə verdiyini bildirib
-və ad çəkilməsini xahiş edib. **Şərt budur: istinad.** Audio çox güman ki
-sintetikdir, şərtləri bilinməyən başqa bir TTS sistemi tərəfindən hazırlanıb —
-[docs/MODEL.md](docs/MODEL.md).
+və ad çəkilməsini xahiş edib. **Şərt budur: istinad.** O audio çox güman ki
+sintetikdir, şərtləri bilinməyən başqa bir TTS sistemi tərəfindən hazırlanıb.
+v2.1 birinci checkpoint-in çəkilərindən başlayıb və müəllim TTS-dən distillə
+edilmiş səs yazıları üzərində əlavə öyrədilib — [docs/MODEL.md](docs/MODEL.md).
 
 **İngiliscə.** `owensong/Inflect-Micro-v2`, dəyişdirilmədən yenidən yayımlanır.
 Model kartından kommersiya qərarı üçün vacib üç fakt:
@@ -486,14 +517,15 @@ Bu model iki nəfər öz işini açıq paylaşdığı üçün mövcuddur.
 
 **[`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)**
 — Owen Song, Apache-2.0. Buradakı hər çəki onunkindən başlayıb: 410 tensordan
-409-u bit-bit köçürülüb və azərbaycanca fonemlər onsuz da onun simvol dəstində
-var idi. O checkpoint olmasaydı, bu iş günlərlə yox, aylarla təlim tələb
-edərdi.
+409-u birinci checkpoint-ə bit-bit köçürülüb və azərbaycanca fonemlər onsuz da
+onun simvol dəstində var idi. O checkpoint olmasaydı, bu iş günlərlə yox,
+aylarla təlim tələb edərdi.
 
 **[`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset)**
-— `ughurabbasov`. 25.07 saatlıq tək danışanlı azərbaycanca audio, müəllifin
-icazəsi ilə, istinad şərti ilə istifadə olunub. **Bu modelin üzərində nəsə
-qursanız, datasetə də istinad edin.**
+— `ughurabbasov`. Birinci checkpoint-in öyrədildiyi tək danışanlı azərbaycanca
+audio; v2.1 də həmin checkpoint-dən başlayır. Müəllifin icazəsi ilə, istinad
+şərti ilə istifadə olunub. **Bu modelin üzərində nəsə qursanız, datasetə də
+istinad edin.**
 
 Layihəyə və hər iki mənbəyə istinad edin — bax [CITATION.cff](CITATION.cff):
 
@@ -504,7 +536,8 @@ Layihəyə və hər iki mənbəyə istinad edin — bax [CITATION.cff](CITATION.
   year   = {2026},
   url    = {https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan},
   note   = {Adapted from owensong/Inflect-Micro-v2 (Apache-2.0);
-            trained on ughurabbasov/azerbaijani-tts-dataset,
-            used with the author's permission}
+            first trained on ughurabbasov/azerbaijani-tts-dataset,
+            used with the author's permission; v2.1 continued on
+            audio distilled from a teacher TTS}
 }
 ```

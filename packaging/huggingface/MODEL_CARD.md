@@ -28,9 +28,11 @@ A text-to-speech model that speaks Azerbaijani **entirely offline**: no server,
 no API key, no network at inference. 9.36M parameters, 24 kHz mono, single
 speaker, **2-4x faster than real time on a laptop CPU**.
 
-A fine-tune of [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)
-by Owen Song — 200,000 steps on 25.07 hours of Azerbaijani speech, 409 of its
-410 tensors carried over bit-identically.
+It started as a fine-tune of [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)
+by Owen Song. This is the second Azerbaijani checkpoint, **v2.1**: it continues
+from the first on 23,088 clips distilled from a teacher TTS, reads stress from a
+stress frontend on top of eSpeak NG, and has a decoder polished with stronger
+discriminators.
 
 This checkpoint is the Azerbaijani voice of **Avaz**, an open-source
 text-to-speech project that runs on the device itself — in the browser, on a
@@ -85,8 +87,8 @@ directly means calling `normalize_az` yourself.
 
 ### Without PyTorch
 
-`onnx/` holds the same model as two graphs, verified against the PyTorch module
-at a waveform correlation of 0.9999999999916:
+`onnx/` holds the same model as two graphs (the v2.1 ONNX export matched
+PyTorch to a parity error of 7e-9):
 
 | Graph | Inputs | Outputs |
 | --- | --- | --- |
@@ -97,7 +99,7 @@ This is what the browser playground runs, through ONNX Runtime Web. On the CPU
 it swaps `decode.onnx` for an int8 copy, built by `tools/quantize_decoder.py` in
 the GitHub repository. `web/` in
 the GitHub repository is a working implementation, including the Azerbaijani
-text layer ported to JavaScript.
+text layer and the stress frontend ported to JavaScript.
 
 ## Model details
 
@@ -105,25 +107,50 @@ text layer ported to JavaScript.
 | --- | --- |
 | Architecture | VITS (compact), 9,356,513 parameters |
 | Audio | 24 kHz, mono, single speaker |
-| Frontend | eSpeak NG (`az`) through `phonemizer`, with stress |
-| Training | 200,000 steps = 1,343 epochs, ~3.7 days on one A40, ~$39 |
-| Data | 25.07 hours, 9,674 clips |
-| Speed | 2-4x real time on CPU; ~0.3 s to load |
+| Frontend | eSpeak NG (`az`) through `phonemizer`, then the stress frontend (`frontend_hook.py`) |
+| Starting point | the first Azerbaijani checkpoint, all 410 tensors |
+| Training | main run to step 20k, then a decoder polish run; step 30,000 exported |
+| Data | 23,088 training clips distilled from a teacher TTS (471 more held out) |
+| Speed | 2-4x real time on CPU; ONNX real-time factor 0.25 on one thread |
 
 The text layer ahead of the model does three things the checkpoint cannot:
 bleeps obscenities, rewrites digits, Roman numerals, dates, units and
 abbreviations into spoken words, and cuts sentences into ~15-word chunks,
 because this model's intonation flattens towards the end of a long sentence.
+The stress frontend inside the package moves the stress marks eSpeak NG puts on
+nearly every word, with rules checked by a native speaker.
+
+## Measurements
+
+On 471 validation sentences the model never trained on. "Teacher" is the
+original recording; 0.3 is the default `variation`.
+
+| Measure | Teacher | v1 | v2.1, variation 0.667 | v2.1, variation 0.3 |
+| --- | ---: | ---: | ---: | ---: |
+| Whisper word error, 416 number-free sentences | 2.07% | 4.84% | 3.65% | ~2.65% (0.333) |
+| Word error, 1-5 word sentences | 0.8% | 9.2% | 5.7% | 3.2% |
+| SQUIM PESQ | 4.20 | 3.47 | 4.18 | -- |
+| Harmonic clarity 2-4 kHz (buzz score, higher is better) | 10.6 | 6.4 | 8.8 | 8.9 |
+| Fixed ring, share of frames | 13% | 20% (6 kHz) | 15% | 15% |
+| Pitch range (semitones) | 16.8 | 13.0 | 15.3 | 15.0 |
+| Yes/no question ending (semitones) | +2.9 | -3.0 | -1.2 | -1.8 |
 
 ## Limitations
 
 - **One voice.** No voice cloning, no multi-speaker support, no emotion control.
 - At 9.36M parameters the speech is clear and intelligible but not fully
-  natural; the vocoder sometimes leaves a metallic resonance.
-- Rare names, foreign words and unusual spellings are at the mercy of the
-  phoneme frontend.
-- The training audio is most likely synthetic, so the quality ceiling is the
-  system that produced it. The evidence is in `docs/MODEL.md` in the repository.
+  natural, and intonation flattens over long sentences.
+- Yes/no questions end with falling pitch, where the teacher's rise. Only 677
+  training clips are such questions, and the model has no explicit pitch
+  predictor.
+- m->n, b->d and q->k confusions remain, most often on a sentence's first and
+  last word.
+- Corrected stress is carried by length, not yet by pitch.
+- The fixed 6 kHz ring of the first checkpoint is gone, but harmonic clarity at
+  2-4 kHz is still below the teacher's.
+- Rare names and unusual spellings are at the mercy of the phoneme frontend.
+- The training audio is synthetic, distilled from a teacher TTS, so the quality
+  ceiling is the teacher. `docs/MODEL.md` in the repository has the details.
 
 ## Licence and commercial use
 
@@ -141,13 +168,14 @@ The checkpoint itself does not need eSpeak: `config.json` declares
 `accepts_prephonemized_input: true`, so phonemes can come from any frontend.
 `THIRD_PARTY_NOTICES.md` in the GitHub repository sets out both routes.
 
-**Training data.** [`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset)
-declares no licence file; asked in its Hugging Face community tab, the author
+**Training data.** The first Azerbaijani checkpoint, which v2.1 starts from,
+was trained on [`ughurabbasov/azerbaijani-tts-dataset`](https://huggingface.co/datasets/ughurabbasov/azerbaijani-tts-dataset).
+It declares no licence file; asked in its Hugging Face community tab, the author
 confirmed free use and asked to be credited. **Attribution is the condition of
 use** — if you build on this model, credit the dataset too.
 
 **Files.** The PyTorch export sits at the root (`model.pth`, `config.json`, the
-frontend and the VITS runtime); `checksums.sha256` verifies 24 of them.
+frontend and the VITS runtime); `checksums.sha256` verifies 25 of them.
 `NOTICES.md` is this project's full third-party notice, while `LICENSE` and
 `THIRD_PARTY_NOTICES.md` are the upstream package's own, unchanged.
 
@@ -160,7 +188,8 @@ content. Disclose synthetic speech where the context could otherwise mislead.
 
 Built on two openly published works: **`owensong/Inflect-Micro-v2`** by Owen
 Song (the checkpoint) and **`ughurabbasov/azerbaijani-tts-dataset`** by
-`ughurabbasov` (the audio). Please cite all three:
+`ughurabbasov` (the audio the first checkpoint was trained on). Please cite all
+three:
 
 ```bibtex
 @software{azerbaijani_tts,
@@ -169,7 +198,8 @@ Song (the checkpoint) and **`ughurabbasov/azerbaijani-tts-dataset`** by
   year   = {2026},
   url    = {https://github.com/HuseynliIlqar/Inflect_Micro_v2_Azerbaijan},
   note   = {Adapted from owensong/Inflect-Micro-v2 (Apache-2.0);
-            trained on ughurabbasov/azerbaijani-tts-dataset,
-            used with the author's permission}
+            first trained on ughurabbasov/azerbaijani-tts-dataset,
+            used with the author's permission; v2.1 continued on
+            audio distilled from a teacher TTS}
 }
 ```

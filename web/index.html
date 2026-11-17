@@ -225,7 +225,7 @@
           <span id="parameters-heading" class="visually-hidden" data-l10n="parameters">Parametrlər</span>
           <div class="chips" role="group" aria-labelledby="parameters-heading">
             <button type="button" class="chip" data-panel="speed" aria-expanded="false" aria-controls="panel-speed"><span data-l10n="speed_label">Sürət</span><span id="speed-value" class="chip-value">1.00×</span></button>
-            <button type="button" class="chip" data-panel="variation" aria-expanded="false" aria-controls="panel-variation"><span data-l10n="chip_variation">Canlılıq</span><span id="variation-value" class="chip-value">0.67</span></button>
+            <button type="button" class="chip" data-panel="variation" aria-expanded="false" aria-controls="panel-variation"><span data-l10n="chip_variation">Canlılıq</span><span id="variation-value" class="chip-value">0.30</span></button>
             <button type="button" class="chip" data-panel="seed" aria-expanded="false" aria-controls="panel-seed"><span data-l10n="seed_label">Seed</span><span id="seed-value" class="chip-value">7</span></button>
             <button type="button" class="chip" data-panel="more" aria-expanded="false" aria-controls="panel-more"><span data-l10n="chip_more">Əlavə</span></button>
           </div>
@@ -241,7 +241,7 @@
         </div>
         <div id="panel-variation" class="tune" hidden>
           <span aria-hidden="true" data-l10n="variation_steady">Sabit</span>
-          <input id="variation" type="range" min="0" max="1" step="0.001" value="0.667" data-l10n-aria="chip_variation" aria-label="Canlılıq" />
+          <input id="variation" type="range" min="0" max="1" step="0.001" value="0.3" data-l10n-aria="chip_variation" aria-label="Canlılıq" />
           <span aria-hidden="true" data-l10n="variation_lively">Canlı</span>
         </div>
         <div id="panel-seed" class="tune tune-wrap" hidden>
@@ -331,9 +331,10 @@
         <p data-l10n="mission_text">Hədəfə hələ çatmamışıq. İndiki 9.36M parametrli model kiçik və sürətlidir, amma intonasiyası hələ yeknəsəqdir, telefon brauzeri isə onu yavaş işlədir. Zəif yerlərimizi açıq yazırıq və mütəmadi düzəldirik:</p>
         <ul class="weak-list">
           <li data-l10n="weak_1">İntonasiya uzun cümlədə düzləşir — ona görə mətni təxminən 15 sözlük hissələrə bölürük.</li>
-          <li data-l10n="weak_2">eSpeak sözlərin 92%-ni vurğulayır və oxunuş yeknəsəq çıxır; öz vurğu qatımız hələ sınaqdadır.</li>
+          <li data-l10n="weak_2">Cavabı «hə» və ya «yox» olan suallar hələ yüksələn yox, enən tonla bitir.</li>
           <li data-l10n="weak_3">Telefon brauzerində model adətən prosessorda işləyir: bir cümlə bir dəqiqəyə qədər çəkə bilər.</li>
-          <li data-l10n="weak_4">Vokoder bəzi cümlələrdə metal tembr qoyur.</li>
+          <li data-l10n="weak_4">Bəzi samitlər qarışır (m→n, b→d, q→k), ən çox cümlənin ilk və son sözündə.</li>
+          <li data-l10n="weak_5">Səs hələ öyrəndiyi səs yazıları qədər aydın deyil, xüsusən 2–4 kHz aralığında.</li>
         </ul>
         <a class="more-link" href="./about.html" data-about-link><span data-l10n="mission_more">Layihə haqqında ətraflı</span> <span aria-hidden="true">→</span></a>
       </section>
@@ -345,7 +346,7 @@
         <details><summary><span data-l10n="faq_q3">Pulsuzdurmu? Mətnim serverə göndərilir?</span></summary><p data-l10n="faq_a3">Pulsuzdur və qeydiyyat tələb etmir; bir dəfəyə ən çoxu 500 simvol səsləndirilir. Mətn və səs cihazınızdan çıxmır: model brauzerdə işləyir və ilk yükləmədən sonra internetsiz də işləyir.</p></details>
         <details><summary><span data-l10n="faq_q4">Telefonda işləyir?</span></summary><p data-l10n="faq_a4">İşləyir, amma telefon brauzerində model adətən prosessorda işlədiyi üçün yavaşdır: bir cümlə bir dəqiqəyə qədər çəkə bilər. Ən sürətlisi kompüterdə Chrome və ya Edge-dir. Telefonda sürət və intonasiya bizim əsas işimizdir.</p></details>
         <details><summary><span data-l10n="faq_q5">Rəqəmləri və tarixləri düzgün oxuyur?</span></summary><p data-l10n="faq_a5">Azərbaycanca mətndə bəli: «25%» — «iyirmi beş faiz», «01/09/1939» — «bir sentyabr min doqquz yüz otuz doqquzuncu il», «II» — «İkinci». Model nəyi oxuyacağını yazarkən mətnin altında görürsünüz.</p></details>
-        <details><summary><span data-l10n="faq_q6">Kommersiya məqsədilə istifadə etmək olar?</span></summary><p data-l10n="faq_a6">Kod və model çəkiləri Apache-2.0-dır, işlətmək məhdudlaşdırılmır. Yeganə şərt fonemləşdiricidən gəlir: eSpeak NG və phonemizer GPL-3.0-or-later-dir, onlarla birləşmiş məhsulu yaymaq GPL-3.0 öhdəlikləri gətirir. Çıxış yolu: model öncədən fonemləşdirilmiş mətni qəbul edir (accepts_prephonemized_input). Azərbaycanca təlim datası müəllifinin icazəsi ilə, adının çəkilməsi şərti ilə istifadə olunub. İngilis səsi sintetikdir və Apache-2.0-dır, amma açıq-çəkidir, açıq-data deyil. Bu, hüquqi məsləhət deyil.</p></details>
+        <details><summary><span data-l10n="faq_q6">Kommersiya məqsədilə istifadə etmək olar?</span></summary><p data-l10n="faq_a6">Kod və model çəkiləri Apache-2.0-dır, işlətmək məhdudlaşdırılmır. Yeganə şərt fonemləşdiricidən gəlir: eSpeak NG və phonemizer GPL-3.0-or-later-dir, onlarla birləşmiş məhsulu yaymaq GPL-3.0 öhdəlikləri gətirir. Çıxış yolu: model öncədən fonemləşdirilmiş mətni qəbul edir (accepts_prephonemized_input). Modelin ilk öyrədildiyi Azərbaycan dataseti müəllifinin icazəsi ilə, adının çəkilməsi şərti ilə istifadə olunub. İngilis səsi sintetikdir və Apache-2.0-dır, amma açıq-çəkidir, açıq-data deyil. Bu, hüquqi məsləhət deyil.</p></details>
       </section>
     </main>
 

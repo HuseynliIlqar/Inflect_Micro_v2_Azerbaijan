@@ -45,11 +45,11 @@
         { "@type": "Question", "name": "Telefonda işləyirmi?",
           "acceptedAnswer": { "@type": "Answer", "text": "İşləyir, amma yavaş. Telefon brauzerində model adətən prosessorda işləyir (WebAssembly, int8 dekoderi ilə) və bir cümlə bir dəqiqəyə qədər çəkə bilər. Ən sürətlisi kompüterdə Chrome və ya Edge-dir: orada model WebGPU ilə qrafik prosessorda, real vaxtdan sürətli işləyir. Telefonda sürət və təbii intonasiya əsas işimizdir." } },
         { "@type": "Question", "name": "Kommersiya məqsədilə istifadə etmək olarmı?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Bəli: kod və model çəkiləri Apache-2.0 lisenziyalıdır, işlətmək məhdudlaşdırılmır. Yalnız bir şərt var və o, modeldən yox, fonemləşdiricidən gəlir: eSpeak NG və Python tərəfdəki phonemizer GPL-3.0-or-later lisenziyalıdır. Onlarla birləşmiş məhsulu yaymaq — masaüstü tətbiq, konteyner, müştəriyə verilən binar — GPL-3.0 öhdəlikləri gətirir. Çıxış yolu budur: model öncədən fonemləşdirilmiş mətni qəbul edir (accepts_prephonemized_input), ona görə məhsul öz fonemləşdiricisini işlədə bilər. Azərbaycanca təlim datası müəllifinin icazəsi ilə, adının çəkilməsi şərti ilə istifadə olunub. İngilis səsi sintetikdir və Apache-2.0-dır, lakin açıq-çəkidir, açıq-data deyil. Real bir insanı təqlid etmək və aldadıcı məzmun hazırlamaq qadağandır. Bu, hüquqi məsləhət deyil." } },
+          "acceptedAnswer": { "@type": "Answer", "text": "Bəli: kod və model çəkiləri Apache-2.0 lisenziyalıdır, işlətmək məhdudlaşdırılmır. Yalnız bir şərt var və o, modeldən yox, fonemləşdiricidən gəlir: eSpeak NG və Python tərəfdəki phonemizer GPL-3.0-or-later lisenziyalıdır. Onlarla birləşmiş məhsulu yaymaq — masaüstü tətbiq, konteyner, müştəriyə verilən binar — GPL-3.0 öhdəlikləri gətirir. Çıxış yolu budur: model öncədən fonemləşdirilmiş mətni qəbul edir (accepts_prephonemized_input), ona görə məhsul öz fonemləşdiricisini işlədə bilər. Modelin ilk öyrədildiyi Azərbaycan dataseti müəllifinin icazəsi ilə, adının çəkilməsi şərti ilə istifadə olunub. İngilis səsi sintetikdir və Apache-2.0-dır, lakin açıq-çəkidir, açıq-data deyil. Real bir insanı təqlid etmək və aldadıcı məzmun hazırlamaq qadağandır. Bu, hüquqi məsləhət deyil." } },
         { "@type": "Question", "name": "Modeli öz kompüterimdə necə işlədə bilərəm?",
           "acceptedAnswer": { "@type": "Answer", "text": "Kod GitHub-dadır: repozitoriyanı klonlayın, pip install -r requirements.txt edin və python say.py \"Salam.\" işə salın. Model adi noutbuk prosessorunda real vaxtdan 2-4 dəfə sürətli işləyir və internet tələb etmir. Çəkilər Hugging Face-də də var, PyTorch və ONNX formatında." } },
         { "@type": "Question", "name": "Model necə hazırlanıb?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Azərbaycan modeli, Inflect-Micro-v2 Azerbaijani, Owen Song-un ingilis dilli Inflect-Micro-v2 modelindən (Apache-2.0) uyğunlaşdırılıb: 25.07 saatlıq Azərbaycan nitqi üzərində 200 000 addım öyrədilib. Təlim datası ughurabbasov/azerbaijani-tts-dataset-dir; müəllifi istifadəyə icazə verib və adının çəkilməsini xahiş edib. Səhifədəki ingilis səsi isə baza modelin özüdür: Azərbaycan səsinin haradan başladığını eşitmək üçün." } }
+          "acceptedAnswer": { "@type": "Answer", "text": "Azərbaycan modeli, Inflect-Micro-v2 Azerbaijani, Owen Song-un ingilis dilli Inflect-Micro-v2 modelindən (Apache-2.0) başlayıb. İlk versiya ughurabbasov/azerbaijani-tts-dataset üzərində öyrədilib; datasetin müəllifi istifadəyə icazə verib və adının çəkilməsini xahiş edib. İndiki versiya, v2.1, birincinin davamıdır: müəllim TTS-dən distillə edilmiş səs yazıları üzərində öyrədilib, eSpeak NG-nin üstündə vurğu frontend-i işləyir və dekoderi cilalanıb. Səhifədəki ingilis səsi isə baza modelin özüdür: Azərbaycan səsinin haradan başladığını eşitmək üçün." } }
       ] }
     </script>
   </head>
@@ -126,15 +126,24 @@
             problemi yumşaldır, amma aradan qaldırmır.
           </li>
           <li>
-            <strong>Oxunuş monotondur.</strong> Hərfləri fonemlərə çevirən eSpeak NG
-            sözlərin 92.2 faizinə vurğu qoyur, ona görə az söz önə çıxır. Komanda sətrində
-            eksperimental vurğu qatı var (<code translate="no">--prosody</code>); hər
-            mətni yaxşılaşdırmadığı üçün istəyə bağlı qalır.
+            <strong>«Hə/yox» sualları enən tonla bitir.</strong> Sualın sonunda ton
+            qalxmalı olduğu yerdə səs hələ də enir. Təlim kliplərindən cəmi 677-si belə
+            sualdır, modeldə isə hələ ayrıca ton hissəsi yoxdur.
           </li>
           <li>
-            <strong>Bəzi cümlələrdə metal tembr eşidilir.</strong> Bu, vokoderdən —
-            modelin səsi yaradan hissəsindən gəlir. Repozitoriyadakı təmizləmə aləti onu
-            saxlanılmış səsdə azaldır; səsləndirmə səhifəsi bu aləti işlətmir.
+            <strong>Vurğu hələ tonla yox, uzunluqla verilir.</strong> Hərfləri fonemlərə
+            çevirən eSpeak NG demək olar ki, hər sözə vurğu qoyur. İndi vurğu frontend-i
+            bu işarələri dil daşıyıcısının yoxladığı qaydalarla düzəldir, amma model
+            vurğulu hecanı yüksəltmək əvəzinə uzadır.
+          </li>
+          <li>
+            <strong>Bəzi samitlər qarışır.</strong> m əvəzinə n, b əvəzinə d, q əvəzinə
+            k eşidilə bilər, ən çox cümlənin ilk və son sözündə.
+          </li>
+          <li>
+            <strong>Səs hələ mənbəyi qədər aydın deyil.</strong> Birinci versiyanın
+            sabit 6&nbsp;kHz cingiltisi aradan qalxıb, amma 2–4&nbsp;kHz aralığında
+            harmoniklər modelin öyrəndiyi səs yazılarındakından zəifdir.
           </li>
           <li>
             <strong>Telefon brauzerində yavaşdır.</strong> Orada model adətən
@@ -146,9 +155,9 @@
             <strong>Bir səs.</strong> Emosiya idarəsi və səs klonlama yoxdur.
           </li>
           <li>
-            <strong>Təlim səs yazıları, çox güman ki, sintetikdir.</strong> Onları yəqin
-            ki, başqa bir TTS sistemi yaradıb, ona görə bu səs o sistemdən yaxşı səslənə
-            bilməz. Daha yaxşı səs üçün daha yaxşı səs yazıları lazımdır.
+            <strong>Təlim səs yazıları sintetikdir.</strong> v2.1 müəllim TTS-in
+            hazırladığı səs yazılarından öyrənib, ona görə bu səs o müəllimdən yaxşı
+            səslənə bilməz. Daha yaxşı səs üçün daha yaxşı səs yazıları lazımdır.
           </li>
         </ul>
         <p>
@@ -161,8 +170,8 @@
       <section aria-labelledby="how">
         <h2 id="how">Necə işləyir</h2>
         <p>
-          Model 9.36 milyon parametrli VITS şəbəkəsidir və 24&nbsp;kHz keyfiyyətində səs
-          verir. Brauzerdə ONNX Runtime Web ilə işləyir: WebGPU olan brauzerdə real
+          Model 9.36 milyon parametrli VITS şəbəkəsidir (ikinci versiya, v2.1) və
+          24&nbsp;kHz keyfiyyətində səs verir. Brauzerdə ONNX Runtime Web ilə işləyir: WebGPU olan brauzerdə real
           vaxtdan sürətli, olmayanda isə prosessorda, daha yavaş. İlk açılışda
           təxminən 37&nbsp;MB yüklənir, sonra brauzer onu yadda saxlayır.
         </p>
@@ -171,8 +180,9 @@
           «İkinci Dünya müharibəsi», «25%» — «iyirmi beş faiz», «01/09/1939» —
           «bir sentyabr min doqquz yüz otuz doqquzuncu il», «19,99 AZN» — «on doqquz
           manat doxsan doqquz qəpik». Uzun mətn təxminən 15 sözlük hissələrə bölünür,
-          çünki uzun cümlədə intonasiya düzləşir. Hərfləri fonemlərə eSpeak NG çevirir;
-          onun WebAssembly versiyası da brauzerdə işləyir.
+          çünki uzun cümlədə intonasiya düzləşir. Hərfləri fonemlərə eSpeak NG çevirir,
+          vurğu frontend-i isə vurğunun yerini düzəldir; hər ikisi brauzerdə də işləyir,
+          eSpeak NG WebAssembly versiyası ilə.
         </p>
       </section>
 
@@ -230,8 +240,9 @@
           konteyner, müştəriyə verilən binar — GPL-3.0 öhdəlikləri gətirir. Çıxış yolu
           budur: model öncədən fonemləşdirilmiş mətni qəbul edir
           (<code translate="no">accepts_prephonemized_input</code>), ona görə məhsul öz
-          fonemləşdiricisini işlədə bilər. Azərbaycanca təlim datası müəllifinin
-          icazəsi ilə, adının çəkilməsi şərti ilə istifadə olunub. İngilis səsi sintetikdir və
+          fonemləşdiricisini işlədə bilər. Modelin ilk öyrədildiyi Azərbaycan dataseti
+          müəllifinin icazəsi ilə, adının çəkilməsi şərti ilə istifadə olunub. İngilis
+          səsi sintetikdir və
           Apache-2.0-dır, lakin açıq-çəkidir, açıq-data deyil. Real bir insanı təqlid
           etmək və aldadıcı məzmun hazırlamaq qadağandır. Bu, hüquqi məsləhət deyil.
         </p>
@@ -247,11 +258,13 @@
         <h3>Model necə hazırlanıb?</h3>
         <p>
           Azərbaycan modeli, Inflect-Micro-v2 Azerbaijani, Owen Song-un ingilis dilli
-          Inflect-Micro-v2 modelindən (Apache-2.0) uyğunlaşdırılıb: 25.07 saatlıq
-          Azərbaycan nitqi üzərində 200 000 addım öyrədilib. Təlim datası
-          ughurabbasov/azerbaijani-tts-dataset-dir; müəllifi istifadəyə icazə verib və
-          adının çəkilməsini xahiş edib. Səhifədəki ingilis səsi isə baza modelin
-          özüdür: Azərbaycan səsinin haradan başladığını eşitmək üçün.
+          Inflect-Micro-v2 modelindən (Apache-2.0) başlayıb. İlk versiya
+          ughurabbasov/azerbaijani-tts-dataset üzərində öyrədilib; datasetin müəllifi
+          istifadəyə icazə verib və adının çəkilməsini xahiş edib. İndiki versiya, v2.1,
+          birincinin davamıdır: müəllim TTS-dən distillə edilmiş səs yazıları üzərində
+          öyrədilib, eSpeak NG-nin üstündə vurğu frontend-i işləyir və dekoderi
+          cilalanıb. Səhifədəki ingilis səsi isə baza modelin özüdür: Azərbaycan
+          səsinin haradan başladığını eşitmək üçün.
         </p>
       </section>
 

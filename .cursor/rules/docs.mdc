@@ -16,8 +16,8 @@ are allowed to differ in wording, never in facts, commands, flags or structure.
 ## Voice
 
 Plain, direct, technical. State limitations honestly — the existing docs already
-say the model is small, the vocoder rings, and the training audio is probably
-synthetic. Keep that tone.
+say the model is small, questions end falling, and the training audio is
+synthetic (distilled from a teacher TTS). Keep that tone.
 
 Do not add marketing language, emoji, or enthusiasm the original did not have.
 Do not add claims that were not measured. Lines wrap at about 80 characters;
@@ -37,15 +37,18 @@ These appear in `README.md`, `README.az.md`, `docs/MODEL.md`,
 change all:
 
 - 9.36M parameters (9,356,513), 24 kHz mono, single speaker
-- 200,000 steps = 1,343 epochs, 25.07 hours, ~3.7 days on an A40, ~$39
+- The checkpoint is v2.1: it continues from v1 on 23,088 clips distilled from a
+  teacher TTS, with the stress frontend, exported at polish step 30,000. Never
+  name the teacher. v1 (200,000 steps on 25.07 hours) is history only.
 - 2-4x real time on CPU
 - Base model `owensong/Inflect-Micro-v2`, Apache-2.0. Its weights are
   redistributed unmodified in `model-en/`, so the interface and the CLI can
   speak English too (`--voice en`). It is a synthetic voice by another author;
   the release is open-weight, not open-data. Do not describe it as "our" second
   voice, and do not claim this project's model speaks English -- it does not.
-- Dataset `ughurabbasov/azerbaijani-tts-dataset`: no licence file declared; the
-  author confirmed free use with attribution requested in the HF community tab.
+- Dataset `ughurabbasov/azerbaijani-tts-dataset` (v1 was trained on it): no
+  licence file declared; the author confirmed free use with attribution
+  requested in the HF community tab.
   The terms of the upstream TTS system that produced the audio remain unknown.
   State it exactly this way — do not simplify it into "licensed" or "unlicensed".
 - `phonemizer` and eSpeak NG are GPL-3.0-or-later and loaded in-process.
@@ -54,8 +57,9 @@ change all:
   carries the commercial-use answer in both READMEs: running is unrestricted,
   redistribution is the condition, and the way out is
   `accepts_prephonemized_input`.
-- 443 tests, about three seconds, and they never load a model. Update the count in
-  both READMEs and in `packaging/PUBLISHING.md` when it changes.
+- 465 tests, about three seconds, and they never load a model; 28 web suites.
+  Update the counts in both READMEs and in `packaging/PUBLISHING.md` when they
+  change.
 - Samples: five Azerbaijani WAVs in `samples/`, three English ones in
   `samples/en/`, all through Git LFS.
 
@@ -64,7 +68,7 @@ change all:
 `README.md` / `README.az.md` (usage, samples, commercial use), `docs/MODEL.md`
 (model card, measurements, limitations), `model-en/README.md` (where the English
 weights came from and how to cite them), `training/README.md` and
-`training/docs/` (how it was made — an archive), `THIRD_PARTY_NOTICES.md`
+`training/v2/README.md` (how it was made — an archive), `THIRD_PARTY_NOTICES.md`
 (licences, including the redistribution of the English checkpoint),
 `packaging/PUBLISHING.md` (release steps), `CITATION.cff` (how to cite this
 project and its two sources), `CLAUDE.md` (working on the code). `AGENTS.md` is a pointer to `CLAUDE.md` for

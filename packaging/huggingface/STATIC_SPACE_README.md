@@ -37,11 +37,11 @@ on phones. Today it speaks Azerbaijani and English; Turkish and Russian are
 next (planned, no dates yet). This page is its playground.
 
 The Azerbaijani voice is the Inflect-Micro-v2 Azerbaijani model, a
-9.36M-parameter VITS network and a fine-tune of
+9.36M-parameter VITS network that started as a fine-tune of
 [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)
-by Owen Song: 200,000 steps on 25.07 hours of Azerbaijani speech, 409 of its
-410 tensors carried over bit-identically. The English voice is that base model,
-unmodified. Nothing you type is sent anywhere: the model and the phonemiser are
+by Owen Song. This page runs its second checkpoint, v2.1, trained on audio
+distilled from a teacher TTS, with a stress frontend on top of eSpeak NG. The
+English voice is that base model, unmodified. Nothing you type is sent anywhere: the model and the phonemiser are
 downloaded once, cached by the browser, and run there. Once the page has
 loaded, it works with the network switched off, with no sign-up.
 
@@ -54,12 +54,13 @@ and we fix them release by release.
   browser has it -- about 3-5x faster than real time, the same as the Python
   command line. Browsers without WebGPU fall back to WebAssembly and are
   slower -- see *Speed* below.
-- **eSpeak NG compiled to WebAssembly** for phonemisation, verified to return
-  byte-identical phonemes to the Python frontend the model was trained with.
+- **eSpeak NG compiled to WebAssembly** for phonemisation, followed by the
+  **stress frontend ported to JavaScript** -- the same two steps the model's
+  training data went through.
 - **The Azerbaijani text layer ported to JavaScript** -- `II` becomes `İkinci`,
   `25%` becomes `iyirmi beş faiz`, `01/09/1939` becomes `bir sentyabr min doqquz
   yüz otuz doqquzuncu il`. The port is checked against the Python original over
-  a golden file: 550 normalisation cases and 24,022 number-word checks.
+  a golden file: 669 normalisation cases and 24,022 number-word checks.
 
 The panel on the right shows the normalised text that actually reaches the
 model, which is the part of this project worth seeing.
@@ -94,11 +95,14 @@ the device.
 ## Limitations
 
 One voice, no emotion control, no voice cloning. At 9.36M parameters the speech
-is clear but not fully natural, and the vocoder leaves a metallic resonance on
-some sentences. Intonation flattens over long sentences, which is why the text
-is cut into roughly fifteen-word chunks. eSpeak NG puts a stress on 92.2% of
-words, so the reading is flat. The Azerbaijani training audio is most likely
-synthetic, which caps the quality.
+is clear but not fully natural. Intonation flattens over long sentences, which
+is why the text is cut into roughly fifteen-word chunks. Yes/no questions end
+with falling pitch instead of a rise. m->n, b->d and q->k confusions remain,
+most often on a sentence's first and last word. Corrected stress is carried by
+length, not yet by pitch. The fixed 6 kHz ring of the first checkpoint is gone,
+but the 2-4 kHz range is less clear than in the recordings the model learnt
+from. The Azerbaijani training audio is synthetic, distilled from a teacher
+TTS, which caps the quality.
 
 **Two voices.** The Azerbaijani one is this project's model. The English one is
 [`owensong/Inflect-Micro-v2`](https://huggingface.co/owensong/Inflect-Micro-v2)
